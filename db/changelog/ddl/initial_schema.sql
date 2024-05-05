@@ -154,3 +154,13 @@ create table client_achievement (
 );
 
 -- rollback DROP TABLE client_achievement;
+
+-- changeset gordey_dovydenko:12
+
+create table friend (
+    client_id bigint not null,
+    friend_id bigint not null,
+    primary key (client_id, friend_id)
+);
+
+-- rollback DROP TABLE friend;

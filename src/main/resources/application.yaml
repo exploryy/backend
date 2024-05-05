@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: open_the_world
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 1000MB
+
+amazonProperties:
+  endpointUrl: https://storage.yandexcloud.net
+  bucketName: open-the-world-bucket
