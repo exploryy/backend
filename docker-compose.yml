@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  application:
+    env_file:
+      - .env
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${OPEN_THE_WORLD_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+    build:
+      dockerfile: Dockerfile
+      network: host
+      context: .
+      args:
+        - DB_URL=jdbc:postgresql://localhost:5432/${OPEN_THE_WORLD_DB}
+        - DB_USERNAME=${POSTGRES_USER}
+        - DB_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - '8080:8080'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+    networks:
+      - app
+
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready", "-d", "db_prod" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - app
+
+  migration:
+    image: migration:latest
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DB_URL=jdbc:postgresql://postgres:5432/${OPEN_THE_WORLD_DB}
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_SCHEMA=public
+    command: "update"
+    networks:
+      - app
+
+volumes:
+  postgres:
+    driver: local
+
+networks:
+  app:
+    driver: bridge
