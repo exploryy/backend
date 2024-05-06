@@ -37,7 +37,7 @@ create sequence s_pass_quest_id start with 1 increment by 1;
 create table pass_quest (
     pass_quest_id bigint default nextval('s_pass_quest_id'),
     quest_id bigint not null,
-    client_id bigint not null,
+    client_id varchar(60) not null,
     start_time timestamp not null,
     end_time timestamp not null,
     route_id bigint not null,
@@ -58,7 +58,7 @@ create table quest_review (
     quest_review_id bigint default nextval('s_quest_review_id'),
     score integer check ( score >= 1 and score <= 5 ) not null,
     message varchar(255) not null,
-    client_id bigint not null,
+    client_id varchar(60) not null,
     quest_id bigint not null,
     primary key (quest_review_id),
     foreign key (quest_id) references quest(quest_id)
@@ -120,13 +120,13 @@ create table distance_quest (
 
 -- changeset gordey_dovydenko:9
 
-create table point (
+create table point_route (
     latitude varchar(60) not null,
     longitude varchar(60) not null,
     previous_latitude varchar(60),
     previous_longitude varchar(60),
     primary key (latitude, longitude),
-    foreign key (previous_latitude, previous_longitude) references point(previous_latitude, previous_longitude)
+    foreign key (previous_latitude, previous_longitude) references point_route(previous_latitude, previous_longitude)
 );
 
 -- rollback DROP TABLE point;
@@ -147,8 +147,9 @@ create table achievement (
 -- changeset gordey_dovydenko:11
 
 create table client_achievement (
-    client_id bigint not null,
+    client_id varchar(60) not null,
     achievement_id bigint not null,
+    achievement_date timestamp with time zone not null,
     primary key (client_id, achievement_id),
     foreign key (achievement_id) references achievement(achievement_id)
 );
@@ -158,8 +159,8 @@ create table client_achievement (
 -- changeset gordey_dovydenko:12
 
 create table friend (
-    client_id bigint not null,
-    friend_id bigint not null,
+    client_id varchar(60) not null,
+    friend_id varchar(60) not null,
     primary key (client_id, friend_id)
 );
 
