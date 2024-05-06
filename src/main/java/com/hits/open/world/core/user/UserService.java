@@ -1,6 +1,5 @@
 package com.hits.open.world.core.user;
 
-import com.hits.open.world.core.UserEntity;
 import com.hits.open.world.keycloak.RoleClient;
 import com.hits.open.world.keycloak.UserClient;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;

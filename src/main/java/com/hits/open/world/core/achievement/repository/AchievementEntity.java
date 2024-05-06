@@ -1,4 +1,4 @@
-package com.hits.open.world.core.achievement;
+package com.hits.open.world.core.achievement.repository;
 
 public record AchievementEntity(
         Long achievementId,

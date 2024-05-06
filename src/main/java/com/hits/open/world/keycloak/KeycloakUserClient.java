@@ -1,6 +1,6 @@
 package com.hits.open.world.keycloak;
 
-import com.hits.open.world.core.UserEntity;
+import com.hits.open.world.core.user.UserEntity;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.user.UpdateUserDto;

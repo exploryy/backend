@@ -1,4 +1,4 @@
-package com.hits.open.world.core;
+package com.hits.open.world.core.user;
 
 public record UserEntity(
         String id,

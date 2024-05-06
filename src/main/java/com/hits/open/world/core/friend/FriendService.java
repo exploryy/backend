@@ -1,6 +1,6 @@
 package com.hits.open.world.core.friend;
 
-import com.hits.open.world.core.UserEntity;
+import com.hits.open.world.core.user.UserEntity;
 import com.hits.open.world.core.friend.repository.FriendRepository;
 import com.hits.open.world.keycloak.UserClient;
 import com.hits.open.world.public_interface.friend.FriendDto;

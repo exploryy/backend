@@ -1,10 +1,9 @@
 package com.hits.open.world.keycloak;
 
 
-import com.hits.open.world.core.UserEntity;
+import com.hits.open.world.core.user.UserEntity;
 import com.hits.open.world.public_interface.user.UpdateUserDto;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface UserClient {
