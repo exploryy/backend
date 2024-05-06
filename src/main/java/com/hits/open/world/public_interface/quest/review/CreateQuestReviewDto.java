@@ -9,6 +9,6 @@ public record CreateQuestReviewDto(
         Integer score,
         String message,
         String clientId,
-        List<MultipartFile> photos
+        List<MultipartFile> images
 ) {
 }

@@ -3,7 +3,9 @@ package com.hits.open.world.rest.quest;
 import com.hits.open.world.core.quest.QuestService;
 import com.hits.open.world.public_interface.quest.CreateQuestDto;
 import com.hits.open.world.public_interface.quest.UpdateQuestDto;
+import com.hits.open.world.public_interface.quest.review.AddImageQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.CreateQuestReviewDto;
+import com.hits.open.world.public_interface.quest.review.DeleteImageQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.DeleteQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.UpdateQuestReviewDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -145,5 +147,35 @@ public class QuestController {
                 message
         );
         questService.updateQuestReview(updateDto);
+    }
+
+    @PostMapping(path = "/{quest_id}/review/{review_id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void addQuestReviewImage(@PathVariable("quest_id") Long questId,
+                                    @PathVariable("review_id") Long reviewId,
+                                    @RequestParam("image") MultipartFile image,
+                                    JwtAuthenticationToken token) {
+        var userId = token.getTokenAttributes().get("sub").toString();
+        var addDto = new AddImageQuestReviewDto(
+                questId,
+                reviewId,
+                userId,
+                image
+        );
+        questService.addImageQuestReview(addDto);
+    }
+
+    @DeleteMapping(path = "/{quest_id}/review/{review_id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void removeQuestReviewImage(@PathVariable("quest_id") Long questId,
+                                       @PathVariable("review_id") Long reviewId,
+                                       @RequestParam("image_id") Long imageId,
+                                       JwtAuthenticationToken token) {
+        var userId = token.getTokenAttributes().get("sub").toString();
+        var deleteDto = new DeleteImageQuestReviewDto(
+                questId,
+                reviewId,
+                userId,
+                imageId
+        );
+        questService.deleteImageQuestReview(deleteDto);
     }
 }

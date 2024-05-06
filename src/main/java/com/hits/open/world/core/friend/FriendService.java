@@ -29,7 +29,7 @@ public class FriendService {
 
     @Transactional(readOnly = true)
     public List<FriendDto> getFriends(String userId) {
-        var friendIds = friendRepository.getFriends(userId);
+        var friendIds = friendRepository.getFriendIds(userId);
         return friendIds.stream()
                 .map(userClient::getUser)
                 .filter(Optional::isPresent)

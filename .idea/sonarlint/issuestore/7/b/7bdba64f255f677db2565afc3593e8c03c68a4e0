@@ -1,19 +1,9 @@
 
-É
-java:S1186"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(§‰¤ÿÿÿÿÿ8œ­“äô1J$0a07510f-7671-4a62-b057-39b900600492
-Ä
-java:S1186"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(Šš¶Ô8œ­“äô1J$06b281e0-35e0-482d-b927-7129799b5d6f
-Ã
-java:S1186!"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(Š‹Ç^8­“äô1J$6eb3b9b4-4c2e-49d6-9964-af0fb17351c1
-É
-java:S1186="€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(³şŠòşÿÿÿÿ8è„Åäô1J$ee0afa5d-f489-492a-8da3-492228900cae
-Ä
-java:S1186A"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(à€¯ó8½ÊÊäô1J$20dc9bba-bb90-4d25-83b4-49390f2d7fb4
-Ä
-java:S1186E"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(¹üúÓ8Ú¹Ôäô1J$27f3dbb0-835f-4f79-8912-08ad2e30c4c4
+š
+java:S1192€"WDefine a constant instead of duplicating this literal "Quest review not found" 4 times.(´¢µ78ÒÜŞêô1J$8aa45d85-7534-4e3e-b3ed-a1bba91c045f
+
+java:S1192ƒ"UDefine a constant instead of duplicating this literal "It's not your review" 4 times.(Œ¿°ìÿÿÿÿÿ8ÒÜŞêô1J$d7c1e4a9-162d-4ec4-8b85-cef932564359
 u
-java:S1135&"2Complete the task associated to this TODO comment.(‰á¶—8ìÛœäô1J$c9352e7a-b06a-4201-b9b7-6142508c281d
+java:S1135M"2Complete the task associated to this TODO comment.(‰á¶—8äÜŞêô1J$afeac3f7-3b2b-4cf1-bbbe-336cd8e620c6
 u
-java:S1135*"2Complete the task associated to this TODO comment.(»†‘æ8ı˜äô1J$2a67114d-465d-4e4b-87a4-3e913355aa24
-{
-java:S1144I"3Remove this unused private "saveQuestImage" method.(í‹®ÿÿÿÿÿ8¤­“äô1J$36135349-1a4e-4f0f-a93a-d895ab3ece3c
+java:S1135Q"2Complete the task associated to this TODO comment.(»†‘æ8åÜŞêô1J$5347e021-a5e6-4437-885b-a722ef4aa186
