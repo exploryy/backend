@@ -20,7 +20,6 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
-@SecurityRequirement(name = "oauth2")
 @Tag(name = "User")
 public class UserController {
     private final UserService userService;
@@ -39,11 +38,13 @@ public class UserController {
     }
 
     @GetMapping(path = "/profile")
+    @SecurityRequirement(name = "oauth2")
     public ProfileDto getProfile(JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
         return userService.getProfile(userId);
     }
 
+    @SecurityRequirement(name = "oauth2")
     @PostMapping(path = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void updateProfile(@RequestParam("username") Optional<String> username,
                               @RequestParam("email") Optional<String> email,
