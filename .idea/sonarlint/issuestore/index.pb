@@ -145,3 +145,5 @@ e
 Xsrc/main/java/com/hits/open/world/public_interface/quest/CreatePointToPointQuestDto.java,5\5\5583003cec8550f7095e7e19307019d9fc4c61d1
 „
 Tsrc/main/java/com/hits/open/world/public_interface/quest/CreateDistanceQuestDto.java,e\b\eb98ddb733a4ed59d7378eeab3b487d65f3cad14
+r
+Bsrc/main/java/com/hits/open/world/config/SwaggerConfiguration.java,4\1\41335aa0558efd18f67462c0a7446ea8e869e4b3

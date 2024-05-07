@@ -41,5 +41,10 @@ logging:
   level:
     org.springframework.security: trace
 
+authServer:
+  authorizationUrl: http://158.160.78.7:8082/realms/hits-project/protocol/openid-connect/auth
+  tokenUrl: http://158.160.78.7:8082/realms/hits-project/protocol/openid-connect/token
+  refreshUrl: http://158.160.78.7:8082/realms/hits-project/protocol/openid-connect/token
+
 server:
   port: 8080
