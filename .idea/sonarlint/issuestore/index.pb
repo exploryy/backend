@@ -137,8 +137,6 @@ hsrc/main/java/com/hits/open/world/core/quest/repository/entity/quest/mapper/Rev
 	deploy.sh,b\e\be94fd40f0c4b440044c3f852e44fd2a75f7b3cc
 H
 .github/workflows/ci.yml,8\9\899ce9c202bf7bb5480e72836c3edc773c9c4244
-ƒ
-Ssrc/main/java/com/hits/open/world/core/route/repository/PointRouteEntityMapper.java,d\d\dd6fd3b7a7e84586dce7a053272273ab9dd8f76d
 …
 Usrc/main/java/com/hits/open/world/core/route/repository/mapper/RouteEntityMapper.java,4\1\41e0646f4fcc45ea6352d05f04d850f03f632da3
 e
