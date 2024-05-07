@@ -121,10 +121,6 @@ Zsrc/main/java/com/hits/open/world/core/achievement/repository/AchievementEntity
 |
 Lsrc/main/java/com/hits/open/world/core/route/repository/RouteRepository.java,5\3\5354b34de86b4e72c5572b1a10b327baad2302cb
 ã
-[src/main/java/com/hits/open/world/core/quest/repository/entity/quest/QuestEntityMapper.java,e\4\e415919a98ff0088c35128e6e27d5c86d860e297
-ê
-`src/main/java/com/hits/open/world/core/quest/repository/entity/quest/QuestPhotoEntityMapper.java,b\9\b957058b613a34b7cedef20e90ecc64c2b10b4fb
-ã
 [src/main/java/com/hits/open/world/public_interface/quest/review/AddImageQuestReviewDto.java,8\5\85f5dfec03797733835562af1df0215f47e59e74
 é
 ^src/main/java/com/hits/open/world/public_interface/quest/review/DeleteImageQuestReviewDto.java,e\4\e4a4fb6acda3893106a709eb09855735a4ab30eb
@@ -137,3 +133,17 @@ hsrc/main/java/com/hits/open/world/core/quest/repository/entity/quest/mapper/Rev
 :
 
 .gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
+9
+	deploy.sh,b\e\be94fd40f0c4b440044c3f852e44fd2a75f7b3cc
+H
+.github/workflows/ci.yml,8\9\899ce9c202bf7bb5480e72836c3edc773c9c4244
+É
+Ssrc/main/java/com/hits/open/world/core/route/repository/PointRouteEntityMapper.java,d\d\dd6fd3b7a7e84586dce7a053272273ab9dd8f76d
+Ö
+Usrc/main/java/com/hits/open/world/core/route/repository/mapper/RouteEntityMapper.java,4\1\41e0646f4fcc45ea6352d05f04d850f03f632da3
+e
+5src/main/java/com/hits/open/world/util/PointUtil.java,d\9\d995a6d5580c2fe3c2a2abffbfacf46beb1bf722
+à
+Xsrc/main/java/com/hits/open/world/public_interface/quest/CreatePointToPointQuestDto.java,5\5\5583003cec8550f7095e7e19307019d9fc4c61d1
+Ñ
+Tsrc/main/java/com/hits/open/world/public_interface/quest/CreateDistanceQuestDto.java,e\b\eb98ddb733a4ed59d7378eeab3b487d65f3cad14

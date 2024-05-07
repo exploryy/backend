@@ -1,11 +1,13 @@
 package com.hits.open.world.core.quest.repository;
 
 import com.hits.open.world.core.quest.repository.entity.quest.QuestEntity;
+import com.hits.open.world.core.quest.repository.entity.quest.distance.DistanceQuestEntity;
 import com.hits.open.world.core.quest.repository.entity.quest.mapper.QuestEntityMapper;
 import com.hits.open.world.core.quest.repository.entity.quest.QuestPhotoEntity;
 import com.hits.open.world.core.quest.repository.entity.quest.mapper.QuestPhotoEntityMapper;
 import com.hits.open.world.core.quest.repository.entity.quest.mapper.QuestReviewEntityMapper;
 import com.hits.open.world.core.quest.repository.entity.quest.mapper.ReviewPhotoEntityMapper;
+import com.hits.open.world.core.quest.repository.entity.quest.point_to_point.PointToPointQuestEntity;
 import com.hits.open.world.core.quest.repository.entity.review.QuestReviewEntity;
 import com.hits.open.world.core.quest.repository.entity.review.ReviewPhotoEntity;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.open_the_world.public_.Tables.DISTANCE_QUEST;
+import static com.example.open_the_world.public_.Tables.POINT_TO_POINT_QUEST;
 import static com.example.open_the_world.public_.Tables.QUEST_PHOTO;
 import static com.example.open_the_world.public_.Tables.QUEST_REVIEW;
 import static com.example.open_the_world.public_.Tables.REVIEW_PHOTO;
@@ -175,5 +179,21 @@ public class QuestRepositoryImpl implements QuestRepository {
         return create.selectFrom(REVIEW_PHOTO)
                 .where(REVIEW_PHOTO.REVIEW_ID.eq(reviewId))
                 .fetch(reviewPhotoEntityMapper);
+    }
+
+    @Override
+    public void createPointToPointQuest(PointToPointQuestEntity entity) {
+        create.insertInto(POINT_TO_POINT_QUEST)
+                .set(POINT_TO_POINT_QUEST.QUEST_ID, entity.questId())
+                .set(POINT_TO_POINT_QUEST.ROUTE_ID, entity.routeId())
+                .execute();
+    }
+
+    @Override
+    public void createDistanceQuest(DistanceQuestEntity entity) {
+        create.insertInto(DISTANCE_QUEST)
+                .set(DISTANCE_QUEST.QUEST_ID, entity.questId())
+                .set(DISTANCE_QUEST.ROUTE_DISTANCE, entity.routeDistance())
+                .execute();
     }
 }

@@ -37,10 +37,5 @@ hits-project:
     users:
       uri: ${KEYCLOAK_URI:http://localhost:8082}
 
-authServer:
-  authorizationUrl: http://localhost:8082/realms/hits-project/protocol/openid-connect/auth
-  tokenUrl: http://localhost:8082/realms/hits-project/protocol/openid-connect/token
-  refreshUrl: http://localhost:8082/realms/hits-project/protocol/openid-connect/token
-
 server:
   port: 8080

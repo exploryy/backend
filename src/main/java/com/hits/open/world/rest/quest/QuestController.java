@@ -1,6 +1,9 @@
 package com.hits.open.world.rest.quest;
 
 import com.hits.open.world.core.quest.QuestService;
+import com.hits.open.world.core.quest.repository.entity.quest.QuestType;
+import com.hits.open.world.public_interface.quest.CreateDistanceQuestDto;
+import com.hits.open.world.public_interface.quest.CreatePointToPointQuestDto;
 import com.hits.open.world.public_interface.quest.CreateQuestDto;
 import com.hits.open.world.public_interface.quest.UpdateQuestDto;
 import com.hits.open.world.public_interface.quest.review.AddImageQuestReviewDto;
@@ -8,6 +11,8 @@ import com.hits.open.world.public_interface.quest.review.CreateQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.DeleteImageQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.DeleteQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.UpdateQuestReviewDto;
+import com.hits.open.world.public_interface.route.CreateRouteDto;
+import com.hits.open.world.public_interface.route.PointDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
 
-//TODO: придумать механизм добавление дополнительных параметров при создании квеста, так как разыне типы
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/quest")
@@ -35,22 +38,47 @@ import java.util.Optional;
 public class QuestController {
     private final QuestService questService;
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void createQuest(@RequestParam("name") String name,
-                            @RequestParam("description") String description,
-                            @RequestParam("difficulty_type") String difficultyType,
-                            @RequestParam("quest_type") String questType,
-                            @RequestParam("transport_type") String transportType,
-                            @RequestParam("images")List<MultipartFile> images) {
+    @PostMapping(path = "/point_to_point", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void createPointToPointQuest(@RequestParam("name") String name,
+                                        @RequestParam("description") String description,
+                                        @RequestParam("difficulty_type") String difficultyType,
+                                        @RequestParam("transport_type") String transportType,
+                                        @RequestParam("images") List<MultipartFile> images,
+                                        @RequestParam("points") List<PointDto> points,
+                                        @RequestParam("start_point_longitude") String startPointLongitude,
+                                        @RequestParam("start_point_latitude") String startPointLatitude) {
         var createDto = new CreateQuestDto(
                 name,
                 description,
                 difficultyType,
-                questType,
+                QuestType.POINT_TO_POINT.name(),
                 transportType,
                 images
         );
-        questService.createQuest(createDto);
+        var routeDto = new CreateRouteDto(
+                points,
+                startPointLongitude,
+                startPointLatitude
+        );
+        questService.createPointToPointQuest(new CreatePointToPointQuestDto(createDto, routeDto));
+    }
+
+    @PostMapping(path = "/distance", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void createDistanceQuest(@RequestParam("name") String name,
+                                    @RequestParam("description") String description,
+                                    @RequestParam("difficulty_type") String difficultyType,
+                                    @RequestParam("transport_type") String transportType,
+                                    @RequestParam("images") List<MultipartFile> images,
+                                    @RequestParam("distance") Double distance) {
+        var createDto = new CreateQuestDto(
+                name,
+                description,
+                difficultyType,
+                QuestType.DISTANCE.name(),
+                transportType,
+                images
+        );
+        questService.createDistanceQuest(new CreateDistanceQuestDto(createDto, distance));
     }
 
     @DeleteMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -79,6 +107,7 @@ public class QuestController {
                             @RequestParam("difficulty_type") Optional<String> difficultyType,
                             @RequestParam("quest_type") Optional<String> questType,
                             @RequestParam("transport_type") Optional<String> transportType) {
+        //TODO: Нужно ли тут запариваться с изменением дочерних элементов?
         var updateDto = new UpdateQuestDto(
                 questId,
                 name,

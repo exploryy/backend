@@ -8,11 +8,16 @@ import com.hits.open.world.core.quest.repository.entity.quest.QuestEntity;
 import com.hits.open.world.core.quest.repository.entity.quest.QuestPhotoEntity;
 import com.hits.open.world.core.quest.repository.entity.quest.QuestType;
 import com.hits.open.world.core.quest.repository.entity.quest.TransportType;
+import com.hits.open.world.core.quest.repository.entity.quest.distance.DistanceQuestEntity;
+import com.hits.open.world.core.quest.repository.entity.quest.point_to_point.PointToPointQuestEntity;
 import com.hits.open.world.core.quest.repository.entity.review.QuestReviewEntity;
 import com.hits.open.world.core.quest.repository.entity.review.ReviewPhotoEntity;
+import com.hits.open.world.core.route.RouteService;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.file.UploadFileDto;
+import com.hits.open.world.public_interface.quest.CreateDistanceQuestDto;
+import com.hits.open.world.public_interface.quest.CreatePointToPointQuestDto;
 import com.hits.open.world.public_interface.quest.CreateQuestDto;
 import com.hits.open.world.public_interface.quest.UpdateQuestDto;
 import com.hits.open.world.public_interface.quest.review.AddImageQuestReviewDto;
@@ -29,10 +34,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class QuestService {
     private final QuestRepository questRepository;
+    private final RouteService routeService;
     private final FileStorageService fileStorageService;
 
-    @Transactional
-    public void createQuest(CreateQuestDto dto) {
+    private Long createQuest(CreateQuestDto dto) {
         var questEntity = new QuestEntity(
                 null,
                 dto.name(),
@@ -45,10 +50,33 @@ public class QuestService {
         for (var image : dto.images()) {
             saveQuestImage(image, questInDb.questId());
         }
+        return questInDb.questId();
+    }
+
+    @Transactional
+    public void createPointToPointQuest(CreatePointToPointQuestDto dto) {
+        var questId = createQuest(dto.questDto());
+        var routeId = routeService.createRoute(dto.routeDto());
+        var pointToPointQuestEntity = new PointToPointQuestEntity(
+                questId,
+                routeId
+        );
+        questRepository.createPointToPointQuest(pointToPointQuestEntity);
+    }
+
+    @Transactional
+    public void createDistanceQuest(CreateDistanceQuestDto dto) {
+        var questId = createQuest(dto.questDto());
+        var distanceQuestEntity = new DistanceQuestEntity(
+                questId,
+                dto.distance()
+        );
+        questRepository.createDistanceQuest(distanceQuestEntity);
     }
 
     @Transactional
     public void deleteQuest(Long questId) {
+        //TODO: надо дочерние сущности подчищать
         var quest = questRepository.getQuestById(questId)
                 .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));
         questRepository.deleteQuest(questId);

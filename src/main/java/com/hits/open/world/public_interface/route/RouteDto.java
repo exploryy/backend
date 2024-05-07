@@ -4,6 +4,7 @@ import java.util.List;
 
 public record RouteDto(
         List<PointDto> points,
-        Double distance
+        Double distance,
+        Long routeId
 ) {
 }

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.FullyQualifiedAnnotationBeanNameGe
 @SpringBootApplication
 public class OpenTheWorldApplication {
     public static void main(String[] args) {
-        new SpringApplicationBuilder()
+        new SpringApplicationBuilder(OpenTheWorldApplication.class)
                 .beanNameGenerator(new FullyQualifiedAnnotationBeanNameGenerator())
                 .run(args);
     }

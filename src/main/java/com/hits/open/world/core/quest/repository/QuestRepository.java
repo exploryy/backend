@@ -2,6 +2,8 @@ package com.hits.open.world.core.quest.repository;
 
 import com.hits.open.world.core.quest.repository.entity.quest.QuestEntity;
 import com.hits.open.world.core.quest.repository.entity.quest.QuestPhotoEntity;
+import com.hits.open.world.core.quest.repository.entity.quest.distance.DistanceQuestEntity;
+import com.hits.open.world.core.quest.repository.entity.quest.point_to_point.PointToPointQuestEntity;
 import com.hits.open.world.core.quest.repository.entity.review.QuestReviewEntity;
 import com.hits.open.world.core.quest.repository.entity.review.ReviewPhotoEntity;
 
@@ -30,4 +32,7 @@ public interface QuestRepository {
     ReviewPhotoEntity createReviewPhoto(ReviewPhotoEntity entity);
     void deleteReviewPhoto(Long reviewPhotoId);
     List<ReviewPhotoEntity> getReviewPhotosByReviewId(Long reviewId);
+
+    void createPointToPointQuest(PointToPointQuestEntity entity);
+    void createDistanceQuest(DistanceQuestEntity entity);
 }
