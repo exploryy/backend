@@ -19,6 +19,11 @@ spring-validation = { module = "org.springframework.boot:spring-boot-starter-val
 spring-websocket = { module = "org.springframework.boot:spring-boot-starter-websocket", version.ref = "spring-boot" }
 spring-client = { module = "org.springframework.boot:spring-boot-starter-webflux", version.ref = "spring-boot" }
 jackson-data-type = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version = "2.17.0" }
+spring-jdbc = { module = "org.springframework.boot:spring-boot-starter-data-jdbc" }
+gson = { module = "com.google.code.gson:gson" }
+jts = { module = "com.vividsolutions:jts", version = "1.13" }
+jackson-geo = { module = "de.grundid.opendatalab:geojson-jackson", version = "1.14" }
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-databind", version = "2.17.1" }
 
 #liquibase
 liquibase-core = { module = "org.liquibase:liquibase-core", version = "" }
@@ -35,12 +40,12 @@ spring-test-starter = { module = "org.springframework.boot:spring-boot-starter-t
 spring-test-security = { module = "org.springframework.security:spring-security-test", version = "6.2.2" }
 
 #s3 sdk
-amazon-bom = { module = "software.amazon.awssdk:bom", version.ref = "awssdk"}
-amazon-s3 = { module = "software.amazon.awssdk:s3", version.ref = "awssdk"}
-amazon-netty-nio-client = { module = "software.amazon.awssdk:netty-nio-client", version.ref = "awssdk"}
-amazon-s3control = { module = "software.amazon.awssdk:s3control", version.ref = "awssdk"}
-amazon-s3-transfer-manager = { module = "software.amazon.awssdk:s3-transfer-manager", version.ref = "awssdk"}
-amazon-apache-client = { module = "software.amazon.awssdk:apache-client", version.ref = "awssdk"}
+amazon-bom = { module = "software.amazon.awssdk:bom", version.ref = "awssdk" }
+amazon-s3 = { module = "software.amazon.awssdk:s3", version.ref = "awssdk" }
+amazon-netty-nio-client = { module = "software.amazon.awssdk:netty-nio-client", version.ref = "awssdk" }
+amazon-s3control = { module = "software.amazon.awssdk:s3control", version.ref = "awssdk" }
+amazon-s3-transfer-manager = { module = "software.amazon.awssdk:s3-transfer-manager", version.ref = "awssdk" }
+amazon-apache-client = { module = "software.amazon.awssdk:apache-client", version.ref = "awssdk" }
 
 #oauth2
 oauth2-resource-server = { module = "org.springframework.boot:spring-boot-starter-oauth2-resource-server", version.ref = "spring-boot" }

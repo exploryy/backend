@@ -10,8 +10,11 @@ function create_user_and_database() {
 	    CREATE USER $database;
 	    CREATE DATABASE $database;
 	    GRANT ALL PRIVILEGES ON DATABASE $database TO $database;
+      CREATE EXTENSION IF NOT EXISTS postgis;
 EOSQL
 }
+echo "$POSTGRES_USER"
+
 
 echo "$POSTGRES_USER"
 if [ -n "$POSTGRES_MULTIPLE_DATABASES" ]; then

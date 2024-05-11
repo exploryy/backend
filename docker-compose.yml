@@ -28,8 +28,10 @@ services:
       - app
 
   postgres:
+    build:
+      context: ./db/postgres
+      dockerfile: Dockerfile
     container_name: postgres
-    image: postgres:latest
     restart: always
     env_file:
       - .env

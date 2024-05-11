@@ -36,6 +36,11 @@ dependencies {
     implementation libs.liquibase.core
     implementation libs.spring.websocket
     implementation libs.jackson.data.type
+    implementation libs.spring.jdbc
+    implementation libs.gson
+    implementation libs.jts
+    implementation libs.jackson.geo
+    implementation libs.jackson.core
 
     liquibaseRuntime libs.liquibase.core
     liquibaseRuntime libs.postgresql.driver

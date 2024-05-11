@@ -177,3 +177,17 @@ create table friend
 );
 
 -- rollback DROP TABLE friend;
+
+-- changeset t9404:13
+
+CREATE EXTENSION postgis;
+
+create table multipolygon
+(
+    client_id varchar(255) not null,
+    geom      geometry(MultiPolygon, 4326),
+    primary key (client_id)
+);
+
+-- rollback DROP TABLE multipolygon;
+-- rollback DROP EXTENSION postgis;
