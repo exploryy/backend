@@ -1,27 +1,8 @@
-{
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {
-        "place_id": 223084172,
-        "osm_type": "relation",
-        "osm_id": 7261645,
-        "place_rank": 16,
-        "category": "place",
-        "type": "city",
-        "importance": 0.527423392273722,
-        "addresstype": "city",
-        "name": "Tomsk",
-        "display_name": "Tomsk, городской округ Томск, Tomsk Oblast, Siberian Federal District, 634000, Russia"
-      },
-      "bbox": [
-        84.8275215,
-        56.379368,
-        85.1495558,
-        56.5705856
-      ],
-      "geometry": {
+-- changeset t9404:14
+
+insert into multipolygon(client_id, geom)
+values ('tomsk',
+        ST_GeomFromGeoJSON('{
         "type": "Polygon",
         "coordinates": [
           [
@@ -3187,7 +3168,6 @@
             ]
           ]
         ]
-      }
-    }
-  ]
-}
+      }'));
+
+-- rollback DELETE FROM public.multipolygon WHERE client_id = 'tomsk';

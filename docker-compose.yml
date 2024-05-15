@@ -28,9 +28,7 @@ services:
       - app
 
   postgres:
-    build:
-      context: ./db/postgres
-      dockerfile: Dockerfile
+    image: postgis/postgis:16-3.4
     container_name: postgres
     restart: always
     env_file:

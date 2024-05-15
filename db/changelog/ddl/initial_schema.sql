@@ -180,7 +180,7 @@ create table friend
 
 -- changeset t9404:13
 
-CREATE EXTENSION postgis;
+create extension postgis;
 
 create table multipolygon
 (

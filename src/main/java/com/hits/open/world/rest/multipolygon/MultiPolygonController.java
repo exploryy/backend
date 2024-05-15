@@ -1,8 +1,8 @@
 package com.hits.open.world.rest.multipolygon;
 
 import com.hits.open.world.core.multipolygon.MultipolygonService;
-import com.hits.open.world.public_interface.multipolygon.AreaDto;
-import com.hits.open.world.public_interface.multipolygon.CoordinateDto;
+import com.hits.open.world.public_interface.multipolygon.AreaDtoResponse;
+import com.hits.open.world.public_interface.multipolygon.CreatePolygonRequestDto;
 import com.hits.open.world.public_interface.multipolygon.geo.GeoDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -11,13 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/multipolygon")
 public class MultiPolygonController {
     private final MultipolygonService multipolygonService;
-
-    @PostMapping
-    public GeoDto save(@RequestBody CoordinateDto coordinateDto) {
-        return multipolygonService.save(coordinateDto, "user1");
-    }
 
     @GetMapping
     public GeoDto getMyPolygons(JwtAuthenticationToken token) {
@@ -26,7 +22,7 @@ public class MultiPolygonController {
     }
 
     @GetMapping("/area")
-    public AreaDto calculateArea(JwtAuthenticationToken token) {
+    public AreaDtoResponse calculateArea(JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
         return multipolygonService.calculateArea(userId);
     }

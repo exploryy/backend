@@ -12,17 +12,17 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${ISSUER_URI_OAUTH2:http://158.160.85.50:8082/realms/hits-project}
+          issuer-uri: ${ISSUER_URI_OAUTH2:http://localhost:8082/realms/hits-project}
       client:
         provider:
           keycloak:
-            issuer-uri: ${ISSUER_URI_OAUTH2:http://158.160.85.50:8082/realms/hits-project}
+            issuer-uri: ${ISSUER_URI_OAUTH2:http://localhost:8082/realms/hits-project}
             user-name-attribute: preferred_username
         registration:
           keycloak:
             authorization-grant-type: authorization_code
             client-id: ${CLIENT_ID_OAUTH2:users-app}
-            client-secret: ${CLIENT_SECRET_OAUTH2:12345678}
+            client-secret: ${CLIENT_SECRET_OAUTH2:123456789}
             scope:
               - openid
               - microprofile-jwt
@@ -35,16 +35,16 @@ hits-project:
   users-realm: ${REALM_NAME:hits-project}
   services:
     users:
-      uri: ${KEYCLOAK_URI:http://158.160.85.50:8082}
+      uri: ${KEYCLOAK_URI:http://localhost:8082}
 
 logging:
   level:
     org.springframework.security: trace
 
 authServer:
-  authorizationUrl: http://158.160.85.50:8082/realms/hits-project/protocol/openid-connect/auth
-  tokenUrl: http://158.160.85.50:8082/realms/hits-project/protocol/openid-connect/token
-  refreshUrl: http://158.160.85.50:8082/realms/hits-project/protocol/openid-connect/token
+  authorizationUrl: http://localhost:8082/realms/hits-project/protocol/openid-connect/auth
+  tokenUrl: http://localhost:8082/realms/hits-project/protocol/openid-connect/token
+  refreshUrl: http://localhost:8082/realms/hits-project/protocol/openid-connect/token
 
 server:
   port: 8080

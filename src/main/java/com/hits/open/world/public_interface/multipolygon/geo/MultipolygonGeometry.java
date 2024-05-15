@@ -2,10 +2,11 @@ package com.hits.open.world.public_interface.multipolygon.geo;
 
 import lombok.Builder;
 
+import java.util.List;
+
 @Builder
-public record Feature (
+public record MultipolygonGeometry(
         String type,
-        Object geometry,
-        Properties properties
+        List<List<List<List<Double>>>> coordinates
 ) {
 }

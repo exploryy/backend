@@ -53,7 +53,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer, WebSoc
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(polygonWebSocketHandler, "/ws/chat")
+        registry.addHandler(polygonWebSocketHandler, "/ws/location")
                 .setAllowedOrigins("*");
     }
 }

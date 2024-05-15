@@ -1,5 +1,6 @@
 package com.hits.open.world.core.multipolygon.repository;
 
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -18,15 +19,15 @@ public class MultipolygonRepositoryImpl implements MultipolygonRepository {
     @Override
     public String insert(String userId, Polygon polygon) {
         var sql = """
-                INSERT INTO multipolygon(user_id, geom)
-                VALUES (:userId, ST_GeomFromText(:polygon, 4326))
-                ON CONFLICT (user_id) DO UPDATE
+                INSERT INTO multipolygon(client_id, geom)
+                VALUES (:clientId, ST_GeomFromText(:polygon, 4326))
+                ON CONFLICT (client_id) DO UPDATE
                 SET geom = ST_Union(multipolygon.geom, excluded.geom)
                 RETURNING ST_AsGeoJSON(geom);
                 """;
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("userId", userId);
+        params.addValue("clientId", userId);
         params.addValue("polygon", polygon.toString());
 
         return jdbcTemplate.queryForObject(sql, params, String.class);
@@ -36,11 +37,11 @@ public class MultipolygonRepositoryImpl implements MultipolygonRepository {
     public void delete(String userId) {
         var sql = """
                 DELETE FROM multipolygon
-                WHERE user_id = :userId;
+                WHERE client_id = :clientId;
                 """;
 
         MapSqlParameterSource params = new MapSqlParameterSource();
-        params.addValue("userId", userId);
+        params.addValue("clientId", userId);
 
         jdbcTemplate.update(sql, params);
     }
@@ -51,11 +52,11 @@ public class MultipolygonRepositoryImpl implements MultipolygonRepository {
             var sql = """
                     SELECT ST_Area(ST_Transform(geom, 26986)) AS sqm
                     FROM multipolygon
-                    WHERE user_id = :userId;
+                    WHERE client_id = :clientId;
                     """;
 
             MapSqlParameterSource params = new MapSqlParameterSource();
-            params.addValue("userId", userId);
+            params.addValue("clientId", userId);
 
             return jdbcTemplate.queryForObject(sql, params, BigDecimal.class);
         } catch (EmptyResultDataAccessException exception) {
@@ -69,11 +70,36 @@ public class MultipolygonRepositoryImpl implements MultipolygonRepository {
             var sql = """
                     SELECT ST_AsGeoJSON(geom) AS geojson
                     FROM public.multipolygon
-                    WHERE user_id = :userId;
+                    WHERE client_id = :clientId;
                     """;
 
             MapSqlParameterSource params = new MapSqlParameterSource();
-            params.addValue("userId", userId);
+            params.addValue("clientId", userId);
+            return jdbcTemplate.queryForObject(sql, params, String.class);
+        } catch (EmptyResultDataAccessException exception) {
+            return null;
+        }
+    }
+
+    @Override
+    public String getPolygonByPoint(Point point, String userId) {
+        try {
+            var sql = """
+                    WITH polygon_temporary AS (
+                        SELECT (ST_Dump(geom)).geom AS part_geom
+                        FROM multipolygon
+                        WHERE client_id = :clientId
+                    )
+                    
+                    SELECT ST_AsGeoJSON(part_geom)::json AS geojson
+                    FROM polygon_temporary
+                    WHERE ST_Contains(part_geom, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326));
+                    """;
+
+            MapSqlParameterSource params = new MapSqlParameterSource();
+            params.addValue("clientId", userId);
+            params.addValue("lon", point.getX());
+            params.addValue("lat", point.getY());
             return jdbcTemplate.queryForObject(sql, params, String.class);
         } catch (EmptyResultDataAccessException exception) {
             return null;
