@@ -23,7 +23,7 @@ spring-jdbc = { module = "org.springframework.boot:spring-boot-starter-data-jdbc
 gson = { module = "com.google.code.gson:gson" }
 jts = { module = "com.vividsolutions:jts", version = "1.13" }
 jackson-geo = { module = "de.grundid.opendatalab:geojson-jackson", version = "1.14" }
-jackson-core = { module = "com.fasterxml.jackson.core:jackson-databind", version = "2.17.1" }
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-databind", version = "2.17.0" }
 
 #liquibase
 liquibase-core = { module = "org.liquibase:liquibase-core", version = "" }
