@@ -173,7 +173,19 @@ create table friend
 (
     client_id varchar(60) not null,
     friend_id varchar(60) not null,
+    is_favorite boolean not null,
     primary key (client_id, friend_id)
 );
 
 -- rollback DROP TABLE friend;
+
+-- changeset gordey_dovydenko:13
+
+create table friend_request
+(
+    client_id varchar(60) not null,
+    friend_id varchar(60) not null,
+    primary key (client_id, friend_id)
+);
+
+-- rollback DROP TABLE friend_request;
