@@ -6,3 +6,5 @@ databaseChangeLog:
 
   - include:
       file: changelog/ddl/initial_schema.sql
+  - include:
+      file: changelog/ddl/initial_tomsk_polygon.sql

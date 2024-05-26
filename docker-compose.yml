@@ -28,8 +28,8 @@ services:
       - app
 
   db:
+    container_name: postgis/postgis:16-3.4
     container_name: db
-    image: postgres:latest
     restart: always
     env_file:
       - .env
