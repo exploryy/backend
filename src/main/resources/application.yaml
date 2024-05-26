@@ -9,3 +9,7 @@ spring:
 amazonProperties:
   endpointUrl: https://storage.yandexcloud.net
   bucketName: open-the-world-bucket
+
+geo:
+  earthRadius: 6378137
+  maxDistance: 50

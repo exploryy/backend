@@ -12,11 +12,11 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${ISSUER_URI_OAUTH2:http://158.160.85.50:8082/realms/hits-project}
+          issuer-uri: ${ISSUER_URI_OAUTH2:http://localhost:8082/realms/hits-project}
       client:
         provider:
           keycloak:
-            issuer-uri: ${ISSUER_URI_OAUTH2:http://158.160.85.50:8082/realms/hits-project}
+            issuer-uri: ${ISSUER_URI_OAUTH2:http://localhost:8082/realms/hits-project}
             user-name-attribute: preferred_username
         registration:
           keycloak:
@@ -35,7 +35,7 @@ hits-project:
   users-realm: ${REALM_NAME:hits-project}
   services:
     users:
-      uri: ${KEYCLOAK_URI:http://158.160.85.50:8082}
+      uri: ${KEYCLOAK_URI:http://localhost:8082}
 
 authServer:
   authorizationUrl: http://158.160.85.50:8082/realms/hits-project/protocol/openid-connect/auth
