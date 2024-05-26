@@ -1,1 +1,1 @@
-http://localhost:8080/swagger-ui/index.html
+http://158.160.85.50:8080/swagger-ui/index.html
