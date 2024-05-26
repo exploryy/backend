@@ -173,6 +173,7 @@ create table friend
 (
     client_id varchar(60) not null,
     friend_id varchar(60) not null,
+    is_favorite boolean not null,
     primary key (client_id, friend_id)
 );
 
@@ -191,3 +192,14 @@ create table multipolygon
 
 -- rollback DROP TABLE multipolygon;
 -- rollback DROP EXTENSION postgis;
+
+-- changeset gordey_dovydenko:14
+
+create table friend_request
+(
+    client_id varchar(60) not null,
+    friend_id varchar(60) not null,
+    primary key (client_id, friend_id)
+);
+
+-- rollback DROP TABLE friend_request;
