@@ -28,7 +28,7 @@ services:
       - app
 
   db:
-    container_name: postgis/postgis:16-3.4
+    image: postgis/postgis:16-3.4
     container_name: db
     restart: always
     env_file:
