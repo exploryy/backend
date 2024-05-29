@@ -16,4 +16,4 @@ services:
       - KC_HOSTNAME_STRICT=true
       - KC_HTTP_ENABLED=true
       - KC_HTTPS_ENABLED=false
-      - KC_HOSTNAME=158.160.85.50
+      - KC_HOSTNAME=158.160.10.72
