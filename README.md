@@ -1,1 +1,1 @@
-http://158.160.10.72:8080/swagger-ui/index.html
+http://158.160.69.160:8080/swagger-ui/index.html
