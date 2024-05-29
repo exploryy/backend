@@ -24,3 +24,10 @@ C
 	README.md,8\e\8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
 9
 	deploy.sh,b\e\be94fd40f0c4b440044c3f852e44fd2a75f7b3cc
+n
+>src/main/java/com/hits/open/world/OpenTheWorldApplication.java,8\0\80ecb6ff59a3d535722d017c9b7e02b2b1f1793a
+?
+db/liquibase.sh,9\7\97c99db8b7070307db739b220d65bdf7f03935c8
+:
+
+init-db.sh,5\5\553614aa93e1453423e26e822b16df564635c9cf
