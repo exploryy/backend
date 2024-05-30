@@ -28,7 +28,8 @@ public class SpringSecurityConfig {
             "/v3/api-docs/**",
             "/ws/**",
             "/actuator/**",
-            "/user/profile/**"
+            "/user/profile/**",
+            "/user/register/**"
     };
 
     @Bean
