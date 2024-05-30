@@ -31,3 +31,7 @@ n
 :
 
 init-db.sh,5\5\553614aa93e1453423e26e822b16df564635c9cf
+S
+#db/changelog/ddl/initial_schema.sql,0\9\091ef469737ee6d507cfdacbdb38cea9cd3c367b
+=
+db/Dockerfile,f\4\f458ef942ebe2348b78e3b9854bbd59a08a489f5
