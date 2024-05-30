@@ -35,3 +35,6 @@ S
 #db/changelog/ddl/initial_schema.sql,0\9\091ef469737ee6d507cfdacbdb38cea9cd3c367b
 =
 db/Dockerfile,f\4\f458ef942ebe2348b78e3b9854bbd59a08a489f5
+:
+
+Dockerfile,6\6\6651ddff6eb82c840ced7c1dddee15c6e1913dd4

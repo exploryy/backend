@@ -1,4 +1,4 @@
-FROM gradle:8.4.0-jdk21-alpine AS build
+FROM mirror.gcr.io/gradle:8.4.0-jdk21-alpine AS build
 ARG DB_URL
 ARG DB_USERNAME
 ARG DB_PASSWORD
@@ -12,7 +12,7 @@ COPY --chown=gradle:gradle ../.. .
 WORKDIR /home/gradle/project
 RUN gradle build --no-daemon --exclude-task test
 
-FROM openjdk:21-oracle
+FROM mirror.gcr.io/openjdk:21-oracle
 WORKDIR /app
 COPY --from=build /home/gradle/project/build/libs/*.jar /app/application.jar
 CMD ["java", "-jar", "application.jar", "--spring.profiles.active=docker"]
