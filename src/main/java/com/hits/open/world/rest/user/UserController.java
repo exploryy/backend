@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -49,13 +50,15 @@ public class UserController {
     public void updateProfile(@RequestParam("username") Optional<String> username,
                               @RequestParam("email") Optional<String> email,
                               @RequestParam("password") Optional<String> password,
+                              @RequestParam("avatar") Optional<MultipartFile> avatar,
                               JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
         var dto = new UpdateUserDto(
                 userId,
                 username,
                 email,
-                password
+                password,
+                avatar
         );
 
         userService.updateUser(dto);

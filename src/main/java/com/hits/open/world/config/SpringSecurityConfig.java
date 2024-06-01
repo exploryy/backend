@@ -26,10 +26,7 @@ public class SpringSecurityConfig {
     private static final String[] WHITE_LIST = {
             "/swagger-ui/**",
             "/v3/api-docs/**",
-            "/ws/**",
-            "/actuator/**",
-            "/user/profile/**",
-            "/user/register/**"
+            "/user/register"
     };
 
     @Bean
@@ -38,7 +35,7 @@ public class SpringSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(CsrfConfigurer::disable)
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(c -> c.requestMatchers(WHITE_LIST).permitAll()
+                .authorizeHttpRequests(c -> c.requestMatchers(WHITE_LIST).anonymous()
                         .anyRequest().access(customAuthManager())
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
