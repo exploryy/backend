@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,7 +16,7 @@ public class CosmeticItemService {
         return cosmeticItemRepository.findByName(name);
     }
 
-    public CosmeticItemEntity findById(Long id) {
-        return cosmeticItemRepository.findById(id).orElseThrow();
+    public Optional<CosmeticItemEntity> findById(Long id) {
+        return cosmeticItemRepository.findById(id);
     }
 }

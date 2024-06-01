@@ -3,7 +3,9 @@ package com.hits.open.world.core.cosmetic_item;
 import com.hits.open.world.core.cosmetic_item.entity.CosmeticItemEntity;
 import com.hits.open.world.core.cosmetic_item.entity.CosmeticItemEntityMapper;
 import lombok.RequiredArgsConstructor;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,12 +22,13 @@ public class CosmeticItemRepositoryImpl implements CosmeticItemRepository {
 
     @Override
     public List<CosmeticItemEntity> findByName(String name) {
-        if (name.isEmpty()) {
-            return create.selectFrom(COSMETIC_ITEM)
-                    .fetch(COSMETIC_ITEM_ENTITY_MAPPER);
+        Condition condition = DSL.trueCondition();
+        if (!name.isEmpty()) {
+            condition = condition.and(COSMETIC_ITEM.NAME.eq(name));
         }
+
         return create.selectFrom(COSMETIC_ITEM)
-                .where(COSMETIC_ITEM.NAME.eq(name))
+                .where(condition)
                 .fetch(COSMETIC_ITEM_ENTITY_MAPPER);
     }
 

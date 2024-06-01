@@ -1,7 +1,7 @@
 package com.hits.open.world.rest.shop;
 
 import com.hits.open.world.core.shop.ShopService;
-import com.hits.open.world.public_interface.cosmetic_item.CosmeticItemDto;
+import com.hits.open.world.public_interface.cosmetic_item.CosmeticItemInShopDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -26,16 +26,16 @@ public class ShopController {
     private final ShopService shopService;
 
     @GetMapping
-    public List<CosmeticItemDto> getShopItems(@RequestParam(value = "name",required = false) Optional<String> name,
-                                              JwtAuthenticationToken token) {
+    public List<CosmeticItemInShopDto> getShopItems(@RequestParam(value = "name",required = false) Optional<String> name,
+                                                    JwtAuthenticationToken token) {
         var userId = token.getToken().getClaim("sub").toString();
-
+        return shopService.findCosmeticItemsInShop(name.orElse(""), userId);
     }
 
     @PostMapping(path = "{item_id}/buy", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void buyItem(@PathVariable("item_id") Long itemId,
                         JwtAuthenticationToken token) {
         var userId = token.getToken().getClaim("sub").toString();
-
+        shopService.buyItem(userId, itemId);
     }
 }

@@ -1,10 +1,10 @@
 package com.hits.open.world.public_interface.cosmetic_item;
 
-import com.hits.open.world.core.cosmetic_item.entity.CosmeticItemEntity;
 import com.hits.open.world.core.cosmetic_item.entity.CosmeticTypeEnum;
 import com.hits.open.world.core.cosmetic_item.entity.RarityTypeEnum;
+import com.hits.open.world.core.shop.CosmeticItemInShopEntity;
 
-public record CosmeticItemDto(
+public record CosmeticItemInShopDto(
         Long itemId,
         String name,
         String description,
@@ -13,15 +13,15 @@ public record CosmeticItemDto(
         CosmeticTypeEnum cosmeticType,
         boolean isOwned
 ) {
-    public static CosmeticItemDto fromEntity(CosmeticItemEntity entity, boolean isOwned) {
-        return new CosmeticItemDto(
+    public static CosmeticItemInShopDto fromEntity(CosmeticItemInShopEntity entity) {
+        return new CosmeticItemInShopDto(
                 entity.itemId(),
                 entity.name(),
                 entity.description(),
                 entity.price(),
                 entity.rarityType(),
                 entity.cosmeticType(),
-                isOwned
+                entity.isOwned()
         );
     }
 }

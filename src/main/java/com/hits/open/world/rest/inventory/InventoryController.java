@@ -1,7 +1,9 @@
 package com.hits.open.world.rest.inventory;
 
 import com.hits.open.world.core.inventory.InventoryService;
+import com.hits.open.world.core.shop.ShopService;
 import com.hits.open.world.public_interface.cosmetic_item.CosmeticItemDto;
+import com.hits.open.world.public_interface.cosmetic_item.CosmeticItemInInventoryDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -20,37 +22,38 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/shop")
+@RequestMapping("/inventory")
 @SecurityRequirement(name = "oauth2")
-@Tag(name = "Shop")
+@Tag(name = "Inventory")
 public class InventoryController {
     private final InventoryService inventoryService;
+    private final ShopService shopService;
 
     @GetMapping
-    public List<CosmeticItemDto> getShopItems(@RequestParam(value = "name",required = false) Optional<String> name,
-                                              JwtAuthenticationToken token) {
+    public List<CosmeticItemInInventoryDto> getInventory(@RequestParam(value = "name",required = false) Optional<String> name,
+                                                         JwtAuthenticationToken token) {
         var userId = token.getToken().getClaim("sub").toString();
-
+        return inventoryService.getInventoryItems(userId);
     }
 
     @DeleteMapping(path = "{item_id}/sell", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void sellItem(@PathVariable("item_id") Long itemId,
                         JwtAuthenticationToken token) {
         var userId = token.getToken().getClaim("sub").toString();
-
+        shopService.sellItem(userId, itemId);
     }
 
     @PostMapping(path = "{item_id}/equip", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void equipItem(@PathVariable("item_id") Long itemId,
                          JwtAuthenticationToken token) {
         var userId = token.getToken().getClaim("sub").toString();
-
+        inventoryService.equipItem(userId, itemId);
     }
 
     @PostMapping(path = "{item_id}/unequip", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void unequipItem(@PathVariable("item_id") Long itemId,
                          JwtAuthenticationToken token) {
         var userId = token.getToken().getClaim("sub").toString();
-
+        inventoryService.unequipItem(userId, itemId);
     }
 }
