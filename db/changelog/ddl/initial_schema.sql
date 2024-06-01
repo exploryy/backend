@@ -272,6 +272,7 @@ create table client_battle_pass
     battle_pass_id bigint not null,
     level integer not null,
     current_battle_pass boolean not null,
+    current_experience integer not null,
     primary key (client_id, battle_pass_id, level),
     foreign key (battle_pass_id, level) references battle_pass_level (battle_pass_id, level)
 );

@@ -1,4 +1,4 @@
 POST http://158.160.69.160:8082/realms/hits-project/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
-client_id=users-app&client_secret=123456789&grant_type=password&username=ghubman1&password=12345
+client_id=users-app&client_secret=123456789&grant_type=password&username=hehehaha&password=123456

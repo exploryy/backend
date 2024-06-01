@@ -25,7 +25,7 @@ public class ShopRepositoryImpl implements ShopRepository {
             condition = condition.and(COSMETIC_ITEM.NAME.eq(name));
         }
 
-        return create.select()
+        return create.select(COSMETIC_ITEM.ITEM_ID, COSMETIC_ITEM.NAME, COSMETIC_ITEM.DESCRIPTION, COSMETIC_ITEM.PRICE, COSMETIC_ITEM.RARITY_TYPE, COSMETIC_ITEM.COSMETIC_TYPE, CLIENT_ITEM.ITEM_ID)
                 .from(COSMETIC_ITEM)
                 .rightJoin(CLIENT_ITEM)
                 .on(COSMETIC_ITEM.ITEM_ID.eq(CLIENT_ITEM.ITEM_ID).and(CLIENT_ITEM.CLIENT_ID.eq(userId)).and(condition))
