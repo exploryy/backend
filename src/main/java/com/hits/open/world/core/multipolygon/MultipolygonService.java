@@ -1,8 +1,11 @@
 package com.hits.open.world.core.multipolygon;
 
 import com.hits.open.world.core.multipolygon.enums.FigureType;
+import com.hits.open.world.core.friend.FriendService;
 import com.hits.open.world.core.multipolygon.factory.polygon.PolygonService;
 import com.hits.open.world.core.multipolygon.repository.MultipolygonRepository;
+import com.hits.open.world.public_interface.exception.ExceptionInApplication;
+import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.multipolygon.AreaDtoResponse;
 import com.hits.open.world.public_interface.multipolygon.CreatePolygonRequestDto;
 import com.hits.open.world.public_interface.multipolygon.geo.GeoDto;
@@ -25,6 +28,18 @@ import static com.hits.open.world.core.multipolygon.factory.polygon.PolygonServi
 public class MultipolygonService {
     private static final String TOMSK_ID = "tomsk";
     private final MultipolygonRepository multipolygonRepository;
+    private final FriendService friendService;
+
+    public GeoDto getAllPolygonsFriend(String userId, String friendId) {
+        var friends = friendService.getFriends(userId);
+        boolean isFriend = friends.friends().stream().anyMatch(friendDto -> friendDto.userId().equals(friendId));
+
+        if (!isFriend) {
+            throw new ExceptionInApplication("You don't have a friend", ExceptionType.FORBIDDEN);
+        }
+
+        return getAllPolygons(friendId);
+    }
 
     public GeoDto getAllPolygons(String userId) {
         var geoString = multipolygonRepository.getAllCoordinates(userId);

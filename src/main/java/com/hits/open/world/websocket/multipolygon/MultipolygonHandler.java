@@ -1,12 +1,15 @@
 package com.hits.open.world.websocket.multipolygon;
 
 import com.google.gson.Gson;
+import com.hits.open.world.core.location.UserLocationService;
 import com.hits.open.world.core.multipolygon.MultipolygonService;
+import com.hits.open.world.core.statistic.StatisticService;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.multipolygon.CreatePolygonRequestDto;
 import com.hits.open.world.public_interface.multipolygon.CreatePolygonResponseDto;
 import com.hits.open.world.public_interface.multipolygon.geo.GeoDto;
+import com.hits.open.world.public_interface.user_location.LocationDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +33,8 @@ import static org.springframework.web.socket.CloseStatus.SERVER_ERROR;
 public class MultipolygonHandler extends AbstractWebSocketHandler {
     private static final Gson objectMapper = new Gson();
     private final MultipolygonService multipolygonService;
+    private final UserLocationService userLocationService;
+    private final StatisticService statisticService;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -41,8 +46,13 @@ public class MultipolygonHandler extends AbstractWebSocketHandler {
         var userId = getUserId(session);
         var coordinateDto = parseCoordinate(message);
 
-        GeoDto geoDto = multipolygonService.save(coordinateDto, userId);
+        var userCoordinate = new LocationDto(userId, coordinateDto.latitude(), coordinateDto.longitude());
+        userLocationService.updateUserLocation(userCoordinate);
+        statisticService.updateStatistic(session.getId(), userCoordinate);
+
+        multipolygonService.save(coordinateDto, userId);
         BigDecimal areaPercent = multipolygonService.calculatePercentArea(userId);
+        GeoDto geoDto = multipolygonService.getAllPolygons(userId);
         CreatePolygonResponseDto createPolygonResponseDto = new CreatePolygonResponseDto(geoDto, areaPercent);
         var response = objectMapper.toJson(createPolygonResponseDto);
         session.sendMessage(new TextMessage(response));
@@ -56,6 +66,7 @@ public class MultipolygonHandler extends AbstractWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
+        //TODO: find all points with session = :session and add distance for user
         log.info("Connection closed on session: {} with status: {}", session.getId(), closeStatus.getCode());
     }
 

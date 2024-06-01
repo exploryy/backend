@@ -140,7 +140,7 @@ create table distance_quest
 
 -- rollback DROP TABLE distance_quest;
 
--- changeset gordey_dovydenko:10
+-- changeset gordey_dovydenko:9
 
 create sequence s_achievement_id start with 1 increment by 1;
 
@@ -154,7 +154,7 @@ create table achievement
 
 -- rollback DROP TABLE achievement;
 
--- changeset gordey_dovydenko:11
+-- changeset gordey_dovydenko:10
 
 create table client_achievement
 (
@@ -167,19 +167,19 @@ create table client_achievement
 
 -- rollback DROP TABLE client_achievement;
 
--- changeset gordey_dovydenko:12
+-- changeset gordey_dovydenko:11
 
 create table friend
 (
-    client_id varchar(60) not null,
-    friend_id varchar(60) not null,
-    is_favorite boolean not null,
+    client_id   varchar(60) not null,
+    friend_id   varchar(60) not null,
+    is_favorite boolean     not null,
     primary key (client_id, friend_id)
 );
 
 -- rollback DROP TABLE friend;
 
--- changeset t9404:13
+-- changeset t9404:12
 
 create extension postgis;
 
@@ -193,7 +193,7 @@ create table multipolygon
 -- rollback DROP TABLE multipolygon;
 -- rollback DROP EXTENSION postgis;
 
--- changeset gordey_dovydenko:14
+-- changeset gordey_dovydenko:13
 
 create table friend_request
 (
@@ -204,63 +204,95 @@ create table friend_request
 
 -- rollback DROP TABLE friend_request;
 
--- changeset gordey_dovydenko:15
+-- changeset t9404:14
+
+create sequence s_coin_id start with 1 increment by 1;
+
+create table coins
+(
+    coin_id   bigint               default nextval('s_coin_id'),
+    value     integer     not null,
+    latitude  varchar(60) not null,
+    longitude varchar(60) not null,
+    taken     boolean     not null default false,
+    client_id varchar(60) not null
+);
+
+CREATE INDEX index_client_id_coin ON coins (client_id);
+
+-- rollback DROP TABLE coins;
+
+-- changeset t9404:15
+
+create table user_location
+(
+    client_id       varchar(60)              not null,
+    latitude        varchar(60)              not null,
+    longitude       varchar(60)              not null,
+    last_visitation TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- rollback DROP TABLE user_location
+
+
+-- changeset gordey_dovydenko:16
 
 create sequence s_cosmetic_item_id start with 1 increment by 1;
 
 create table cosmetic_item
 (
-    item_id bigint default nextval('s_cosmetic_item_id'),
-    name    varchar(60) not null,
-    description varchar(255) not null,
-    price integer not null,
-    rarity_type varchar(20) check ( rarity_type in ('COMMON', 'RARE', 'EPIC', 'LEGENDARY') ) not null,
-    cosmetic_type varchar(20) check ( cosmetic_type in ('FOOTPRINT', 'AVATAR_FRAMES', 'APPLICATION_IMAGE', 'FOG') ) not null,
+    item_id       bigint default nextval('s_cosmetic_item_id'),
+    name          varchar(60)                                                                                       not null,
+    description   varchar(255)                                                                                      not null,
+    price         integer                                                                                           not null,
+    rarity_type   varchar(20) check ( rarity_type in ('COMMON', 'RARE', 'EPIC', 'LEGENDARY') )                      not null,
+    cosmetic_type varchar(20) check ( cosmetic_type in ('FOOTPRINT', 'AVATAR_FRAMES', 'APPLICATION_IMAGE',
+                                                        'FOG') )                                                    not null,
     primary key (item_id)
 );
 
 -- rollback DROP TABLE cosmetic_item;
 -- rollback DROP SEQUENCE s_cosmetic_item_id;
 
--- changeset gordey_dovydenko:16
+-- changeset gordey_dovydenko:17
 
 create table client_money
 (
     client_id varchar(60) not null,
-    money integer not null,
+    money     integer     not null,
     primary key (client_id)
 );
 
 -- rollback DROP TABLE client_money;
 
--- changeset gordey_dovydenko:17
+-- changeset gordey_dovydenko:18
 
 create sequence s_battle_pass_id start with 1 increment by 1;
 
 create table battle_pass
 (
     battle_pass_id bigint default nextval('s_battle_pass_id'),
-    name varchar(60) not null,
-    description varchar(255) not null,
-    start_date timestamp not null,
-    end_date timestamp not null,
+    name           varchar(60)  not null,
+    description    varchar(255) not null,
+    start_date     timestamp    not null,
+    end_date       timestamp    not null,
     primary key (battle_pass_id)
 );
 
 create table battle_pass_level
 (
-    level integer not null,
-    battle_pass_id bigint not null,
-    experience integer not null,
+    level          integer not null,
+    battle_pass_id bigint  not null,
+    experience     integer not null,
     primary key (level, battle_pass_id),
     foreign key (battle_pass_id) references battle_pass (battle_pass_id)
 );
 
 create table item_battle_pass_level
 (
-    item_id bigint not null,
-    level integer not null,
-    battle_pass_id bigint not null,
+    item_id        bigint  not null,
+    level          integer not null,
+    battle_pass_id bigint  not null,
     primary key (item_id, level, battle_pass_id),
     foreign key (item_id) references cosmetic_item (item_id),
     foreign key (level, battle_pass_id) references battle_pass_level (level, battle_pass_id)
@@ -283,7 +315,7 @@ create table client_battle_pass
 -- rollback DROP TABLE battle_pass;
 -- rollback DROP SEQUENCE s_battle_pass_id;
 
--- changeset gordey_dovydenko:18
+-- changeset gordey_dovydenko:19
 
 create table client_item
 (
@@ -295,3 +327,19 @@ create table client_item
 );
 
 -- rollback DROP TABLE client_item;
+
+-- changeset t9404:20
+
+create table client_statistic
+(
+    client_id          varchar(60)  not null,
+    experience         integer      not null default 0,
+    web_session_id     varchar(255) not null,
+    previous_latitude  varchar(60)  not null,
+    previous_longitude varchar(60)  not null,
+    distance           integer      not null default 0,
+    primary key (client_id)
+);
+
+-- rollback DROP TABLE client_statistic
+
