@@ -16,17 +16,25 @@ public class UserLocationRepositoryImpl implements UserLocationRepository {
 
     @Override
     public void save(UserLocationEntity entity) {
+        boolean exists = findById(entity.clientId()).isPresent();
+
+        if (exists) {
+            create.update(USER_LOCATION)
+                    .set(USER_LOCATION.LAST_VISITATION, entity.lastVisitation())
+                    .set(USER_LOCATION.LONGITUDE, entity.longitude())
+                    .set(USER_LOCATION.LATITUDE, entity.latitude())
+                    .where(USER_LOCATION.CLIENT_ID.eq(entity.clientId()))
+                    .execute();
+            return;
+        }
+
         create.insertInto(USER_LOCATION)
                 .set(USER_LOCATION.CLIENT_ID, entity.clientId())
                 .set(USER_LOCATION.LAST_VISITATION, entity.lastVisitation())
                 .set(USER_LOCATION.LONGITUDE, entity.longitude())
                 .set(USER_LOCATION.LATITUDE, entity.latitude())
-                .onConflict(USER_LOCATION.CLIENT_ID)
-                .doUpdate()
-                .set(USER_LOCATION.LAST_VISITATION, entity.lastVisitation())
-                .set(USER_LOCATION.LONGITUDE, entity.longitude())
-                .set(USER_LOCATION.LATITUDE, entity.latitude())
                 .execute();
+
     }
 
     @Override

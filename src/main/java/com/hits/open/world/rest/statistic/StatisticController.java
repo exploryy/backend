@@ -21,14 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class StatisticController {
     private final StatisticService statisticService;
 
-    @GetMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @GetMapping
     public TotalStatisticDto getAllStatistics(@RequestParam(value = "count", defaultValue = "10") Integer count,
                                               JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
         return statisticService.getTotal(userId, count);
     }
 
-    @GetMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/my")
     public UserStatisticDto getAllUserStatistics(JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
         return statisticService.getUserStatistics(userId);

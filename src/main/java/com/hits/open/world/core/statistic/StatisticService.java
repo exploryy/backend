@@ -3,8 +3,6 @@ package com.hits.open.world.core.statistic;
 import com.hits.open.world.core.statistic.repository.StatisticEntity;
 import com.hits.open.world.core.statistic.repository.StatisticRepository;
 import com.hits.open.world.core.user.UserService;
-import com.hits.open.world.public_interface.exception.ExceptionInApplication;
-import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.statistic.TotalStatisticDto;
 import com.hits.open.world.public_interface.statistic.UserStatisticDto;
 import com.hits.open.world.public_interface.user.ProfileDto;
@@ -18,7 +16,7 @@ import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
 import static com.hits.open.world.util.BuffCalculator.calculateExperience;
-import static com.hits.open.world.util.DistanceCalculator.calculateDistance;
+import static com.hits.open.world.util.DistanceCalculator.calculateDistanceInMeters;
 import static com.hits.open.world.util.LevelUtil.calculateLevel;
 
 @Service
@@ -75,7 +73,7 @@ public class StatisticService {
         if (statistic.isPresent()) {
             var statisticEntity = statistic.get();
 
-            if (statisticEntity.webSessionId().equals(webSocketSessionId) &&
+            if (statisticEntity.webSessionId() != null && statisticEntity.webSessionId().equals(webSocketSessionId) &&
                     isCoordinateValid(statisticEntity.previousLatitude()) &&
                     isCoordinateValid(statisticEntity.previousLongitude())) {
                 updateDistance(statisticEntity, dto);
@@ -107,8 +105,9 @@ public class StatisticService {
     }
 
     private void updateDistance(StatisticEntity statisticEntity, LocationDto dto) {
-        int distance = calculateDistance(dto.latitude(), dto.longitude(), new BigDecimal(statisticEntity.previousLatitude()),
-                new BigDecimal(statisticEntity.previousLongitude()));
+        int distance = calculateDistanceInMeters(dto.latitude().doubleValue(), dto.longitude().doubleValue(),
+                new BigDecimal(statisticEntity.previousLatitude()).doubleValue(),
+                new BigDecimal(statisticEntity.previousLongitude()).doubleValue());
 
         int calculatedExperience = calculateExperience(statisticEntity.experience(), distance);
 

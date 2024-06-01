@@ -1,26 +1,23 @@
 package com.hits.open.world.util;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
-
 public final class DistanceCalculator {
+    private static final double EQUATORIAL_EARTH_RADIUS = 6378.1370D;
+    private static final double D2R = (Math.PI / 180D);
 
     private DistanceCalculator() {
         throw new UnsupportedOperationException();
     }
 
-    public static int calculateDistance(final BigDecimal x1, final BigDecimal y1, final BigDecimal x2, final BigDecimal y2) {
-        BigDecimal dx = x2.subtract(x1);
-        BigDecimal dy = y2.subtract(y1);
+    public static int calculateDistanceInMeters(double lat1, double long1, double lat2, double long2) {
+        return (int) (calculateHaversineInKM(lat1, long1, lat2, long2) * 1000D);
+    }
 
-        BigDecimal dxSquared = dx.pow(2);
-        BigDecimal dySquared = dy.pow(2);
-
-        BigDecimal sum = dxSquared.add(dySquared);
-
-        BigDecimal distance = sum.sqrt(new MathContext(10, RoundingMode.HALF_UP));
-
-        return distance.intValue();
+    public static double calculateHaversineInKM(double lat1, double long1, double lat2, double long2) {
+        double dlong = (long2 - long1) * D2R;
+        double dlat = (lat2 - lat1) * D2R;
+        double a = Math.pow(Math.sin(dlat / 2D), 2D) + Math.cos(lat1 * D2R) * Math.cos(lat2 * D2R)
+                * Math.pow(Math.sin(dlong / 2D), 2D);
+        double c = 2D * Math.atan2(Math.sqrt(a), Math.sqrt(1D - a));
+        return EQUATORIAL_EARTH_RADIUS * c;
     }
 }
