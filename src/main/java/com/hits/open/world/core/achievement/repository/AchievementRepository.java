@@ -7,10 +7,16 @@ import java.util.Optional;
 
 public interface AchievementRepository {
     AchievementEntity createAchievement(AchievementEntity achievementEntity);
+
     void updateAchievement(AchievementEntity achievementEntity);
+
     void deleteAchievement(Long achievementId);
+
     Optional<AchievementEntity> getAchievementById(Long achievementId);
+
     Optional<AchievementEntity> getAchievementByName(String name);
+
     List<AchievementDto> getAchievements(String userId);
+
     void createClientAchievement(ClientAchievementEntity clientAchievementEntity);
 }

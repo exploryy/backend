@@ -21,7 +21,7 @@ public class WebSocketExceptionInterceptor extends StompSubProtocolErrorHandler 
     );
 
     @Override
-    public Message<byte[]> handleClientMessageProcessingError(Message<byte[]>clientMessage, @NonNull Throwable exception) {
+    public Message<byte[]> handleClientMessageProcessingError(Message<byte[]> clientMessage, @NonNull Throwable exception) {
         if (exception instanceof ExceptionInApplication exceptionInApplication) {
             return handleExceptionInApplication(clientMessage, exceptionInApplication);
         }

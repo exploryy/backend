@@ -1,4 +1,4 @@
-package com.hits.open.world.core.cosmetic_item;
+package com.hits.open.world.core.cosmetic_item.entity;
 
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;

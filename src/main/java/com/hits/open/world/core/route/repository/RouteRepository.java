@@ -5,7 +5,10 @@ import java.util.Optional;
 
 public interface RouteRepository {
     void savePoints(List<PointRouteEntity> pointRouteEntity);
+
     RouteEntity saveRoute(RouteEntity routeEntity);
+
     Optional<RouteEntity> getRoute(Long routeId);
+
     List<PointRouteEntity> getPointsInRoute(Long routeId);
 }

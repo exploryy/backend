@@ -140,7 +140,7 @@ create table distance_quest
 
 -- rollback DROP TABLE distance_quest;
 
--- changeset gordey_dovydenko:10
+-- changeset gordey_dovydenko:9
 
 create sequence s_achievement_id start with 1 increment by 1;
 
@@ -154,7 +154,7 @@ create table achievement
 
 -- rollback DROP TABLE achievement;
 
--- changeset gordey_dovydenko:11
+-- changeset gordey_dovydenko:10
 
 create table client_achievement
 (
@@ -167,7 +167,7 @@ create table client_achievement
 
 -- rollback DROP TABLE client_achievement;
 
--- changeset gordey_dovydenko:12
+-- changeset gordey_dovydenko:11
 
 create table friend
 (
@@ -179,7 +179,7 @@ create table friend
 
 -- rollback DROP TABLE friend;
 
--- changeset t9404:13
+-- changeset t9404:12
 
 create extension postgis;
 
@@ -193,7 +193,7 @@ create table multipolygon
 -- rollback DROP TABLE multipolygon;
 -- rollback DROP EXTENSION postgis;
 
--- changeset gordey_dovydenko:14
+-- changeset gordey_dovydenko:13
 
 create table friend_request
 (
@@ -204,7 +204,7 @@ create table friend_request
 
 -- rollback DROP TABLE friend_request;
 
--- changeset t9404:15
+-- changeset t9404:14
 
 create sequence s_coin_id start with 1 increment by 1;
 
@@ -222,7 +222,7 @@ CREATE INDEX index_client_id_coin ON coins (client_id);
 
 -- rollback DROP TABLE coins;
 
--- changeset t9404:16
+-- changeset t9404:15
 
 create table user_location
 (
@@ -235,7 +235,7 @@ create table user_location
 -- rollback DROP TABLE user_location
 
 
--- changeset gordey_dovydenko:17
+-- changeset gordey_dovydenko:16
 
 create sequence s_cosmetic_item_id start with 1 increment by 1;
 
@@ -254,7 +254,7 @@ create table cosmetic_item
 -- rollback DROP TABLE cosmetic_item;
 -- rollback DROP SEQUENCE s_cosmetic_item_id;
 
--- changeset gordey_dovydenko:18
+-- changeset gordey_dovydenko:17
 
 create table client_money
 (
@@ -265,7 +265,7 @@ create table client_money
 
 -- rollback DROP TABLE client_money;
 
--- changeset gordey_dovydenko:19
+-- changeset gordey_dovydenko:18
 
 create sequence s_battle_pass_id start with 1 increment by 1;
 
@@ -314,19 +314,21 @@ create table client_battle_pass
 -- rollback DROP TABLE battle_pass;
 -- rollback DROP SEQUENCE s_battle_pass_id;
 
--- changeset gordey_dovydenko:20
+-- changeset gordey_dovydenko:19
 
 create table client_item
 (
     client_id varchar(60) not null,
     item_id   bigint      not null,
+    item_id bigint not null,
+    is_equipped boolean not null,
     primary key (client_id, item_id),
     foreign key (item_id) references cosmetic_item (item_id)
 );
 
 -- rollback DROP TABLE client_item;
 
--- changeset t9404:21
+-- changeset t9404:20
 
 create table client_statistic
 (
