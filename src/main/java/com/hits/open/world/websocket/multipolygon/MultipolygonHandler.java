@@ -1,12 +1,14 @@
 package com.hits.open.world.websocket.multipolygon;
 
 import com.google.gson.Gson;
+import com.hits.open.world.core.location.UserLocationService;
 import com.hits.open.world.core.multipolygon.MultipolygonService;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.multipolygon.CreatePolygonRequestDto;
 import com.hits.open.world.public_interface.multipolygon.CreatePolygonResponseDto;
 import com.hits.open.world.public_interface.multipolygon.geo.GeoDto;
+import com.hits.open.world.public_interface.user_location.LocationDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,7 @@ import static org.springframework.web.socket.CloseStatus.SERVER_ERROR;
 public class MultipolygonHandler extends AbstractWebSocketHandler {
     private static final Gson objectMapper = new Gson();
     private final MultipolygonService multipolygonService;
+    private final UserLocationService userLocationService;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -40,6 +43,9 @@ public class MultipolygonHandler extends AbstractWebSocketHandler {
     public void handleMessage(@NonNull WebSocketSession session, @NonNull WebSocketMessage<?> message) throws Exception {
         var userId = getUserId(session);
         var coordinateDto = parseCoordinate(message);
+
+        var userCoordinate = new LocationDto(userId, coordinateDto.latitude(), coordinateDto.longitude());
+        userLocationService.updateUserLocation(userCoordinate);
 
         GeoDto geoDto = multipolygonService.save(coordinateDto, userId);
         BigDecimal areaPercent = multipolygonService.calculatePercentArea(userId);

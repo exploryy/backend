@@ -1,0 +1,7 @@
+
+“
+java:S36552"PCall "Optional#isPresent()" or "!Optional#isEmpty()" before accessing the value.(âˆÀ¼8£¹ˆı1J$d6ebab23-762b-4a76-b1ef-0e06298c18e5
+˜
+java:S3655."PCall "Optional#isPresent()" or "!Optional#isEmpty()" before accessing the value.(ù¬ĞÔùÿÿÿÿ8¡¹ˆı1J$1e70e46c-0ed9-4966-8eac-b0bc3fe25188
+w
+java:S22016"/The return value of "orElseThrow" must be used.(”ÀºÕÿÿÿÿÿ8 ºˆı1J$016c8172-294c-4619-91d5-4b43b31128ec

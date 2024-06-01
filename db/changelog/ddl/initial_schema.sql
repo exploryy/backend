@@ -171,9 +171,9 @@ create table client_achievement
 
 create table friend
 (
-    client_id varchar(60) not null,
-    friend_id varchar(60) not null,
-    is_favorite boolean not null,
+    client_id   varchar(60) not null,
+    friend_id   varchar(60) not null,
+    is_favorite boolean     not null,
     primary key (client_id, friend_id)
 );
 
@@ -203,3 +203,33 @@ create table friend_request
 );
 
 -- rollback DROP TABLE friend_request;
+
+-- changeset t9404:15
+
+create sequence s_coin_id start with 1 increment by 1;
+
+create table coins
+(
+    coin_id   bigint               default nextval('s_coin_id'),
+    value     integer not null,
+    latitude  varchar(60) not null,
+    longitude varchar(60) not null,
+    taken     boolean     not null default false,
+    client_id varchar(60) not null
+);
+
+CREATE INDEX index_client_id_coin ON coins (client_id);
+
+-- rollback DROP TABLE coins;
+
+-- changeset t9404:16
+
+create table user_location
+(
+    client_id varchar(60) not null,
+    latitude  varchar(60) not null,
+    longitude varchar(60) not null,
+    last_visitation TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- rollback DROP TABLE user_location
