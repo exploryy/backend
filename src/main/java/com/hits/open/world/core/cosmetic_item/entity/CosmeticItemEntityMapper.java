@@ -1,4 +1,4 @@
-package com.hits.open.world.core.cosmetic_item;
+package com.hits.open.world.core.cosmetic_item.entity;
 
 import com.example.open_the_world.public_.tables.records.CosmeticItemRecord;
 import org.jooq.RecordMapper;
