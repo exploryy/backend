@@ -73,7 +73,7 @@ public class StatisticService {
         if (statistic.isPresent()) {
             var statisticEntity = statistic.get();
 
-            if (statisticEntity.webSessionId().equals(webSocketSessionId) &&
+            if (statisticEntity.webSessionId() != null && statisticEntity.webSessionId().equals(webSocketSessionId) &&
                     isCoordinateValid(statisticEntity.previousLatitude()) &&
                     isCoordinateValid(statisticEntity.previousLongitude())) {
                 updateDistance(statisticEntity, dto);

@@ -335,9 +335,9 @@ create table client_statistic
 (
     client_id          varchar(60)  not null,
     experience         integer      not null default 0,
-    web_session_id     varchar(255) not null,
-    previous_latitude  varchar(60)  not null,
-    previous_longitude varchar(60)  not null,
+    web_session_id     varchar(255),
+    previous_latitude  varchar(60),
+    previous_longitude varchar(60),
     distance           integer      not null default 0,
     primary key (client_id)
 );

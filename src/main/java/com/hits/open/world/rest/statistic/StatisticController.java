@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class StatisticController {
     private final StatisticService statisticService;
 
-    @GetMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @GetMapping
     public TotalStatisticDto getAllStatistics(@RequestParam(value = "count", defaultValue = "10") Integer count,
                                               JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
