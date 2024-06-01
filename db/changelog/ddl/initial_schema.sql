@@ -203,3 +203,93 @@ create table friend_request
 );
 
 -- rollback DROP TABLE friend_request;
+
+-- changeset gordey_dovydenko:15
+
+create sequence s_cosmetic_item_id start with 1 increment by 1;
+
+create table cosmetic_item
+(
+    item_id bigint default nextval('s_cosmetic_item_id'),
+    name    varchar(60) not null,
+    description varchar(255) not null,
+    price integer not null,
+    rarity_type varchar(20) check ( rarity_type in ('COMMON', 'RARE', 'EPIC', 'LEGENDARY') ) not null,
+    cosmetic_type varchar(20) check ( cosmetic_type in ('FOOTPRINT', 'AVATAR_FRAMES', 'APPLICATION_IMAGE', 'FOG') ) not null,
+    primary key (item_id)
+);
+
+-- rollback DROP TABLE cosmetic_item;
+-- rollback DROP SEQUENCE s_cosmetic_item_id;
+
+-- changeset gordey_dovydenko:16
+
+create table client_money
+(
+    client_id varchar(60) not null,
+    money integer not null,
+    primary key (client_id)
+);
+
+-- rollback DROP TABLE client_money;
+
+-- changeset gordey_dovydenko:17
+
+create sequence s_battle_pass_id start with 1 increment by 1;
+
+create table battle_pass
+(
+    battle_pass_id bigint default nextval('s_battle_pass_id'),
+    name varchar(60) not null,
+    description varchar(255) not null,
+    start_date timestamp not null,
+    end_date timestamp not null,
+    primary key (battle_pass_id)
+);
+
+create table battle_pass_level
+(
+    level integer not null,
+    battle_pass_id bigint not null,
+    experience integer not null,
+    primary key (level, battle_pass_id),
+    foreign key (battle_pass_id) references battle_pass (battle_pass_id)
+);
+
+create table item_battle_pass_level
+(
+    item_id bigint not null,
+    level integer not null,
+    battle_pass_id bigint not null,
+    primary key (item_id, level, battle_pass_id),
+    foreign key (item_id) references cosmetic_item (item_id),
+    foreign key (level, battle_pass_id) references battle_pass_level (level, battle_pass_id)
+);
+
+create table client_battle_pass
+(
+    client_id varchar(60) not null,
+    battle_pass_id bigint not null,
+    level integer not null,
+    current_battle_pass boolean not null,
+    primary key (client_id, battle_pass_id, level),
+    foreign key (battle_pass_id, level) references battle_pass_level (battle_pass_id, level)
+);
+
+-- rollback DROP TABLE client_battle_pass;
+-- rollback DROP TABLE item_battle_pass_level;
+-- rollback DROP TABLE battle_pass_level;
+-- rollback DROP TABLE battle_pass;
+-- rollback DROP SEQUENCE s_battle_pass_id;
+
+-- changeset gordey_dovydenko:18
+
+create table client_item
+(
+    client_id varchar(60) not null,
+    item_id bigint not null,
+    primary key (client_id, item_id),
+    foreign key (item_id) references cosmetic_item (item_id)
+);
+
+-- rollback DROP TABLE client_item;
