@@ -25,7 +25,7 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping(path = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/register")
     public String createUser(@RequestParam("username") String username,
                              @RequestParam("email") String email,
                              @RequestParam("password") String password) {
@@ -46,7 +46,7 @@ public class UserController {
     }
 
     @SecurityRequirement(name = "oauth2")
-    @PostMapping(path = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/profile")
     public void updateProfile(@RequestParam("username") Optional<String> username,
                               @RequestParam("email") Optional<String> email,
                               @RequestParam("password") Optional<String> password,
