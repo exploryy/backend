@@ -12,11 +12,11 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${ISSUER_URI_OAUTH2:http://localhost:8082/realms/hits-project}
+          issuer-uri: ${ISSUER_URI_OAUTH2:http://158.160.69.160:8082/realms/hits-project}
       client:
         provider:
           keycloak:
-            issuer-uri: ${ISSUER_URI_OAUTH2:http://localhost:8082/realms/hits-project}
+            issuer-uri: ${ISSUER_URI_OAUTH2:http://158.160.69.160:8082/realms/hits-project}
             user-name-attribute: preferred_username
         registration:
           keycloak:

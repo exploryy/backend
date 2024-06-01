@@ -13,6 +13,7 @@ import com.hits.open.world.core.quest.repository.entity.quest.point_to_point.Poi
 import com.hits.open.world.core.quest.repository.entity.review.QuestReviewEntity;
 import com.hits.open.world.core.quest.repository.entity.review.ReviewPhotoEntity;
 import com.hits.open.world.core.route.RouteService;
+import com.hits.open.world.core.statistic.StatisticService;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.file.UploadFileDto;
@@ -35,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class QuestService {
     private final QuestRepository questRepository;
     private final RouteService routeService;
+    private final StatisticService statisticService;
     private final FileStorageService fileStorageService;
 
     private Long createQuest(CreateQuestDto dto) {
@@ -106,6 +108,7 @@ public class QuestService {
     }
 
     public void finishQuest(Long questId, String userId) {
+        statisticService.updateExperience(userId, 10);
         //TODO: тут какой-то должен быть механизм отслеживания завершения квеста, в сервисе
     }
 
