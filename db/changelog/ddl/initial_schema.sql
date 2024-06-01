@@ -211,7 +211,7 @@ create sequence s_coin_id start with 1 increment by 1;
 create table coins
 (
     coin_id   bigint               default nextval('s_coin_id'),
-    value     integer not null,
+    value     integer     not null,
     latitude  varchar(60) not null,
     longitude varchar(60) not null,
     taken     boolean     not null default false,
@@ -226,9 +226,9 @@ CREATE INDEX index_client_id_coin ON coins (client_id);
 
 create table user_location
 (
-    client_id varchar(60) not null,
-    latitude  varchar(60) not null,
-    longitude varchar(60) not null,
+    client_id       varchar(60)              not null,
+    latitude        varchar(60)              not null,
+    longitude       varchar(60)              not null,
     last_visitation TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -241,12 +241,13 @@ create sequence s_cosmetic_item_id start with 1 increment by 1;
 
 create table cosmetic_item
 (
-    item_id bigint default nextval('s_cosmetic_item_id'),
-    name    varchar(60) not null,
-    description varchar(255) not null,
-    price integer not null,
-    rarity_type varchar(20) check ( rarity_type in ('COMMON', 'RARE', 'EPIC', 'LEGENDARY') ) not null,
-    cosmetic_type varchar(20) check ( cosmetic_type in ('FOOTPRINT', 'AVATAR_FRAMES', 'APPLICATION_IMAGE', 'FOG') ) not null,
+    item_id       bigint default nextval('s_cosmetic_item_id'),
+    name          varchar(60)                                                                                       not null,
+    description   varchar(255)                                                                                      not null,
+    price         integer                                                                                           not null,
+    rarity_type   varchar(20) check ( rarity_type in ('COMMON', 'RARE', 'EPIC', 'LEGENDARY') )                      not null,
+    cosmetic_type varchar(20) check ( cosmetic_type in ('FOOTPRINT', 'AVATAR_FRAMES', 'APPLICATION_IMAGE',
+                                                        'FOG') )                                                    not null,
     primary key (item_id)
 );
 
@@ -258,7 +259,7 @@ create table cosmetic_item
 create table client_money
 (
     client_id varchar(60) not null,
-    money integer not null,
+    money     integer     not null,
     primary key (client_id)
 );
 
@@ -271,27 +272,27 @@ create sequence s_battle_pass_id start with 1 increment by 1;
 create table battle_pass
 (
     battle_pass_id bigint default nextval('s_battle_pass_id'),
-    name varchar(60) not null,
-    description varchar(255) not null,
-    start_date timestamp not null,
-    end_date timestamp not null,
+    name           varchar(60)  not null,
+    description    varchar(255) not null,
+    start_date     timestamp    not null,
+    end_date       timestamp    not null,
     primary key (battle_pass_id)
 );
 
 create table battle_pass_level
 (
-    level integer not null,
-    battle_pass_id bigint not null,
-    experience integer not null,
+    level          integer not null,
+    battle_pass_id bigint  not null,
+    experience     integer not null,
     primary key (level, battle_pass_id),
     foreign key (battle_pass_id) references battle_pass (battle_pass_id)
 );
 
 create table item_battle_pass_level
 (
-    item_id bigint not null,
-    level integer not null,
-    battle_pass_id bigint not null,
+    item_id        bigint  not null,
+    level          integer not null,
+    battle_pass_id bigint  not null,
     primary key (item_id, level, battle_pass_id),
     foreign key (item_id) references cosmetic_item (item_id),
     foreign key (level, battle_pass_id) references battle_pass_level (level, battle_pass_id)
@@ -299,10 +300,10 @@ create table item_battle_pass_level
 
 create table client_battle_pass
 (
-    client_id varchar(60) not null,
-    battle_pass_id bigint not null,
-    level integer not null,
-    current_battle_pass boolean not null,
+    client_id           varchar(60) not null,
+    battle_pass_id      bigint      not null,
+    level               integer     not null,
+    current_battle_pass boolean     not null,
     primary key (client_id, battle_pass_id, level),
     foreign key (battle_pass_id, level) references battle_pass_level (battle_pass_id, level)
 );
@@ -318,9 +319,25 @@ create table client_battle_pass
 create table client_item
 (
     client_id varchar(60) not null,
-    item_id bigint not null,
+    item_id   bigint      not null,
     primary key (client_id, item_id),
     foreign key (item_id) references cosmetic_item (item_id)
 );
 
 -- rollback DROP TABLE client_item;
+
+-- changeset t9404:21
+
+create table client_statistic
+(
+    client_id          varchar(60)  not null,
+    experience         integer      not null default 0,
+    web_session_id     varchar(255) not null,
+    previous_latitude  varchar(60)  not null,
+    previous_longitude varchar(60)  not null,
+    distance           integer      not null default 0,
+    primary key (client_id)
+);
+
+-- rollback DROP TABLE client_statistic
+

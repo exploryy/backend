@@ -50,7 +50,6 @@ public class FriendService {
         Map<Boolean, List<FriendEntity>> friendFavorite = friends.stream()
                 .collect(partitioningBy(FriendEntity::isFavorite));
 
-
         return new AllFriendDto(
                 mapToFriendDto(friendFavorite.get(true).stream().map(FriendEntity::friendId).toList()).toList(),
                 mapToFriendDto(friendFavorite.get(false).stream().map(FriendEntity::friendId).toList()).toList()

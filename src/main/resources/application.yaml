@@ -12,4 +12,4 @@ amazonProperties:
 
 geo:
   earthRadius: 6378137
-  maxDistance: 50
+  maxDistance: 100
