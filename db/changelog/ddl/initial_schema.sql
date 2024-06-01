@@ -319,7 +319,6 @@ create table client_battle_pass
 create table client_item
 (
     client_id varchar(60) not null,
-    item_id   bigint      not null,
     item_id bigint not null,
     is_equipped boolean not null,
     primary key (client_id, item_id),
