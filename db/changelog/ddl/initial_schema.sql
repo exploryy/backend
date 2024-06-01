@@ -229,7 +229,8 @@ create table user_location
     client_id       varchar(60)              not null,
     latitude        varchar(60)              not null,
     longitude       varchar(60)              not null,
-    last_visitation TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    last_visitation TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    primary key (client_id)
 );
 
 -- rollback DROP TABLE user_location
