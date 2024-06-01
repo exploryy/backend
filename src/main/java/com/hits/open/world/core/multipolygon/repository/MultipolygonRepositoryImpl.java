@@ -90,7 +90,7 @@ public class MultipolygonRepositoryImpl implements MultipolygonRepository {
                         FROM multipolygon
                         WHERE client_id = :clientId
                     )
-                    
+                                        
                     SELECT ST_AsGeoJSON(part_geom)::json AS geojson
                     FROM polygon_temporary
                     WHERE ST_Contains(part_geom, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326));

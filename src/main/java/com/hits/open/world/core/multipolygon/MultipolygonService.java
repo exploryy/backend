@@ -1,12 +1,15 @@
 package com.hits.open.world.core.multipolygon;
 
+import com.hits.open.world.core.multipolygon.enums.FigureType;
 import com.hits.open.world.core.multipolygon.factory.polygon.PolygonService;
 import com.hits.open.world.core.multipolygon.repository.MultipolygonRepository;
 import com.hits.open.world.public_interface.multipolygon.AreaDtoResponse;
 import com.hits.open.world.public_interface.multipolygon.CreatePolygonRequestDto;
-import com.hits.open.world.core.multipolygon.enums.FigureType;
 import com.hits.open.world.public_interface.multipolygon.geo.GeoDto;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

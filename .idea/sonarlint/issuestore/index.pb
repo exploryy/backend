@@ -70,14 +70,6 @@ Psrc/main/java/com/hits/open/world/core/cosmetic_item/CosmeticItemRepository.jav
 Tsrc/main/java/com/hits/open/world/core/cosmetic_item/CosmeticItemRepositoryImpl.java,3\e\3ea9877b92f75e855d6386c35ea50253e56bef5c
 l
 <src/main/java/com/hits/open/world/core/shop/ShopService.java,5\4\54546fdc0286d7d0aaf4ac4424c11b8fae7b2422
-|
-Lsrc/main/java/com/hits/open/world/core/cosmetic_item/CosmeticItemEntity.java,e\f\ef9a4e187880160c502d699690e42046ef07f8ba
-x
-Hsrc/main/java/com/hits/open/world/core/cosmetic_item/RarityTypeEnum.java,8\b\8ba4111f42a3ab6b24769c7daa6ed4203afad5bb
-z
-Jsrc/main/java/com/hits/open/world/core/cosmetic_item/CosmeticTypeEnum.java,6\a\6a56044e1739e01a6a888ec0c55a16672c10b988
-‚
-Rsrc/main/java/com/hits/open/world/core/cosmetic_item/CosmeticItemEntityMapper.java,b\f\bf196b82f109ad8ac593ca861c2203b76a228a22
 …
 Usrc/main/java/com/hits/open/world/core/quest/repository/entity/quest/QuestEntity.java,1\c\1c13c4e17e3d16309661e9b22cdf8198ff8557a3
 r
@@ -99,8 +91,6 @@ Msrc/main/java/com/hits/open/world/rest/achievement/AchievementController.java,
 y
 Isrc/main/java/com/hits/open/world/rest/inventory/InventoryController.java,e\4\e4808f0cfa066f13bb604b2d3259a1bc897c2316
 v
-Fsrc/main/java/com/hits/open/world/core/inventory/InvertoryService.java,b\e\bea50c79aa1117a2b05896adaedc575792963de6
-v
 Fsrc/main/java/com/hits/open/world/core/inventory/InventoryService.java,6\3\63c3f6cb3a7de874cef1bab7258fcf35d70c88d3
 O
 db/changelog/root-changelog.yml,c\e\ceea9c28cba14bdf524f314aa478bafc8683667f
@@ -110,8 +100,6 @@ Isrc/main/java/com/hits/open/world/core/inventory/InventoryRepository.java,e\e\
 Msrc/main/java/com/hits/open/world/core/inventory/InventoryRepositoryImpl.java,b\4\b4317294206a20c4ded5255053660bc099f4d4fb
 
 `src/main/java/com/hits/open/world/public_interface/cosmetic_item/CosmeticItemInInventoryDto.java,0\6\061a1a3223446c533bfe275447067b55843ae166
-s
-Csrc/main/java/com/hits/open/world/core/inventory/InventoryItem.java,d\c\dcae73f49e8080161c19b3c7e062ae920a1249a1
 y
 Isrc/main/java/com/hits/open/world/core/inventory/InventoryItemEntity.java,c\3\c3f1e30bb16e62b001e2334cd670274b35993ad9
 n
@@ -128,3 +116,9 @@ y
 Isrc/main/java/com/hits/open/world/core/shop/CosmeticItemInShopEntity.java,d\0\d004e937040075053d2e29913c08eec61b9a3da4
 ‹
 [src/main/java/com/hits/open/world/public_interface/cosmetic_item/CosmeticItemInShopDto.java,0\4\0461b0f2565fb4a66c19a7f223935247b386e476
+y
+Isrc/main/java/com/hits/open/world/core/battle_pass/BattlePassService.java,c\7\c7cf7209411718a79be4763c63e18f1132d9f7ee
+|
+Lsrc/main/java/com/hits/open/world/core/battle_pass/BattlePassRepository.java,2\f\2ff9976be33f0ce9cd8a8009247e41008f635aec
+€
+Psrc/main/java/com/hits/open/world/core/battle_pass/BattlePassRepositoryImpl.java,b\b\bbfc6e0fe30b4f01497095b95b649027975ccfd3

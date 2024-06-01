@@ -5,7 +5,6 @@ import com.hits.open.world.public_interface.cosmetic_item.CosmeticItemInShopDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,13 +25,13 @@ public class ShopController {
     private final ShopService shopService;
 
     @GetMapping
-    public List<CosmeticItemInShopDto> getShopItems(@RequestParam(value = "name",required = false) Optional<String> name,
+    public List<CosmeticItemInShopDto> getShopItems(@RequestParam(value = "name", required = false) Optional<String> name,
                                                     JwtAuthenticationToken token) {
         var userId = token.getToken().getClaim("sub").toString();
         return shopService.findCosmeticItemsInShop(name.orElse(""), userId);
     }
 
-    @PostMapping(path = "{item_id}/buy", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "{item_id}/buy")
     public void buyItem(@PathVariable("item_id") Long itemId,
                         JwtAuthenticationToken token) {
         var userId = token.getToken().getClaim("sub").toString();

@@ -7,7 +7,6 @@ import com.hits.open.world.public_interface.achievement.UpdateAchievementDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +28,7 @@ import java.util.Optional;
 public class AchievementController {
     private final AchievementService achievementService;
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping
     public void createAchievement(@RequestParam("name") String name,
                                   @RequestParam("description") String description,
                                   @RequestParam("image") MultipartFile image) {
@@ -41,12 +40,12 @@ public class AchievementController {
         achievementService.createAchievement(createDto);
     }
 
-    @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping
     public void deleteAchievement(@RequestParam("achievementId") Long achievementId) {
         achievementService.deleteAchievement(achievementId);
     }
 
-    @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping
     public void updateAchievement(@RequestParam("achievementId") Long achievementId,
                                   @RequestParam("name") Optional<String> name,
                                   @RequestParam("description") Optional<String> description,
@@ -60,7 +59,7 @@ public class AchievementController {
         achievementService.updateAchievement(updateDto);
     }
 
-    @GetMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @GetMapping
     public List<AchievementDto> getMyAchievements(JwtAuthenticationToken token) {
         var userId = token.getToken().getClaim("sub").toString();
         return achievementService.getAchievements(userId);

@@ -1,12 +1,12 @@
 package com.hits.open.world.core.multipolygon.factory.geo;
 
 import com.google.gson.Gson;
-import com.hits.open.world.public_interface.multipolygon.geo.*;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Polygon;
+import com.hits.open.world.public_interface.multipolygon.geo.Feature;
+import com.hits.open.world.public_interface.multipolygon.geo.GeoDto;
+import com.hits.open.world.public_interface.multipolygon.geo.MultipolygonGeometry;
+import com.hits.open.world.public_interface.multipolygon.geo.PolygonGeometry;
+import com.hits.open.world.public_interface.multipolygon.geo.Properties;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 

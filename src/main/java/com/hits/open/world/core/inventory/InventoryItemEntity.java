@@ -1,9 +1,7 @@
 package com.hits.open.world.core.inventory;
 
-import com.hits.open.world.core.cosmetic_item.entity.CosmeticItemEntity;
 import com.hits.open.world.core.cosmetic_item.entity.CosmeticTypeEnum;
 import com.hits.open.world.core.cosmetic_item.entity.RarityTypeEnum;
-import com.hits.open.world.public_interface.cosmetic_item.CosmeticItemDto;
 import com.hits.open.world.public_interface.cosmetic_item.CosmeticItemInInventoryDto;
 
 public record InventoryItemEntity(

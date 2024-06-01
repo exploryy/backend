@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface CosmeticItemRepository {
     List<CosmeticItemEntity> findByName(String name);
+
     Optional<CosmeticItemEntity> findById(Long id);
 }

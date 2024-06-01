@@ -24,7 +24,7 @@ public class S3FileStorageService implements FileStorageService {
 
     public S3FileStorageService(@Value("${amazonProperties.bucketName}") String bucketName,
                                 @Value("${amazonProperties.endpointUrl}") String url
-                                ) {
+    ) {
         this.bucketName = bucketName;
         this.url = url;
     }
