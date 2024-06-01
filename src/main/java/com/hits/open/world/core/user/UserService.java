@@ -47,12 +47,12 @@ public class UserService {
                 .orElseThrow(() -> new ExceptionInApplication("User with this id does not exist", ExceptionType.NOT_FOUND));
 
         //TODO: Не уверен что тут не будет ошибки, если нет файла
-        var avatarUrl = fileStorageService.getDownloadLinkByName(getAvatarName(user.id()));
+        var avatarUrl = fileStorageService.getDownloadLinkByName(user.getPhotoName());
         return new ProfileDto(
                 user.id(),
                 user.username(),
                 user.email(),
-                Optional.ofNullable(avatarUrl)
+                avatarUrl
         );
     }
 
@@ -63,8 +63,8 @@ public class UserService {
         var user = userClient.getUser(dto.userId())
                 .orElseThrow(() -> new ExceptionInApplication("User with this id does not exist", ExceptionType.NOT_FOUND));
 
-        dto.avatar().ifPresent(avatar -> fileStorageService.deleteFile(getAvatarName(user.id()))
-                .then(saveAvatar(user.id(), avatar))
+        dto.avatar().ifPresent(avatar -> fileStorageService.deleteFile(user.getPhotoName())
+                .then(saveAvatar(user, avatar))
                 .subscribe());
         userClient.updateUser(dto);
     }
@@ -81,9 +81,9 @@ public class UserService {
         }
     }
 
-    private Mono<Void> saveAvatar(String userId, MultipartFile avatar) {
+    private Mono<Void> saveAvatar(UserEntity user, MultipartFile avatar) {
         var metadata = new FileMetadata(
-                getAvatarName(userId),
+                user.getPhotoName(),
                 avatar.getContentType(),
                 avatar.getSize()
         );
@@ -92,9 +92,5 @@ public class UserService {
                 avatar
         );
         return fileStorageService.uploadFile(fileDto);
-    }
-
-    private String getAvatarName(String userId) {
-        return fileStorageService.getDownloadLinkByName("user_photo_%s".formatted(userId));
     }
 }

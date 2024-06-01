@@ -2,6 +2,8 @@ package com.hits.open.world.core.achievement.repository;
 
 import com.hits.open.world.core.file.FileStorageService;
 import com.hits.open.world.public_interface.achievement.AchievementDto;
+import com.hits.open.world.public_interface.exception.ExceptionInApplication;
+import com.hits.open.world.public_interface.exception.ExceptionType;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
@@ -87,6 +89,8 @@ public class AchievementRepositoryImpl implements AchievementRepository {
 
     private String getPhotoUri(Long achievementId) {
         var fileName = String.format("achievement-%d", achievementId);
-        return fileStorageService.getDownloadLinkByName(fileName);
+        return fileStorageService.getDownloadLinkByName(fileName).orElseThrow(
+                () -> new ExceptionInApplication("Achievement image not found", ExceptionType.NOT_FOUND)
+        );
     }
 }

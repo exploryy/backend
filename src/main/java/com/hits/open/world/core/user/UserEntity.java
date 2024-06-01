@@ -6,4 +6,7 @@ public record UserEntity(
         String email,
         String password
 ) {
+    public String getPhotoName() {
+        return "user_photo_%s".formatted(id);
+    }
 }

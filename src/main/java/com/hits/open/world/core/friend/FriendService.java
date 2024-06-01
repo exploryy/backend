@@ -1,5 +1,6 @@
 package com.hits.open.world.core.friend;
 
+import com.hits.open.world.core.file.FileStorageService;
 import com.hits.open.world.core.friend.repository.FriendEntity;
 import com.hits.open.world.core.friend.repository.FriendRepository;
 import com.hits.open.world.core.user.UserEntity;
@@ -25,6 +26,7 @@ import static java.util.stream.Collectors.partitioningBy;
 public class FriendService {
     private final FriendRepository friendRepository;
     private final UserClient userClient;
+    private final FileStorageService fileStorageService;
 
     @Transactional
     public void addFriendRequest(String userId, String friendId) {
@@ -110,10 +112,12 @@ public class FriendService {
     }
 
     private FriendDto mapToFriendDto(UserEntity entity) {
+        var avatarUrl = fileStorageService.getDownloadLinkByName(entity.getPhotoName());
         return new FriendDto(
                 entity.id(),
                 entity.username(),
-                entity.email()
+                entity.email(),
+                avatarUrl
         );
     }
 
