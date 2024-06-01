@@ -233,3 +233,4 @@ create table user_location
 );
 
 -- rollback DROP TABLE user_location
+

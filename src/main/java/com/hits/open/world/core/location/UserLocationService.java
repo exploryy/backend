@@ -49,7 +49,7 @@ public class UserLocationService {
                     (DEGREES_TO_KM_LAT * Math.cos(Math.toRadians(locationDto.latitude().doubleValue()))));
 
             BigDecimal latitude = BigDecimal.valueOf(randomOffsetLat).add(BigDecimal.valueOf(randomOffsetLon));
-            BigDecimal longitude = BigDecimal.valueOf(randomOffsetLat).add(BigDecimal.valueOf(randomOffsetLon));
+            BigDecimal longitude = BigDecimal.valueOf(randomOffsetLon).add(BigDecimal.valueOf(randomOffsetLon));
             LocationDto location = new LocationDto(locationDto.clientId(), latitude, longitude);
             coinService.save(location);
         }
