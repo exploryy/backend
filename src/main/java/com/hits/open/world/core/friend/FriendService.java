@@ -1,8 +1,8 @@
 package com.hits.open.world.core.friend;
 
 import com.hits.open.world.core.friend.repository.FriendEntity;
-import com.hits.open.world.core.user.UserEntity;
 import com.hits.open.world.core.friend.repository.FriendRepository;
+import com.hits.open.world.core.user.UserEntity;
 import com.hits.open.world.keycloak.UserClient;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.partitioningBy;

@@ -1,9 +1,13 @@
 package com.hits.open.world.core.multipolygon.factory.polygon.impl;
 
+import com.hits.open.world.core.multipolygon.enums.FigureType;
 import com.hits.open.world.core.multipolygon.factory.polygon.PolygonService;
 import com.hits.open.world.core.multipolygon.properties.GeoProperties;
-import com.hits.open.world.core.multipolygon.enums.FigureType;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

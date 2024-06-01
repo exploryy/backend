@@ -2,6 +2,7 @@ package com.hits.open.world.core.user;
 
 import com.hits.open.world.core.file.FileMetadata;
 import com.hits.open.world.core.file.FileStorageService;
+import com.hits.open.world.core.money.MoneyRepository;
 import com.hits.open.world.keycloak.RoleClient;
 import com.hits.open.world.keycloak.UserClient;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
@@ -23,6 +24,7 @@ public class UserService {
     private final UserClient userClient;
     private final RoleClient roleClient;
     private final FileStorageService fileStorageService;
+    private final MoneyRepository moneyRepository;
 
     public String createUser(CreateUserDto dto) {
         checkUserWithUsernameExists(dto.username());
@@ -36,6 +38,7 @@ public class UserService {
         );
         var oauthId = userClient.registerUser(userEntity);
         roleClient.assignRole(oauthId, "ROLE_USER");
+        moneyRepository.initializeMoney(oauthId);
         return oauthId;
     }
 

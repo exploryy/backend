@@ -12,15 +12,8 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class PolygonServiceFactory {
-    private final List<PolygonService> polygonServices;
     private static final Map<FigureType, PolygonService> polygonServiceMap = new HashMap<>();
-
-    @PostConstruct
-    public void init() {
-        for (PolygonService polygonService : polygonServices) {
-            polygonServiceMap.put(polygonService.getType(), polygonService);
-        }
-    }
+    private final List<PolygonService> polygonServices;
 
     public static PolygonService getPolygonService(FigureType figureType) {
         PolygonService polygonService = polygonServiceMap.get(figureType);
@@ -30,6 +23,13 @@ public class PolygonServiceFactory {
         }
 
         return polygonService;
+    }
+
+    @PostConstruct
+    public void init() {
+        for (PolygonService polygonService : polygonServices) {
+            polygonServiceMap.put(polygonService.getType(), polygonService);
+        }
     }
 
 }

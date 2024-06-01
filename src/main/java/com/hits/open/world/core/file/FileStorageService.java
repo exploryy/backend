@@ -5,6 +5,8 @@ import reactor.core.publisher.Mono;
 
 public interface FileStorageService {
     Mono<Void> uploadFile(UploadFileDto dto);
+
     String getDownloadLinkByName(String name);
+
     Mono<Void> deleteFile(String name);
 }

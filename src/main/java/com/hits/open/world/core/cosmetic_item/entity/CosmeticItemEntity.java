@@ -1,4 +1,4 @@
-package com.hits.open.world.core.cosmetic_item;
+package com.hits.open.world.core.cosmetic_item.entity;
 
 public record CosmeticItemEntity(
         Long itemId,
