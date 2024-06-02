@@ -1,5 +1,6 @@
 package com.hits.open.world.core.quest.repository;
 
+import com.hits.open.world.core.quest.repository.entity.pass_quest.PassQuestEntity;
 import com.hits.open.world.core.quest.repository.entity.quest.QuestEntity;
 import com.hits.open.world.core.quest.repository.entity.quest.QuestPhotoEntity;
 import com.hits.open.world.core.quest.repository.entity.quest.distance.DistanceQuestEntity;
@@ -50,4 +51,26 @@ public interface QuestRepository {
     void createPointToPointQuest(PointToPointQuestEntity entity);
 
     void createDistanceQuest(DistanceQuestEntity entity);
+
+    List<QuestEntity> getQuestsByName(String name);
+
+    void startQuest(PassQuestEntity entity);
+
+    boolean isQuestStarted(Long questId, String userId);
+
+    boolean isQuestFinished(Long questId, String userId);
+
+    void updatePassQuest(PassQuestEntity entity);
+
+    Optional<PassQuestEntity> getPassQuestById(Long passQuestId);
+
+    void deletePassQuest(Long passQuestId);
+
+    List<QuestEntity> getActiveQuests(String userId);
+
+    List<QuestEntity> getFinishedQuests(String userId);
+
+    Optional<PointToPointQuestEntity> getPointToPointQuestByQuestId(Long questId);
+
+    Optional<DistanceQuestEntity> getDistanceQuestByQuestId(Long questId);
 }

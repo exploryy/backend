@@ -2,7 +2,7 @@ package com.hits.open.world.core.quest.repository.entity.pass_quest;
 
 import com.hits.open.world.core.quest.repository.entity.quest.TransportType;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 public record PassQuestEntity(
         Long passQuestId,
@@ -10,7 +10,7 @@ public record PassQuestEntity(
         Long routeId,
         String userId,
         TransportType transportType,
-        OffsetDateTime startTime,
-        OffsetDateTime endTime
+        LocalDateTime startTime,
+        LocalDateTime endTime
 ) {
 }

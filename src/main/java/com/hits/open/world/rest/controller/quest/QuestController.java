@@ -2,9 +2,15 @@ package com.hits.open.world.rest.controller.quest;
 
 import com.hits.open.world.core.quest.QuestService;
 import com.hits.open.world.core.quest.repository.entity.quest.QuestType;
+import com.hits.open.world.core.quest.repository.entity.quest.TransportType;
+import com.hits.open.world.public_interface.quest.CommonQuestDto;
 import com.hits.open.world.public_interface.quest.CreateDistanceQuestDto;
 import com.hits.open.world.public_interface.quest.CreatePointToPointQuestDto;
 import com.hits.open.world.public_interface.quest.CreateQuestDto;
+import com.hits.open.world.public_interface.quest.DistanceQuestDto;
+import com.hits.open.world.public_interface.quest.GetQuestsDto;
+import com.hits.open.world.public_interface.quest.PointToPointQuestDto;
+import com.hits.open.world.public_interface.quest.StartQuestDto;
 import com.hits.open.world.public_interface.quest.UpdateQuestDto;
 import com.hits.open.world.public_interface.quest.review.AddImageQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.CreateQuestReviewDto;
@@ -19,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.service.annotation.DeleteExchange;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +46,7 @@ import java.util.Optional;
 public class QuestController {
     private final QuestService questService;
 
-    @PostMapping(path = "/point_to_point", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/point_to_point")
     public void createPointToPointQuest(@RequestParam("name") String name,
                                         @RequestParam("description") String description,
                                         @RequestParam("difficulty_type") String difficultyType,
@@ -63,7 +71,7 @@ public class QuestController {
         questService.createPointToPointQuest(new CreatePointToPointQuestDto(createDto, routeDto));
     }
 
-    @PostMapping(path = "/distance", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/distance")
     public void createDistanceQuest(@RequestParam("name") String name,
                                     @RequestParam("description") String description,
                                     @RequestParam("difficulty_type") String difficultyType,
@@ -81,33 +89,45 @@ public class QuestController {
         questService.createDistanceQuest(new CreateDistanceQuestDto(createDto, distance));
     }
 
-    @DeleteMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @DeleteMapping
     public void deleteQuest(@RequestParam("quest_id") Long questId) {
         questService.deleteQuest(questId);
     }
 
-    @PostMapping(path = "/{quest_id}/start", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/{quest_id}/start")
     public void startQuest(@PathVariable("quest_id") Long questId,
+                           @RequestParam(value = "transport_type", required = false) Optional<String> transportType,
                            JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
-        questService.startQuest(questId, userId);
+        var startDto = new StartQuestDto(
+                questId,
+                userId,
+                transportType.orElse(TransportType.WALK.name())
+        );
+        questService.startQuest(startDto);
     }
 
-    @PostMapping(path = "/{quest_id}/finish", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/{quest_id}/finish")
     public void finishQuest(@PathVariable("quest_id") Long questId,
                             JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
         questService.finishQuest(questId, userId);
     }
 
-    @PatchMapping(path = "/{quest_id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @DeleteMapping(path = "/{quest_id}/cancel")
+    public void cancelQuest(@PathVariable("quest_id") Long questId,
+                            JwtAuthenticationToken token) {
+        var userId = token.getTokenAttributes().get("sub").toString();
+        questService.cancelQuest(questId, userId);
+    }
+
+    @PatchMapping(path = "/{quest_id}")
     public void updateQuest(@PathVariable("quest_id") Long questId,
                             @RequestParam("name") Optional<String> name,
                             @RequestParam("description") Optional<String> description,
                             @RequestParam("difficulty_type") Optional<String> difficultyType,
                             @RequestParam("quest_type") Optional<String> questType,
                             @RequestParam("transport_type") Optional<String> transportType) {
-        //TODO: Нужно ли тут запариваться с изменением дочерних элементов?
         var updateDto = new UpdateQuestDto(
                 questId,
                 name,
@@ -119,19 +139,19 @@ public class QuestController {
         questService.updateQuest(updateDto);
     }
 
-    @PostMapping(path = "/{quest_id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/{quest_id}/image")
     public void addQuestImage(@PathVariable("quest_id") Long questId,
                               @RequestParam("image") MultipartFile image) {
         questService.saveQuestImage(image, questId);
     }
 
-    @DeleteMapping(path = "/{quest_id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @DeleteMapping(path = "/{quest_id}/image")
     public void removeQuestImage(@PathVariable("quest_id") Long questId,
                                  @RequestParam("image_id") Long imageId) {
         questService.deleteQuestImage(questId, imageId);
     }
 
-    @PostMapping(path = "/{quest_id}/review", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/{quest_id}/review")
     public void addQuestReview(@PathVariable("quest_id") Long questId,
                                @RequestParam("score") Integer score,
                                @RequestParam("message") String message,
@@ -148,7 +168,7 @@ public class QuestController {
         questService.createQuestReview(createDto);
     }
 
-    @DeleteMapping(path = "/{quest_id}/review", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @DeleteMapping(path = "/{quest_id}/review")
     public void removeQuestReview(@PathVariable("quest_id") Long questId,
                                   @RequestParam("review_id") Long reviewId,
                                   JwtAuthenticationToken token) {
@@ -161,7 +181,7 @@ public class QuestController {
         questService.deleteQuestReview(deleteDto);
     }
 
-    @PatchMapping(path = "/{quest_id}/review/{review_id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(path = "/{quest_id}/review/{review_id}")
     public void updateQuestReview(@PathVariable("quest_id") Long questId,
                                   @PathVariable("review_id") Long reviewId,
                                   @RequestParam("score") Optional<Integer> score,
@@ -178,7 +198,7 @@ public class QuestController {
         questService.updateQuestReview(updateDto);
     }
 
-    @PostMapping(path = "/{quest_id}/review/{review_id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/{quest_id}/review/{review_id}/image")
     public void addQuestReviewImage(@PathVariable("quest_id") Long questId,
                                     @PathVariable("review_id") Long reviewId,
                                     @RequestParam("image") MultipartFile image,
@@ -193,7 +213,7 @@ public class QuestController {
         questService.addImageQuestReview(addDto);
     }
 
-    @DeleteMapping(path = "/{quest_id}/review/{review_id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @DeleteMapping(path = "/{quest_id}/review/{review_id}/image")
     public void removeQuestReviewImage(@PathVariable("quest_id") Long questId,
                                        @PathVariable("review_id") Long reviewId,
                                        @RequestParam("image_id") Long imageId,
@@ -206,5 +226,35 @@ public class QuestController {
                 imageId
         );
         questService.deleteImageQuestReview(deleteDto);
+    }
+
+    @GetMapping(path = "/list")
+    public List<CommonQuestDto> getQuestsList(@RequestParam(value = "name", required = false) Optional<String> name) {
+        var dto = new GetQuestsDto(
+                name.orElse("")
+        );
+        return questService.getQuests(dto);
+    }
+
+    @GetMapping(path = "/my/completed")
+    public List<CommonQuestDto> getMyCompletedQuests(JwtAuthenticationToken token) {
+        var userId = token.getTokenAttributes().get("sub").toString();
+        return questService.getMyCompletedQuests(userId);
+    }
+
+    @GetMapping(path = "/my/active")
+    public List<CommonQuestDto> getMyActiveQuests(JwtAuthenticationToken token) {
+        var userId = token.getTokenAttributes().get("sub").toString();
+        return questService.getMyActiveQuests(userId);
+    }
+
+    @GetMapping(path = "/point_to_point/{quest_id}")
+    public PointToPointQuestDto getPointToPointQuest(@PathVariable("quest_id") Long questId) {
+        return questService.getPointToPointQuest(questId);
+    }
+
+    @GetMapping(path = "/distance/{quest_id}")
+    public DistanceQuestDto getDistanceQuest(@PathVariable("quest_id") Long questId) {
+        return questService.getDistanceQuest(questId);
     }
 }
