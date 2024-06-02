@@ -1,5 +1,6 @@
 package com.hits.open.world.core.statistic;
 
+import com.hits.open.world.core.friend.FriendService;
 import com.hits.open.world.core.statistic.repository.StatisticEntity;
 import com.hits.open.world.core.statistic.repository.StatisticRepository;
 import com.hits.open.world.core.user.UserService;
@@ -7,6 +8,7 @@ import com.hits.open.world.public_interface.statistic.TotalStatisticDto;
 import com.hits.open.world.public_interface.statistic.UserStatisticDto;
 import com.hits.open.world.public_interface.user.ProfileDto;
 import com.hits.open.world.public_interface.user_location.LocationDto;
+import com.hits.open.world.public_interface.user_location.LocationStatisticDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -24,6 +26,7 @@ import static com.hits.open.world.util.LevelUtil.calculateLevel;
 public class StatisticService {
     private final StatisticRepository statisticRepository;
     private final UserService userService;
+    private final FriendService friendService;
 
     public TotalStatisticDto getTotal(String userId, int count) {
         List<StatisticEntity> allStatistics = statisticRepository.findAllStatistic();
@@ -43,11 +46,28 @@ public class StatisticService {
         return new TotalStatisticDto(profiles, userPosition);
     }
 
+    public List<LocationStatisticDto> getLocationsMyFriend(String userId) {
+        var friends = friendService.getFriends(userId);
+        return friends.friends().stream()
+                .map(friendDto -> getInfo(friendDto.userId()))
+                .toList();
+    }
+
     public UserStatisticDto getUserStatistics(String userId) {
         var statistic = getUserStatistic(userId);
 
         int level = calculateLevel(statistic.experience());
         return new UserStatisticDto(level, statistic.experience(), statistic.distance());
+    }
+
+    public LocationStatisticDto getInfo(String userId) {
+        var statistic = getUserStatistic(userId);
+
+        var profile = userService.getProfile(statistic.clientId());
+
+        int level = calculateLevel(statistic.experience());
+        return new LocationStatisticDto(profile.username(), profile.email(), profile.userId(), statistic.previousLatitude(),
+                statistic.previousLongitude(), statistic.experience(), statistic.distance(), level);
     }
 
     public void updateExperience(String userId, int addedExperience) {

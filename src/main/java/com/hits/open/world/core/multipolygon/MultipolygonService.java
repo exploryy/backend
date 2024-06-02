@@ -30,17 +30,6 @@ public class MultipolygonService {
     private final MultipolygonRepository multipolygonRepository;
     private final FriendService friendService;
 
-    public GeoDto getAllPolygonsFriend(String userId, String friendId) {
-        var friends = friendService.getFriends(userId);
-        boolean isFriend = friends.friends().stream().anyMatch(friendDto -> friendDto.userId().equals(friendId));
-
-        if (!isFriend) {
-            throw new ExceptionInApplication("You don't have a friend", ExceptionType.FORBIDDEN);
-        }
-
-        return getAllPolygons(friendId);
-    }
-
     public GeoDto getAllPolygons(String userId) {
         var geoString = multipolygonRepository.getAllCoordinates(userId);
         return buildMultiPolygonGeoDto(geoString);
@@ -59,6 +48,17 @@ public class MultipolygonService {
         BigDecimal userArea = multipolygonRepository.calculateArea(userId);
         BigDecimal tomskArea = multipolygonRepository.calculateArea(TOMSK_ID);
         return userArea.divide(tomskArea, 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+    }
+
+    public GeoDto getAllPolygonsFriend(String userId, String friendId) {
+        var friends = friendService.getFriends(userId);
+        boolean isFriend = friends.friends().stream().anyMatch(friendDto -> friendDto.userId().equals(friendId));
+
+        if (!isFriend) {
+            throw new ExceptionInApplication("You don't have a friend", ExceptionType.FORBIDDEN);
+        }
+
+        return getAllPolygons(friendId);
     }
 
     public GeoDto save(CreatePolygonRequestDto createPolygonRequestDto, String userId) {
