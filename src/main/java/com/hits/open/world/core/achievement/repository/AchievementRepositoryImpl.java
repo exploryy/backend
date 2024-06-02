@@ -65,7 +65,7 @@ public class AchievementRepositoryImpl implements AchievementRepository {
     public List<AchievementDto> getAchievements(String userId) {
         return create.select()
                 .from(CLIENT_ACHIEVEMENT)
-                .rightJoin(ACHIEVEMENT)
+                .join(ACHIEVEMENT)
                 .on(CLIENT_ACHIEVEMENT.ACHIEVEMENT_ID.eq(ACHIEVEMENT.ACHIEVEMENT_ID))
                 .where(CLIENT_ACHIEVEMENT.CLIENT_ID.eq(userId))
                 .fetch(record -> new AchievementDto(

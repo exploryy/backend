@@ -39,6 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -80,7 +81,9 @@ public class QuestService {
         var questId = createQuest(dto.questDto());
         var distanceQuestEntity = new DistanceQuestEntity(
                 questId,
-                dto.distance()
+                dto.distance(),
+                dto.longitude(),
+                dto.latitude()
         );
         questRepository.createDistanceQuest(distanceQuestEntity);
     }
@@ -88,21 +91,21 @@ public class QuestService {
     public List<CommonQuestDto> getQuests(GetQuestsDto dto) {
         return questRepository.getQuestsByName(dto.name())
                 .stream()
-                .map(QuestEntity::toDto)
+                .map(this::toDto)
                 .toList();
     }
 
     public List<CommonQuestDto> getMyCompletedQuests(String userId) {
         return questRepository.getFinishedQuests(userId)
                 .stream()
-                .map(QuestEntity::toDto)
+                .map(this::toDto)
                 .toList();
     }
 
     public List<CommonQuestDto> getMyActiveQuests(String userId) {
         return questRepository.getActiveQuests(userId)
                 .stream()
-                .map(QuestEntity::toDto)
+                .map(this::toDto)
                 .toList();
     }
 
@@ -135,6 +138,9 @@ public class QuestService {
 
     @Transactional
     public void startQuest(StartQuestDto dto) {
+        if (!getMyActiveQuests(dto.userId()).isEmpty()) {
+            throw new ExceptionInApplication("You already have active quest", ExceptionType.ALREADY_EXISTS);
+        }
         if(questRepository.isQuestFinished(dto.questId(), dto.userId())) {
             throw new ExceptionInApplication("Quest already finished", ExceptionType.ALREADY_EXISTS);
         }
@@ -192,7 +198,7 @@ public class QuestService {
         var pointToPointQuest = questRepository.getPointToPointQuestByQuestId(questId)
                 .orElseThrow(() -> new ExceptionInApplication("Point to point quest not found", ExceptionType.NOT_FOUND));
         return new PointToPointQuestDto(
-                QuestEntity.toDto(quest),
+                toDto(quest),
                 routeService.getRoute(pointToPointQuest.routeId())
         );
     }
@@ -204,7 +210,7 @@ public class QuestService {
                 .orElseThrow(() -> new ExceptionInApplication("Distance quest not found", ExceptionType.NOT_FOUND));
 
         return new DistanceQuestDto(
-                QuestEntity.toDto(quest),
+                toDto(quest),
                 distanceQuest.routeDistance()
         );
     }
@@ -341,5 +347,25 @@ public class QuestService {
 
     private void deleteImage(String fileName) {
         fileStorageService.deleteFile(fileName).subscribe();
+    }
+
+    private CommonQuestDto toDto(QuestEntity entity) {
+        var photos = questRepository.getQuestPhotosByQuestId(entity.questId())
+                .parallelStream()
+                .map(photoEntity -> "quest_%d_photo_%d".formatted(entity.questId(), photoEntity.questPhotoId()))
+                .map(fileStorageService::getDownloadLinkByName)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+
+        return new CommonQuestDto(
+                entity.questId(),
+                entity.name(),
+                entity.description(),
+                entity.difficultyType(),
+                entity.questType(),
+                entity.transportType(),
+                photos
+        );
     }
 }

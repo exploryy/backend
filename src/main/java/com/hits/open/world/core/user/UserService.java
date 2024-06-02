@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -46,14 +47,7 @@ public class UserService {
         var user = userClient.getUser(userId)
                 .orElseThrow(() -> new ExceptionInApplication("User with this id does not exist", ExceptionType.NOT_FOUND));
 
-        //TODO: Не уверен что тут не будет ошибки, если нет файла
-        var avatarUrl = fileStorageService.getDownloadLinkByName(user.getPhotoName());
-        return new ProfileDto(
-                user.id(),
-                user.username(),
-                user.email(),
-                avatarUrl
-        );
+        return mapUserToProfileDto(user);
     }
 
     public void updateUser(UpdateUserDto dto) {
@@ -67,6 +61,26 @@ public class UserService {
                 .then(saveAvatar(user, avatar))
                 .subscribe());
         userClient.updateUser(dto);
+    }
+
+    public List<ProfileDto> getUsers(Optional<String> username) {
+        return username.map(string -> userClient.getUsersByUsername(string)
+                .parallelStream()
+                .map(this::mapUserToProfileDto)
+                .toList()).orElseGet(() -> userClient.getAllUsers()
+                .parallelStream()
+                .map(this::mapUserToProfileDto)
+                .toList());
+    }
+
+    private ProfileDto mapUserToProfileDto(UserEntity user) {
+        var avatarUrl = fileStorageService.getDownloadLinkByName(user.getPhotoName());
+        return new ProfileDto(
+                user.id(),
+                user.username(),
+                user.email(),
+                avatarUrl
+        );
     }
 
     private void checkUserWithUsernameExists(String username) {

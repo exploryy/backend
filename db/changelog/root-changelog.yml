@@ -8,3 +8,11 @@ databaseChangeLog:
       file: changelog/ddl/initial_schema.sql
   - include:
       file: changelog/ddl/initial_tomsk_polygon.sql
+  - include:
+      file: changelog/ddl/quest_init.sql
+  - include:
+      file: changelog/ddl/cosmetic_init.sql
+  - include:
+      file: changelog/ddl/battle_pass_init.sql
+  - include:
+      file: changelog/ddl/achievement_init.sql

@@ -15,6 +15,7 @@ import static com.example.open_the_world.public_.Tables.POINT_ROUTE;
 import static com.example.open_the_world.public_.Tables.ROUTE;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
+import static org.jooq.impl.DSL.table;
 
 @Repository
 @RequiredArgsConstructor
@@ -60,29 +61,43 @@ public class RouteRepositoryImpl implements RouteRepository {
         var cte = name("cte")
                 .fields("latitude", "longitude", "next_latitude", "next_longitude")
                 .as(
-                        create.select(POINT_ROUTE.LATITUDE, POINT_ROUTE.LONGITUDE, POINT_ROUTE.NEXT_LATITUDE, POINT_ROUTE.NEXT_LONGITUDE)
+                        create.select(
+                                        POINT_ROUTE.LATITUDE.as("latitude"),
+                                        POINT_ROUTE.LONGITUDE.as("longitude"),
+                                        POINT_ROUTE.NEXT_LATITUDE.as("next_latitude"),
+                                        POINT_ROUTE.NEXT_LONGITUDE.as("next_longitude"))
                                 .from(POINT_ROUTE)
                                 .where(POINT_ROUTE.LATITUDE.eq(route.pointLatitude())
                                         .and(POINT_ROUTE.LONGITUDE.eq(route.pointLongitude()))
                                 )
                                 .unionAll(
-                                        create.select(POINT_ROUTE.LATITUDE, POINT_ROUTE.LONGITUDE, POINT_ROUTE.NEXT_LATITUDE, POINT_ROUTE.NEXT_LONGITUDE)
+                                        create.select(
+                                                        POINT_ROUTE.LATITUDE.as("latitude"),
+                                                        POINT_ROUTE.LONGITUDE.as("longitude"),
+                                                        POINT_ROUTE.NEXT_LATITUDE.as("next_latitude"),
+                                                        POINT_ROUTE.NEXT_LONGITUDE.as("next_longitude"))
                                                 .from(POINT_ROUTE)
-                                                .join(name("cte"))
-                                                .on(field("cte.next_latitude").eq(POINT_ROUTE.LATITUDE)
-                                                        .and(field("cte.next_longitude").eq(POINT_ROUTE.LONGITUDE)
-                                                        )
+                                                .join(table(name("cte")))
+                                                .on(field(name("cte", "next_latitude")).eq(POINT_ROUTE.LATITUDE)
+                                                        .and(field(name("cte", "next_longitude")).eq(POINT_ROUTE.LONGITUDE))
                                                 )
                                 )
                 );
 
-        return create.with(cte)
-                .selectFrom(cte)
+        return create.withRecursive(cte)
+                .select(
+                        field(name("cte", "latitude")),
+                        field(name("cte", "longitude")),
+                        field(name("cte", "next_latitude")),
+                        field(name("cte", "next_longitude"))
+                )
+                .from(table(name("cte")))
                 .fetch(record -> new PointRouteEntity(
-                        record.get(POINT_ROUTE.LONGITUDE, String.class),
-                        record.get(POINT_ROUTE.LATITUDE, String.class),
-                        record.get(POINT_ROUTE.NEXT_LONGITUDE, String.class),
-                        record.get(POINT_ROUTE.NEXT_LATITUDE, String.class)
+                        record.get("longitude", String.class),
+                        record.get("latitude", String.class),
+                        record.get("next_longitude", String.class),
+                        record.get("next_latitude", String.class)
                 ));
     }
+
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -62,5 +63,10 @@ public class UserController {
         );
 
         userService.updateUser(dto);
+    }
+
+    @GetMapping
+    public List<ProfileDto> getUsers(@RequestParam("username") Optional<String> username) {
+        return userService.getUsers(username);
     }
 }

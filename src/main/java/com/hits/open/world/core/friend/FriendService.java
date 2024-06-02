@@ -41,8 +41,9 @@ public class FriendService {
     }
 
     @Transactional
-    public void removeFriendRequest(String userId, String friendId) {
-        friendRepository.deleteFriendRequest(friendId, userId);
+    public void removeFriend(String userId, String friendId) {
+        friendRepository.deleteFriend(friendId, userId);
+        friendRepository.deleteFriend(userId, friendId);
     }
 
     @Transactional(readOnly = true)
@@ -61,12 +62,12 @@ public class FriendService {
     public void acceptFriend(String userId, String friendId) {
         friendRepository.createFriend(userId, friendId);
         friendRepository.createFriend(friendId, userId);
-        friendRepository.deleteFriendRequest(userId, friendId);
+        friendRepository.deleteFriendRequest(friendId, userId);
     }
 
     @Transactional
     public void declineFriend(String userId, String friendId) {
-        friendRepository.deleteFriendRequest(userId, friendId);
+        friendRepository.deleteFriendRequest(friendId, userId);
     }
 
     @Transactional

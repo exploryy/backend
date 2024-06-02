@@ -22,6 +22,7 @@ public class FriendRepositoryImpl implements FriendRepository {
         create.insertInto(FRIEND)
                 .set(FRIEND.CLIENT_ID, userId)
                 .set(FRIEND.FRIEND_ID, friendId)
+                .set(FRIEND.IS_FAVORITE, false)
                 .execute();
     }
 
