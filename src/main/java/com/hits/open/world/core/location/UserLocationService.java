@@ -39,7 +39,7 @@ public class UserLocationService {
                 .clientId(locationDto.clientId())
                 .build();
 
-        notificationFriendService.notifyFriendsAboutNewLocation(entity);
+        notificationFriendService.notifyFriendsAboutNewLocation(locationDto);
 
         if (savedEntity.isPresent() && checkIfLessOneDay(savedEntity.get())) {
             userLocationRepository.update(entity);
