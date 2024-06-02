@@ -4,6 +4,7 @@ import com.hits.open.world.core.friend.FriendService;
 import com.hits.open.world.core.statistic.repository.StatisticEntity;
 import com.hits.open.world.core.statistic.repository.StatisticRepository;
 import com.hits.open.world.core.user.UserService;
+import com.hits.open.world.core.websocket.WebSocketClient;
 import com.hits.open.world.public_interface.statistic.TotalStatisticDto;
 import com.hits.open.world.public_interface.statistic.UpdateStatisticDto;
 import com.hits.open.world.public_interface.statistic.UserStatisticDto;
@@ -22,6 +23,7 @@ import static com.hits.open.world.core.statistic.ExperienceService.calculateExpe
 import static com.hits.open.world.core.statistic.ExperienceService.calculateExperienceByTask;
 import static com.hits.open.world.util.DistanceCalculator.calculateDistanceInMeters;
 import static com.hits.open.world.util.LevelUtil.calculateLevel;
+import static com.hits.open.world.util.LevelUtil.calculateTotalExperienceInLevel;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +31,7 @@ public class StatisticService {
     private final StatisticRepository statisticRepository;
     private final UserService userService;
     private final FriendService friendService;
+    private final WebSocketClient webSocketClient;
 
     public TotalStatisticDto getTotal(String userId, int count) {
         List<StatisticEntity> allStatistics = statisticRepository.findAllStatistic();
@@ -59,7 +62,8 @@ public class StatisticService {
         var statistic = getUserStatistic(userId);
 
         int level = calculateLevel(statistic.experience());
-        return new UserStatisticDto(level, statistic.experience(), statistic.distance());
+        int totalExperienceInLevel = calculateTotalExperienceInLevel(level);
+        return new UserStatisticDto(level, statistic.experience(), statistic.distance(), totalExperienceInLevel);
     }
 
     public LocationStatisticDto getInfo(String userId) {
@@ -88,6 +92,7 @@ public class StatisticService {
                 .build();
 
         statisticRepository.updateStatistic(updatedStatistic);
+        sendClientInfo(userId, calculatedExperience);
     }
 
     public void updateStatistic(UpdateStatisticDto dto) {
@@ -108,6 +113,12 @@ public class StatisticService {
         }
 
         initUserStatistic(dto);
+    }
+
+    private void sendClientInfo(String userId, int experience) {
+        int level = calculateLevel(experience);
+        webSocketClient.sendUserExperience(userId, String.valueOf(experience));
+        webSocketClient.sendUserLevel(userId, String.valueOf(level));
     }
 
     private StatisticEntity getUserStatistic(String userId) {
@@ -146,6 +157,7 @@ public class StatisticService {
         );
 
         statisticRepository.updateStatistic(updatedStatistic);
+            sendClientInfo(statisticEntity.clientId(), calculatedExperience);
     }
 
     private void updateCoordinates(StatisticEntity statisticEntity, UpdateStatisticDto dto) {

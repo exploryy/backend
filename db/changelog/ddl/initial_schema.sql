@@ -227,6 +227,7 @@ CREATE INDEX index_client_id_coin ON coins (client_id);
 create table user_location
 (
     client_id       varchar(60)              not null,
+    client_id       varchar(60)              not null,
     latitude        varchar(60)              not null,
     longitude       varchar(60)              not null,
     last_visitation timestamp with time zone not null default current_timestamp,

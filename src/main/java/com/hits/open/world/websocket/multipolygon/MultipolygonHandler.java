@@ -71,8 +71,7 @@ public class MultipolygonHandler extends AbstractWebSocketHandler {
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
-        //TODO: find all points with session = :session and add distance for user
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
         log.info("Connection closed on session: {} with status: {}", session.getId(), closeStatus.getCode());
     }
 

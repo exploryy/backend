@@ -13,4 +13,8 @@ public final class LevelUtil {
 
         return (experience - 3000) / 5000 + 1;
     }
+
+    public static int calculateTotalExperienceInLevel(int level) {
+        return 3000 + 5000 * (level - 1);
+    }
 }
