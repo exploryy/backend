@@ -48,10 +48,10 @@ public class UserController {
 
     @SecurityRequirement(name = "oauth2")
     @PostMapping(path = "/profile")
-    public void updateProfile(@RequestParam("username") Optional<String> username,
-                              @RequestParam("email") Optional<String> email,
-                              @RequestParam("password") Optional<String> password,
-                              @RequestParam("avatar") Optional<MultipartFile> avatar,
+    public void updateProfile(@RequestParam(value = "username", required = false) Optional<String> username,
+                              @RequestParam(value = "email", required = false) Optional<String> email,
+                              @RequestParam(value = "password", required = false) Optional<String> password,
+                              @RequestParam(value = "avatar", required = false) Optional<MultipartFile> avatar,
                               JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
         var dto = new UpdateUserDto(
