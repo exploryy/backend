@@ -13,6 +13,8 @@ public record CommonQuestDto(
         DifficultyType difficultyType,
         QuestType questType,
         TransportType transportType,
+        String longitude,
+        String latitude,
         List<String> images
 ) {
 }

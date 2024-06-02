@@ -3,6 +3,7 @@ package com.hits.open.world.core.quest;
 import com.hits.open.world.core.file.FileMetadata;
 import com.hits.open.world.core.file.FileStorageService;
 import com.hits.open.world.core.quest.repository.QuestRepository;
+import com.hits.open.world.core.quest.repository.entity.PointEntity;
 import com.hits.open.world.core.quest.repository.entity.pass_quest.PassQuestEntity;
 import com.hits.open.world.core.quest.repository.entity.quest.DifficultyType;
 import com.hits.open.world.core.quest.repository.entity.quest.QuestEntity;
@@ -211,7 +212,9 @@ public class QuestService {
 
         return new DistanceQuestDto(
                 toDto(quest),
-                distanceQuest.routeDistance()
+                distanceQuest.routeDistance(),
+                distanceQuest.longitude(),
+                distanceQuest.latitude()
         );
     }
 
@@ -358,6 +361,7 @@ public class QuestService {
                 .map(Optional::get)
                 .toList();
 
+        var cord = getCoordinates(entity);
         return new CommonQuestDto(
                 entity.questId(),
                 entity.name(),
@@ -365,7 +369,26 @@ public class QuestService {
                 entity.difficultyType(),
                 entity.questType(),
                 entity.transportType(),
+                cord.longitude(),
+                cord.latitude(),
                 photos
         );
+    }
+
+    private PointEntity getCoordinates(QuestEntity entity) {
+        switch (entity.questType()) {
+            case POINT_TO_POINT -> {
+                var pointToPointQuest = questRepository.getPointToPointQuestByQuestId(entity.questId())
+                        .orElseThrow(() -> new ExceptionInApplication("Point to point quest not found", ExceptionType.NOT_FOUND));
+                var route = routeService.getRoute(pointToPointQuest.routeId());
+                return new PointEntity(route.points().getFirst().longitude(), route.points().getFirst().latitude());
+            }
+            case DISTANCE -> {
+                var distanceQuest = questRepository.getDistanceQuestByQuestId(entity.questId())
+                        .orElseThrow(() -> new ExceptionInApplication("Distance quest not found", ExceptionType.NOT_FOUND));
+                return new PointEntity(distanceQuest.longitude(), distanceQuest.latitude());
+            }
+            default -> throw new ExceptionInApplication("Quest type not found", ExceptionType.NOT_FOUND);
+        }
     }
 }
