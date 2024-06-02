@@ -105,5 +105,29 @@ public class MultipolygonRepositoryImpl implements MultipolygonRepository {
             return null;
         }
     }
+
+    @Override
+    public boolean isPointInPolygon(Point point, String userId) {
+        var sql = """
+            WITH polygon_temporary AS (
+                SELECT (ST_Dump(geom)).geom AS part_geom
+                FROM multipolygon
+                WHERE client_id = :clientId
+            )
+                                    
+            SELECT EXISTS (
+                SELECT 1
+                FROM polygon_temporary
+                WHERE ST_Contains(part_geom, ST_SetSRID(ST_MakePoint(:lon, :lat), 4326))
+            );
+            """;
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("clientId", userId);
+        params.addValue("lon", point.getX());
+        params.addValue("lat", point.getY());
+        return jdbcTemplate.queryForObject(sql, params, Boolean.class);
+    }
+
 }
 

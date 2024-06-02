@@ -9,6 +9,7 @@ import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.multipolygon.CreatePolygonRequestDto;
 import com.hits.open.world.public_interface.multipolygon.CreatePolygonResponseDto;
 import com.hits.open.world.public_interface.multipolygon.geo.GeoDto;
+import com.hits.open.world.public_interface.statistic.UpdateStatisticDto;
 import com.hits.open.world.public_interface.user_location.LocationDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
 import java.math.BigDecimal;
 import java.security.Principal;
+import java.time.OffsetDateTime;
 
 import static org.springframework.web.socket.CloseStatus.SERVER_ERROR;
 
@@ -46,9 +48,13 @@ public class MultipolygonHandler extends AbstractWebSocketHandler {
         var userId = getUserId(session);
         var coordinateDto = parseCoordinate(message);
 
-        var userCoordinate = new LocationDto(userId, coordinateDto.latitude(), coordinateDto.longitude());
-        userLocationService.updateUserLocation(userCoordinate);
-        statisticService.updateStatistic(session.getId(), userCoordinate);
+        var locationInfo = new LocationDto(userId, coordinateDto.latitude(), coordinateDto.longitude());
+        boolean isNewTerritory = multipolygonService.isNewTerritory(locationInfo);
+        var updateStatisticDto = new UpdateStatisticDto(userId, session.getId(), coordinateDto.latitude(),
+                coordinateDto.longitude(), isNewTerritory, OffsetDateTime.now());
+
+        statisticService.updateStatistic(updateStatisticDto);
+        userLocationService.updateUserLocation(locationInfo);
 
         multipolygonService.save(coordinateDto, userId);
         BigDecimal areaPercent = multipolygonService.calculatePercentArea(userId);

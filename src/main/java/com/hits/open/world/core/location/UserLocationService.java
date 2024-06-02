@@ -37,7 +37,12 @@ public class UserLocationService {
             return;
         }
 
-        userLocationRepository.save(entity);
+        if (savedEntity.isPresent()) {
+            userLocationRepository.update(entity);
+        } else {
+            userLocationRepository.save(entity);
+        }
+
         coinService.deleteAllClientCoins(locationDto.clientId());
         generateNewCoins(locationDto);
     }

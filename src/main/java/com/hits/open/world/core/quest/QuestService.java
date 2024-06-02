@@ -108,6 +108,7 @@ public class QuestService {
     }
 
     public void finishQuest(Long questId, String userId) {
+        //TODO: в задание вшить сколько опыта грязными будет
         statisticService.updateExperience(userId, 10);
         //TODO: тут какой-то должен быть механизм отслеживания завершения квеста, в сервисе
     }

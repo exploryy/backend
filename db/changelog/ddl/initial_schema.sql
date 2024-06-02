@@ -229,7 +229,7 @@ create table user_location
     client_id       varchar(60)              not null,
     latitude        varchar(60)              not null,
     longitude       varchar(60)              not null,
-    last_visitation TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_visitation timestamp with time zone not null default current_timestamp,
     primary key (client_id)
 );
 
@@ -339,6 +339,7 @@ create table client_statistic
     previous_latitude  varchar(60),
     previous_longitude varchar(60),
     distance           integer      not null default 0,
+    last_update        timestamp with time zone not null default current_timestamp,
     primary key (client_id)
 );
 

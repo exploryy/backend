@@ -2,6 +2,8 @@ package com.hits.open.world.core.statistic.repository;
 
 import lombok.Builder;
 
+import java.time.OffsetDateTime;
+
 @Builder
 public record StatisticEntity(
         String clientId,
@@ -9,6 +11,7 @@ public record StatisticEntity(
         int distance,
         String webSessionId,
         String previousLatitude,
-        String previousLongitude
+        String previousLongitude,
+        OffsetDateTime lastUpdate
 ) {
 }
