@@ -33,7 +33,7 @@ public class FriendController {
     public void removeFriend(@RequestParam("friend_id") String friendId,
                              JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
-        friendService.removeFriendRequest(userId, friendId);
+        friendService.removeFriend(userId, friendId);
     }
 
     @PostMapping(path = "/accept")

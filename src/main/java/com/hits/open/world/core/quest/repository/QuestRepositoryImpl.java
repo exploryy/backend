@@ -209,6 +209,8 @@ public class QuestRepositoryImpl implements QuestRepository {
         create.insertInto(DISTANCE_QUEST)
                 .set(DISTANCE_QUEST.QUEST_ID, entity.questId())
                 .set(DISTANCE_QUEST.ROUTE_DISTANCE, entity.routeDistance())
+                .set(DISTANCE_QUEST.LONGITUDE, entity.longitude())
+                .set(DISTANCE_QUEST.LATITUDE, entity.latitude())
                 .execute();
     }
 

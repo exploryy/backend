@@ -77,7 +77,9 @@ public class QuestController {
                                     @RequestParam("difficulty_type") String difficultyType,
                                     @RequestParam("transport_type") String transportType,
                                     @RequestParam("images") List<MultipartFile> images,
-                                    @RequestParam("distance") Double distance) {
+                                    @RequestParam("distance") Double distance,
+                                    @RequestParam("longitude") String longitude,
+                                    @RequestParam("latitude") String latitude) {
         var createDto = new CreateQuestDto(
                 name,
                 description,
@@ -86,7 +88,12 @@ public class QuestController {
                 transportType,
                 images
         );
-        questService.createDistanceQuest(new CreateDistanceQuestDto(createDto, distance));
+        questService.createDistanceQuest(new CreateDistanceQuestDto(
+                createDto,
+                distance,
+                longitude,
+                latitude
+        ));
     }
 
     @DeleteMapping

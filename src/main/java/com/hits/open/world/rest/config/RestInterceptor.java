@@ -2,6 +2,7 @@ package com.hits.open.world.rest.config;
 
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
+@Slf4j
 @ControllerAdvice
 public class RestInterceptor extends ResponseEntityExceptionHandler {
     private static final Map<ExceptionType, HttpStatus> STATUS_MAP = Map.of(
@@ -30,6 +33,8 @@ public class RestInterceptor extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {ExceptionInApplication.class})
     protected ResponseEntity<Object> handleException(ExceptionInApplication ex, WebRequest request) {
+        log.error(ex.getMessage());
+
         final HttpStatus status = STATUS_MAP.get(ex.getType());
         return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), status, request);
     }

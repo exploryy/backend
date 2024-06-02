@@ -114,6 +114,25 @@ public class KeycloakUserClient implements UserClient {
         return Optional.of(userRepresentationToEntity(userRepresentation));
     }
 
+    @Override
+    public List<UserEntity> getUsersByUsername(String username) {
+        UsersResource usersResource = getUsersResource();
+        List<UserRepresentation> userRepresentations = usersResource.searchByUsername(username, false);
+        return userRepresentations.stream()
+                .map(this::userRepresentationToEntity)
+                .toList();
+    }
+
+    @Override
+    public List<UserEntity> getAllUsers() {
+        UsersResource usersResource = getUsersResource();
+        List<UserRepresentation> userRepresentations = usersResource.list();
+        return userRepresentations.stream()
+                .map(this::userRepresentationToEntity)
+                .toList();
+    }
+
+
     private UsersResource getUsersResource() {
         RealmResource realm1 = keycloak.realm(realm);
         return realm1.users();

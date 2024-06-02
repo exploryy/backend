@@ -8,7 +8,9 @@ public class DistanceQuestEntityMapper implements RecordMapper<DistanceQuestReco
     public DistanceQuestEntity map(DistanceQuestRecord distanceQuestRecord) {
         return new DistanceQuestEntity(
                 distanceQuestRecord.getQuestId(),
-                distanceQuestRecord.getRouteDistance()
+                distanceQuestRecord.getRouteDistance(),
+                distanceQuestRecord.getLongitude(),
+                distanceQuestRecord.getLatitude()
         );
     }
 }
