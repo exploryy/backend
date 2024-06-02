@@ -14,6 +14,8 @@ function create_user_and_database() {
 EOSQL
 }
 echo "$POSTGRES_USER"
+echo "$POSTGRES_USER"
+echo "$POSTGRES_USER"
 
 echo "$POSTGRES_USER"
 if [ -n "$POSTGRES_MULTIPLE_DATABASES" ]; then

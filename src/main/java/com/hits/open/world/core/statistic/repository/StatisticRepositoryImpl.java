@@ -32,6 +32,7 @@ public class StatisticRepositoryImpl implements StatisticRepository {
                 .set(CLIENT_STATISTIC.WEB_SESSION_ID, statistic.webSessionId())
                 .set(CLIENT_STATISTIC.PREVIOUS_LATITUDE, statistic.previousLatitude())
                 .set(CLIENT_STATISTIC.PREVIOUS_LONGITUDE, statistic.previousLongitude())
+                .set(CLIENT_STATISTIC.LAST_UPDATE, statistic.lastUpdate())
                 .returning()
                 .fetchOne(mapper);
     }
@@ -44,6 +45,7 @@ public class StatisticRepositoryImpl implements StatisticRepository {
                 .set(CLIENT_STATISTIC.WEB_SESSION_ID, statistic.webSessionId())
                 .set(CLIENT_STATISTIC.PREVIOUS_LONGITUDE, statistic.previousLongitude())
                 .set(CLIENT_STATISTIC.PREVIOUS_LATITUDE, statistic.previousLatitude())
+                .set(CLIENT_STATISTIC.LAST_UPDATE, statistic.lastUpdate())
                 .where(CLIENT_STATISTIC.CLIENT_ID.eq(statistic.clientId()))
                 .execute();
     }

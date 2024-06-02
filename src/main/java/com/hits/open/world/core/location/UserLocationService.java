@@ -1,24 +1,31 @@
 package com.hits.open.world.core.location;
 
 import com.hits.open.world.core.coin.CoinService;
+import com.hits.open.world.core.friend.repository.NotificationFriendService;
 import com.hits.open.world.core.location.repository.UserLocationEntity;
 import com.hits.open.world.core.location.repository.UserLocationRepository;
+import com.hits.open.world.core.statistic.StatisticService;
 import com.hits.open.world.public_interface.user_location.LocationDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.time.OffsetDateTime;
 import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
 public class UserLocationService {
-    private static final double DEGREES_TO_KM_LAT = 111.0;
-    private static final double RADIUS_IN_KILOMETERS = 2.0;
-    private static final int POINTS_NUMBER = 2;
+    private static final SecureRandom secureRandom = new SecureRandom();
+    private static final double EARTH_RADIUS_KM = 6371.0;
+    private static final double RADIUS_IN_KILOMETERS = 1.0;
+    private static final int MIN_POINTS_NUMBER = 2;
     private final UserLocationRepository userLocationRepository;
+    private final StatisticService statisticService;
+    private final NotificationFriendService notificationFriendService;
     private final CoinService coinService;
 
     @Transactional
@@ -32,26 +39,31 @@ public class UserLocationService {
                 .clientId(locationDto.clientId())
                 .build();
 
+        notificationFriendService.notifyFriendsAboutNewLocation(locationDto);
+
         if (savedEntity.isPresent() && checkIfLessOneDay(savedEntity.get())) {
             userLocationRepository.update(entity);
             return;
         }
 
-        userLocationRepository.save(entity);
+        if (savedEntity.isPresent()) {
+            userLocationRepository.update(entity);
+        } else {
+            userLocationRepository.save(entity);
+        }
+
         coinService.deleteAllClientCoins(locationDto.clientId());
         generateNewCoins(locationDto);
     }
 
     private void generateNewCoins(LocationDto locationDto) {
-        for (int i = 0; i < POINTS_NUMBER; i++) {
-            double randomOffsetLat = Math.random() * (RADIUS_IN_KILOMETERS / DEGREES_TO_KM_LAT);
-            double randomOffsetLon = Math.random() * (RADIUS_IN_KILOMETERS /
-                    (DEGREES_TO_KM_LAT * Math.cos(Math.toRadians(locationDto.latitude().doubleValue()))));
+        var userStatistic = statisticService.getUserStatistics(locationDto.clientId());
+        int userLevel = userStatistic.level();
+        int coinsCount = Math.max(userLevel, MIN_POINTS_NUMBER);
 
-            BigDecimal latitude = BigDecimal.valueOf(randomOffsetLat).add(BigDecimal.valueOf(randomOffsetLon));
-            BigDecimal longitude = BigDecimal.valueOf(randomOffsetLon).add(BigDecimal.valueOf(randomOffsetLon));
-            LocationDto location = new LocationDto(locationDto.clientId(), latitude, longitude);
-            coinService.save(location);
+        for (int i = 0; i < coinsCount; i++) {
+            LocationDto newLocation = generateRandomLocation(locationDto);
+            coinService.save(newLocation);
         }
     }
 
@@ -61,6 +73,25 @@ public class UserLocationService {
 
     private boolean checkIfLessOneDay(UserLocationEntity entity) {
         return entity.lastVisitation().isAfter(OffsetDateTime.now().minusDays(1));
+    }
+
+    private LocationDto generateRandomLocation(LocationDto baseLocation) {
+        double lat = baseLocation.latitude().doubleValue();
+        double lon = baseLocation.longitude().doubleValue();
+
+        double angle = secureRandom.nextDouble() * 2 * Math.PI;
+        double distance = secureRandom.nextDouble() * RADIUS_IN_KILOMETERS;
+
+        double deltaLat = distance / EARTH_RADIUS_KM * (180 / Math.PI);
+        double deltaLon = distance / (EARTH_RADIUS_KM * Math.cos(Math.toRadians(lat))) * (180 / Math.PI);
+
+        double newLat = lat + deltaLat * Math.cos(angle);
+        double newLon = lon + deltaLon * Math.sin(angle);
+
+        BigDecimal latitude = BigDecimal.valueOf(newLat).setScale(20, BigDecimal.ROUND_HALF_UP);
+        BigDecimal longitude = BigDecimal.valueOf(newLon).setScale(20, BigDecimal.ROUND_HALF_UP);
+
+        return new LocationDto(baseLocation.clientId(), latitude, longitude);
     }
 
 }

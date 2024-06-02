@@ -16,5 +16,7 @@ public interface MultipolygonRepository {
     String getAllCoordinates(String userId);
 
     String getPolygonByPoint(Point point, String userId);
+
+    boolean isPointInPolygon(Point point, String userId);
 }
 

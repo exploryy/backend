@@ -7,6 +7,18 @@ public final class LevelUtil {
     }
 
     public static int calculateLevel(int experience) {
-        return (int) Math.floor((Math.sqrt(8 * experience + 1) - 1) / 2);
+        if (experience < 3000) {
+            return 0;
+        }
+
+        return (experience - 3000) / 5000 + 1;
+    }
+
+    public static int calculateTotalExperienceInLevel(int level) {
+        if (level == 0) {
+            return 3000;
+        }
+
+        return 3000 + 5000 * (level - 1);
     }
 }

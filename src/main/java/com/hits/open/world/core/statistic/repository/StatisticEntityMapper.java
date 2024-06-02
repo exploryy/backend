@@ -13,7 +13,8 @@ public class StatisticEntityMapper implements RecordMapper<ClientStatisticRecord
                 clientStatisticRecord.getDistance(),
                 clientStatisticRecord.getWebSessionId(),
                 clientStatisticRecord.getPreviousLatitude(),
-                clientStatisticRecord.getPreviousLongitude()
+                clientStatisticRecord.getPreviousLongitude(),
+                clientStatisticRecord.getLastUpdate()
         );
     }
 }

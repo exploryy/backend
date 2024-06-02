@@ -163,6 +163,7 @@ public class QuestService {
 
     @Transactional
     public void finishQuest(Long questId, String userId) {
+        //TODO: в задание вшить сколько опыта грязными будет
         statisticService.updateExperience(userId, 10);
         var passQuest = questRepository.getPassQuestById(questId)
                 .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));

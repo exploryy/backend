@@ -12,7 +12,7 @@ public final class DistanceCalculator {
         return (int) (calculateHaversineInKM(lat1, long1, lat2, long2) * 1000D);
     }
 
-    public static double calculateHaversineInKM(double lat1, double long1, double lat2, double long2) {
+    private static double calculateHaversineInKM(double lat1, double long1, double lat2, double long2) {
         double dlong = (long2 - long1) * D2R;
         double dlat = (lat2 - lat1) * D2R;
         double a = Math.pow(Math.sin(dlat / 2D), 2D) + Math.cos(lat1 * D2R) * Math.cos(lat2 * D2R)

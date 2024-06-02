@@ -9,6 +9,7 @@ import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.multipolygon.AreaDtoResponse;
 import com.hits.open.world.public_interface.multipolygon.CreatePolygonRequestDto;
 import com.hits.open.world.public_interface.multipolygon.geo.GeoDto;
+import com.hits.open.world.public_interface.user_location.LocationDto;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -48,6 +49,12 @@ public class MultipolygonService {
         BigDecimal userArea = multipolygonRepository.calculateArea(userId);
         BigDecimal tomskArea = multipolygonRepository.calculateArea(TOMSK_ID);
         return userArea.divide(tomskArea, 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+    }
+
+    public boolean isNewTerritory(LocationDto locationDto) {
+        var coordinate = new Coordinate(locationDto.longitude().doubleValue(), locationDto.latitude().doubleValue());
+        var point = new GeometryFactory().createPoint(coordinate);
+        return multipolygonRepository.isPointInPolygon(point, locationDto.clientId());
     }
 
     public GeoDto getAllPolygonsFriend(String userId, String friendId) {
