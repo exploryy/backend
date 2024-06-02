@@ -66,7 +66,11 @@ public class UserController {
     }
 
     @GetMapping
-    public List<ProfileDto> getUsers(@RequestParam(value = "username", required = false) Optional<String> username) {
-        return userService.getUsers(username);
+    public List<ProfileDto> getUsers(@RequestParam(value = "username", required = false) Optional<String> username,
+                                     JwtAuthenticationToken token) {
+        var userId = token.getTokenAttributes().get("sub").toString();
+        return userService.getUsers(username).stream()
+                .filter(user -> !user.userId().equals(userId))
+                .toList();
     }
 }
