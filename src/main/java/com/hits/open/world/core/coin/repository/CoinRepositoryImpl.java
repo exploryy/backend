@@ -20,8 +20,9 @@ public class CoinRepositoryImpl implements CoinRepository {
         return create.insertInto(COINS)
                 .set(COINS.CLIENT_ID, coinEntity.clientId())
                 .set(COINS.LATITUDE, coinEntity.latitude())
+                .set(COINS.VALUE, coinEntity.value())
                 .set(COINS.LONGITUDE, coinEntity.longitude())
-                .returning(COINS.COIN_ID, COINS.LATITUDE, COINS.LONGITUDE, COINS.TAKEN, COINS.CLIENT_ID)
+                .returning(COINS.COIN_ID, COINS.LATITUDE, COINS.LONGITUDE, COINS.VALUE, COINS.TAKEN, COINS.CLIENT_ID)
                 .fetchOne(mapper);
     }
 

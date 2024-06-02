@@ -6,7 +6,6 @@ import com.hits.open.world.public_interface.multipolygon.geo.GeoDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,13 +24,6 @@ public class MultiPolygonController {
         return multipolygonService.getAllPolygons(userId);
     }
 
-    @GetMapping(path = "/friend", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public GeoDto getPolygonsMyFriend(@RequestParam("friend_id") String friendId,
-                                      JwtAuthenticationToken token) {
-        var userId = token.getTokenAttributes().get("sub").toString();
-        return multipolygonService.getAllPolygonsFriend(userId, friendId);
-    }
-
     @GetMapping("/area")
     public AreaDtoResponse calculateArea(JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
@@ -42,6 +34,13 @@ public class MultiPolygonController {
     public void deleteMultipolygon(JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
         multipolygonService.delete(userId);
+    }
+
+    @GetMapping("/friend")
+    public GeoDto getPolygonsMyFriend(@RequestParam("friend_id") String friendId,
+                                      JwtAuthenticationToken token) {
+        var userId = token.getTokenAttributes().get("sub").toString();
+        return multipolygonService.getAllPolygonsFriend(userId, friendId);
     }
 
 }

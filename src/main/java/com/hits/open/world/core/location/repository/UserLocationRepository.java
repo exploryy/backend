@@ -6,4 +6,6 @@ public interface UserLocationRepository {
     void save(UserLocationEntity entity);
 
     Optional<UserLocationEntity> findById(String id);
+
+    void update(UserLocationEntity entity);
 }

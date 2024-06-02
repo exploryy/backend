@@ -229,7 +229,8 @@ create table user_location
     client_id       varchar(60)              not null,
     latitude        varchar(60)              not null,
     longitude       varchar(60)              not null,
-    last_visitation TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    last_visitation TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    primary key (client_id)
 );
 
 -- rollback DROP TABLE user_location
@@ -334,9 +335,9 @@ create table client_statistic
 (
     client_id          varchar(60)  not null,
     experience         integer      not null default 0,
-    web_session_id     varchar(255) not null,
-    previous_latitude  varchar(60)  not null,
-    previous_longitude varchar(60)  not null,
+    web_session_id     varchar(255),
+    previous_latitude  varchar(60),
+    previous_longitude varchar(60),
     distance           integer      not null default 0,
     primary key (client_id)
 );

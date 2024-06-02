@@ -25,10 +25,6 @@ public class UserLocationService {
     public void updateUserLocation(LocationDto locationDto) {
         var savedEntity = getUserLocation(locationDto.clientId());
 
-        if (savedEntity.isPresent() && checkIfLessOneDay(savedEntity.get())) {
-            return;
-        }
-
         var entity = UserLocationEntity.builder()
                 .longitude(String.valueOf(locationDto.longitude()))
                 .latitude(String.valueOf(locationDto.latitude()))
@@ -36,8 +32,12 @@ public class UserLocationService {
                 .clientId(locationDto.clientId())
                 .build();
 
-        userLocationRepository.save(entity);
+        if (savedEntity.isPresent() && checkIfLessOneDay(savedEntity.get())) {
+            userLocationRepository.update(entity);
+            return;
+        }
 
+        userLocationRepository.save(entity);
         coinService.deleteAllClientCoins(locationDto.clientId());
         generateNewCoins(locationDto);
     }
