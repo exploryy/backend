@@ -3,15 +3,17 @@ package com.hits.open.world.rest.statistic;
 import com.hits.open.world.core.statistic.StatisticService;
 import com.hits.open.world.public_interface.statistic.TotalStatisticDto;
 import com.hits.open.world.public_interface.statistic.UserStatisticDto;
+import com.hits.open.world.public_interface.user_location.LocationStatisticDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,5 +36,10 @@ public class StatisticController {
         return statisticService.getUserStatistics(userId);
     }
 
+    @GetMapping("/friend/coordinates")
+    public List<LocationStatisticDto> getLocationsMyFriend(JwtAuthenticationToken token) {
+        var userId = token.getTokenAttributes().get("sub").toString();
+        return statisticService.getLocationsMyFriend(userId);
+    }
 
 }

@@ -43,4 +43,14 @@ public class UserLocationRepositoryImpl implements UserLocationRepository {
                 .where(USER_LOCATION.CLIENT_ID.eq(userId))
                 .fetchOptional(mapper);
     }
+
+    @Override
+    public void update(UserLocationEntity entity) {
+        create.update(USER_LOCATION)
+                .set(USER_LOCATION.LAST_VISITATION, entity.lastVisitation())
+                .set(USER_LOCATION.LONGITUDE, entity.longitude())
+                .set(USER_LOCATION.LATITUDE, entity.latitude())
+                .where(USER_LOCATION.CLIENT_ID.eq(entity.clientId()))
+                .execute();
+    }
 }
