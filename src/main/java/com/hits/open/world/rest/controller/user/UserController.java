@@ -66,7 +66,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<ProfileDto> getUsers(@RequestParam("username") Optional<String> username) {
+    public List<ProfileDto> getUsers(@RequestParam(value = "username", required = false) Optional<String> username) {
         return userService.getUsers(username);
     }
 }
