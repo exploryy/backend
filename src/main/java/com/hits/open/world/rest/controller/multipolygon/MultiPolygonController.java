@@ -1,4 +1,4 @@
-package com.hits.open.world.rest.multipolygon;
+package com.hits.open.world.rest.controller.multipolygon;
 
 import com.hits.open.world.core.multipolygon.MultipolygonService;
 import com.hits.open.world.public_interface.multipolygon.AreaDtoResponse;

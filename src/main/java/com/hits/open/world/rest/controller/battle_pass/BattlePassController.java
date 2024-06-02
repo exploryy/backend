@@ -1,4 +1,4 @@
-package com.hits.open.world.rest.battle_pass;
+package com.hits.open.world.rest.controller.battle_pass;
 
 import com.hits.open.world.core.battle_pass.BattlePassService;
 import com.hits.open.world.public_interface.battle_pass.BattlePassDto;

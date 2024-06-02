@@ -38,6 +38,7 @@ public class QuestService {
     private final RouteService routeService;
     private final StatisticService statisticService;
     private final FileStorageService fileStorageService;
+    //TODO: завершение квеста, выдача квестов
 
     private Long createQuest(CreateQuestDto dto) {
         var questEntity = new QuestEntity(

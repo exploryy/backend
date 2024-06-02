@@ -1,4 +1,4 @@
-package com.hits.open.world.rest.quest;
+package com.hits.open.world.rest.controller.quest;
 
 import com.hits.open.world.core.quest.QuestService;
 import com.hits.open.world.core.quest.repository.entity.quest.QuestType;
