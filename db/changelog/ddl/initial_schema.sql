@@ -134,6 +134,8 @@ create table distance_quest
 (
     quest_id       bigint           not null,
     route_distance double precision not null,
+    latitude       varchar(60)      not null,
+    longitude      varchar(60)      not null,
     primary key (quest_id),
     foreign key (quest_id) references quest (quest_id)
 );

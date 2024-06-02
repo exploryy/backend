@@ -20,7 +20,7 @@ public class InventoryRepositoryImpl implements InventoryRepository {
     public List<InventoryItemEntity> findByUserId(String userId) {
         return create.select(COSMETIC_ITEM.ITEM_ID, COSMETIC_ITEM.NAME, COSMETIC_ITEM.DESCRIPTION, COSMETIC_ITEM.PRICE, COSMETIC_ITEM.RARITY_TYPE, COSMETIC_ITEM.COSMETIC_TYPE, CLIENT_ITEM.IS_EQUIPPED)
                 .from(CLIENT_ITEM)
-                .rightJoin(COSMETIC_ITEM)
+                .join(COSMETIC_ITEM)
                 .on(CLIENT_ITEM.ITEM_ID.eq(COSMETIC_ITEM.ITEM_ID).and(CLIENT_ITEM.CLIENT_ID.eq(userId)))
                 .fetch(record -> new InventoryItemEntity(
                         record.get(COSMETIC_ITEM.ITEM_ID),

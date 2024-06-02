@@ -1,4 +1,4 @@
-package com.hits.open.world.rest.achievement;
+package com.hits.open.world.rest.controller.achievement;
 
 import com.hits.open.world.core.achievement.AchievementService;
 import com.hits.open.world.public_interface.achievement.AchievementDto;

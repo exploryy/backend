@@ -1,4 +1,4 @@
-package com.hits.open.world.rest.shop;
+package com.hits.open.world.rest.controller.shop;
 
 import com.hits.open.world.core.shop.ShopService;
 import com.hits.open.world.public_interface.cosmetic_item.CosmeticItemInShopDto;

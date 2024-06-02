@@ -1,4 +1,4 @@
-package com.hits.open.world.rest.route;
+package com.hits.open.world.rest.controller.route;
 
 import com.hits.open.world.core.route.RouteService;
 import com.hits.open.world.public_interface.route.CreateRouteDto;

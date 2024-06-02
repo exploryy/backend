@@ -1,4 +1,4 @@
-package com.hits.open.world.rest.inventory;
+package com.hits.open.world.rest.controller.inventory;
 
 import com.hits.open.world.core.inventory.InventoryService;
 import com.hits.open.world.core.shop.ShopService;

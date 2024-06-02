@@ -1,23 +1,35 @@
 package com.hits.open.world.core.quest.repository;
 
+import com.hits.open.world.core.quest.repository.entity.pass_quest.PassQuestEntity;
+import com.hits.open.world.core.quest.repository.entity.pass_quest.PassQuestEntityMapper;
+import com.hits.open.world.core.quest.repository.entity.quest.DifficultyType;
 import com.hits.open.world.core.quest.repository.entity.quest.QuestEntity;
 import com.hits.open.world.core.quest.repository.entity.quest.QuestPhotoEntity;
+import com.hits.open.world.core.quest.repository.entity.quest.QuestType;
+import com.hits.open.world.core.quest.repository.entity.quest.TransportType;
 import com.hits.open.world.core.quest.repository.entity.quest.distance.DistanceQuestEntity;
+import com.hits.open.world.core.quest.repository.entity.quest.distance.DistanceQuestEntityMapper;
 import com.hits.open.world.core.quest.repository.entity.quest.mapper.QuestEntityMapper;
 import com.hits.open.world.core.quest.repository.entity.quest.mapper.QuestPhotoEntityMapper;
 import com.hits.open.world.core.quest.repository.entity.quest.mapper.QuestReviewEntityMapper;
 import com.hits.open.world.core.quest.repository.entity.quest.mapper.ReviewPhotoEntityMapper;
 import com.hits.open.world.core.quest.repository.entity.quest.point_to_point.PointToPointQuestEntity;
+import com.hits.open.world.core.quest.repository.entity.quest.point_to_point.PointToPointQuestEntityMapper;
 import com.hits.open.world.core.quest.repository.entity.review.QuestReviewEntity;
 import com.hits.open.world.core.quest.repository.entity.review.ReviewPhotoEntity;
 import lombok.RequiredArgsConstructor;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.RecordMapper;
+import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static com.example.open_the_world.public_.Tables.DISTANCE_QUEST;
+import static com.example.open_the_world.public_.Tables.PASS_QUEST;
 import static com.example.open_the_world.public_.Tables.POINT_TO_POINT_QUEST;
 import static com.example.open_the_world.public_.Tables.QUEST_PHOTO;
 import static com.example.open_the_world.public_.Tables.QUEST_REVIEW;
@@ -31,6 +43,9 @@ public class QuestRepositoryImpl implements QuestRepository {
     private static final QuestPhotoEntityMapper questPhotoEntityMapper = new QuestPhotoEntityMapper();
     private static final QuestReviewEntityMapper questReviewEntityMapper = new QuestReviewEntityMapper();
     private static final ReviewPhotoEntityMapper reviewPhotoEntityMapper = new ReviewPhotoEntityMapper();
+    private static final PassQuestEntityMapper passQuestEntityMapper = new PassQuestEntityMapper();
+    private static final PointToPointQuestEntityMapper pointToPointQuestEntityMapper = new PointToPointQuestEntityMapper();
+    private static final DistanceQuestEntityMapper distanceQuestEntityMapper = new DistanceQuestEntityMapper();
 
     private final DSLContext create;
 
@@ -194,6 +209,120 @@ public class QuestRepositoryImpl implements QuestRepository {
         create.insertInto(DISTANCE_QUEST)
                 .set(DISTANCE_QUEST.QUEST_ID, entity.questId())
                 .set(DISTANCE_QUEST.ROUTE_DISTANCE, entity.routeDistance())
+                .set(DISTANCE_QUEST.LONGITUDE, entity.longitude())
+                .set(DISTANCE_QUEST.LATITUDE, entity.latitude())
                 .execute();
+    }
+
+    @Override
+    public List<QuestEntity> getQuestsByName(String name) {
+        Condition condition = DSL.trueCondition();
+        if (!name.isEmpty()) {
+            condition = condition.and(QUEST.NAME.contains(name));
+        }
+
+        return create.selectFrom(QUEST)
+                .where(condition)
+                .fetch(questEntityMapper);
+    }
+
+    @Override
+    public void startQuest(PassQuestEntity entity) {
+        create.insertInto(PASS_QUEST)
+                .set(PASS_QUEST.START_TIME, entity.startTime())
+                .set(PASS_QUEST.QUEST_ID, entity.questId())
+                .set(PASS_QUEST.CLIENT_ID, entity.userId())
+                .set(PASS_QUEST.TRANSPORT_TYPE, entity.transportType().name())
+                .execute();
+    }
+
+    @Override
+    public boolean isQuestStarted(Long questId, String userId) {
+        return create.fetchExists(
+                create.selectOne()
+                        .from(PASS_QUEST)
+                        .where(PASS_QUEST.QUEST_ID.eq(questId))
+                        .and(PASS_QUEST.CLIENT_ID.eq(userId))
+                        .and(PASS_QUEST.END_TIME.isNull())
+        );
+    }
+
+    @Override
+    public boolean isQuestFinished(Long questId, String userId) {
+        return create.fetchExists(
+                create.selectOne()
+                        .from(PASS_QUEST)
+                        .where(PASS_QUEST.QUEST_ID.eq(questId))
+                        .and(PASS_QUEST.CLIENT_ID.eq(userId))
+                        .and(PASS_QUEST.END_TIME.isNotNull())
+        );
+    }
+
+    @Override
+    public void updatePassQuest(PassQuestEntity entity) {
+        create.update(PASS_QUEST)
+                .set(PASS_QUEST.END_TIME, entity.endTime())
+                .set(PASS_QUEST.START_TIME, entity.startTime())
+                .set(PASS_QUEST.TRANSPORT_TYPE, entity.transportType().name())
+                .set(PASS_QUEST.ROUTE_ID, entity.routeId())
+                .set(PASS_QUEST.QUEST_ID, entity.questId())
+                .set(PASS_QUEST.CLIENT_ID, entity.userId())
+                .where(PASS_QUEST.PASS_QUEST_ID.eq(entity.passQuestId()))
+                .execute();
+    }
+
+    @Override
+    public Optional<PassQuestEntity> getPassQuestById(Long passQuestId) {
+        return create.selectFrom(PASS_QUEST)
+                .where(PASS_QUEST.PASS_QUEST_ID.eq(passQuestId))
+                .fetchOptional(passQuestEntityMapper);
+    }
+
+    @Override
+    public void deletePassQuest(Long passQuestId) {
+        create.deleteFrom(PASS_QUEST)
+                .where(PASS_QUEST.PASS_QUEST_ID.eq(passQuestId))
+                .execute();
+    }
+
+    @Override
+    public List<QuestEntity> getActiveQuests(String userId) {
+        return create.select(QUEST.QUEST_ID, QUEST.NAME, QUEST.DESCRIPTION, QUEST.DIFFICULTY_TYPE, QUEST.QUEST_TYPE, QUEST.TRANSPORT_TYPE)
+                .from(PASS_QUEST)
+                .join(QUEST).on(PASS_QUEST.QUEST_ID.eq(QUEST.QUEST_ID).and(PASS_QUEST.CLIENT_ID.eq(userId)).and(PASS_QUEST.END_TIME.isNull()))
+                .fetch(questEntityMapper());
+    }
+
+    @Override
+    public List<QuestEntity> getFinishedQuests(String userId) {
+        return create.select(QUEST.QUEST_ID, QUEST.NAME, QUEST.DESCRIPTION, QUEST.DIFFICULTY_TYPE, QUEST.QUEST_TYPE, QUEST.TRANSPORT_TYPE)
+                .from(PASS_QUEST)
+                .join(QUEST).on(PASS_QUEST.QUEST_ID.eq(QUEST.QUEST_ID).and(PASS_QUEST.CLIENT_ID.eq(userId)).and(PASS_QUEST.END_TIME.isNotNull()))
+                .fetch(questEntityMapper());
+    }
+
+    @Override
+    public Optional<PointToPointQuestEntity> getPointToPointQuestByQuestId(Long questId) {
+        return create.selectFrom(POINT_TO_POINT_QUEST)
+                .where(POINT_TO_POINT_QUEST.QUEST_ID.eq(questId))
+                .fetchOptional(pointToPointQuestEntityMapper);
+    }
+
+    @Override
+    public Optional<DistanceQuestEntity> getDistanceQuestByQuestId(Long questId) {
+        return create.selectFrom(DISTANCE_QUEST)
+                .where(DISTANCE_QUEST.QUEST_ID.eq(questId))
+                .fetchOptional(distanceQuestEntityMapper);
+    }
+
+    private RecordMapper<org.jooq.Record, QuestEntity> questEntityMapper() {
+        return record -> new QuestEntity(
+                record.get(QUEST.QUEST_ID),
+                record.get(QUEST.NAME),
+                record.get(QUEST.DESCRIPTION),
+                DifficultyType.fromString(record.get(QUEST.DIFFICULTY_TYPE)),
+                QuestType.fromString(record.get(QUEST.QUEST_TYPE)),
+                TransportType.fromString(record.get(QUEST.TRANSPORT_TYPE))
+        );
     }
 }

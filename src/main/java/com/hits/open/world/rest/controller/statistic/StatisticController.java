@@ -1,4 +1,4 @@
-package com.hits.open.world.rest.statistic;
+package com.hits.open.world.rest.controller.statistic;
 
 import com.hits.open.world.core.statistic.StatisticService;
 import com.hits.open.world.public_interface.statistic.TotalStatisticDto;

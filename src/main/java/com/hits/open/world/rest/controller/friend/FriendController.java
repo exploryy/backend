@@ -1,4 +1,4 @@
-package com.hits.open.world.rest.friend;
+package com.hits.open.world.rest.controller.friend;
 
 import com.hits.open.world.core.friend.FriendService;
 import com.hits.open.world.public_interface.friend.AllFriendDto;
@@ -33,7 +33,7 @@ public class FriendController {
     public void removeFriend(@RequestParam("friend_id") String friendId,
                              JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
-        friendService.removeFriendRequest(userId, friendId);
+        friendService.removeFriend(userId, friendId);
     }
 
     @PostMapping(path = "/accept")

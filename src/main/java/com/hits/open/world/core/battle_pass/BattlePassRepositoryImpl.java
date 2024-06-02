@@ -15,6 +15,7 @@ import static com.example.open_the_world.public_.Tables.BATTLE_PASS_LEVEL;
 import static com.example.open_the_world.public_.Tables.CLIENT_BATTLE_PASS;
 import static com.example.open_the_world.public_.Tables.ITEM_BATTLE_PASS_LEVEL;
 import static org.jooq.impl.DSL.max;
+import static org.jooq.impl.DSL.min;
 import static org.jooq.impl.DSL.sum;
 
 @Repository
@@ -55,7 +56,7 @@ public class BattlePassRepositoryImpl implements BattlePassRepository {
         create.insertInto(CLIENT_BATTLE_PASS)
                 .set(CLIENT_BATTLE_PASS.CLIENT_ID, userId)
                 .set(CLIENT_BATTLE_PASS.BATTLE_PASS_ID, battlePassId)
-                .set(CLIENT_BATTLE_PASS.LEVEL, 0)
+                .set(CLIENT_BATTLE_PASS.LEVEL, create.select(min(BATTLE_PASS_LEVEL.LEVEL)).from(BATTLE_PASS_LEVEL).where(BATTLE_PASS_LEVEL.BATTLE_PASS_ID.eq(battlePassId)))
                 .set(CLIENT_BATTLE_PASS.CURRENT_BATTLE_PASS, true)
                 .set(CLIENT_BATTLE_PASS.CURRENT_EXPERIENCE, 0)
                 .execute();

@@ -92,7 +92,7 @@ public class AchievementService {
 
     private void saveImage(MultipartFile image, Long achievementId) {
         var fileMetadata = new FileMetadata(
-                String.format("achievement-%d", achievementId),
+                String.format("achievement_%d", achievementId),
                 image.getContentType(),
                 image.getSize()
         );
@@ -104,7 +104,7 @@ public class AchievementService {
     }
 
     private void deleteImage(Long achievementId) {
-        var name = String.format("achievement-%d", achievementId);
+        var name = String.format("achievement_%d", achievementId);
         fileStorageService.deleteFile(name).subscribe();
     }
 }

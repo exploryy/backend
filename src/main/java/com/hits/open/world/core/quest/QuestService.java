@@ -3,6 +3,8 @@ package com.hits.open.world.core.quest;
 import com.hits.open.world.core.file.FileMetadata;
 import com.hits.open.world.core.file.FileStorageService;
 import com.hits.open.world.core.quest.repository.QuestRepository;
+import com.hits.open.world.core.quest.repository.entity.PointEntity;
+import com.hits.open.world.core.quest.repository.entity.pass_quest.PassQuestEntity;
 import com.hits.open.world.core.quest.repository.entity.quest.DifficultyType;
 import com.hits.open.world.core.quest.repository.entity.quest.QuestEntity;
 import com.hits.open.world.core.quest.repository.entity.quest.QuestPhotoEntity;
@@ -17,9 +19,14 @@ import com.hits.open.world.core.statistic.StatisticService;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.file.UploadFileDto;
+import com.hits.open.world.public_interface.quest.CommonQuestDto;
 import com.hits.open.world.public_interface.quest.CreateDistanceQuestDto;
 import com.hits.open.world.public_interface.quest.CreatePointToPointQuestDto;
 import com.hits.open.world.public_interface.quest.CreateQuestDto;
+import com.hits.open.world.public_interface.quest.DistanceQuestDto;
+import com.hits.open.world.public_interface.quest.GetQuestsDto;
+import com.hits.open.world.public_interface.quest.PointToPointQuestDto;
+import com.hits.open.world.public_interface.quest.StartQuestDto;
 import com.hits.open.world.public_interface.quest.UpdateQuestDto;
 import com.hits.open.world.public_interface.quest.review.AddImageQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.CreateQuestReviewDto;
@@ -30,6 +37,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -71,9 +82,32 @@ public class QuestService {
         var questId = createQuest(dto.questDto());
         var distanceQuestEntity = new DistanceQuestEntity(
                 questId,
-                dto.distance()
+                dto.distance(),
+                dto.longitude(),
+                dto.latitude()
         );
         questRepository.createDistanceQuest(distanceQuestEntity);
+    }
+
+    public List<CommonQuestDto> getQuests(GetQuestsDto dto) {
+        return questRepository.getQuestsByName(dto.name())
+                .stream()
+                .map(this::toDto)
+                .toList();
+    }
+
+    public List<CommonQuestDto> getMyCompletedQuests(String userId) {
+        return questRepository.getFinishedQuests(userId)
+                .stream()
+                .map(this::toDto)
+                .toList();
+    }
+
+    public List<CommonQuestDto> getMyActiveQuests(String userId) {
+        return questRepository.getActiveQuests(userId)
+                .stream()
+                .map(this::toDto)
+                .toList();
     }
 
     @Transactional
@@ -103,14 +137,86 @@ public class QuestService {
         questRepository.updateQuest(updatedEntity);
     }
 
-    public void startQuest(Long questId, String userId) {
-        //TODO: тут какой-то должен быть механизм отслеживания начала квеста
+    @Transactional
+    public void startQuest(StartQuestDto dto) {
+        if (!getMyActiveQuests(dto.userId()).isEmpty()) {
+            throw new ExceptionInApplication("You already have active quest", ExceptionType.ALREADY_EXISTS);
+        }
+        if(questRepository.isQuestFinished(dto.questId(), dto.userId())) {
+            throw new ExceptionInApplication("Quest already finished", ExceptionType.ALREADY_EXISTS);
+        }
+        if(questRepository.isQuestStarted(dto.questId(), dto.userId())) {
+            throw new ExceptionInApplication("Quest already started", ExceptionType.ALREADY_EXISTS);
+        }
+
+        var passQuestEntity = new PassQuestEntity(
+                null,
+                dto.questId(),
+                null,
+                dto.userId(),
+                TransportType.valueOf(dto.transportType()),
+                LocalDateTime.now(),
+                null
+        );
+        questRepository.startQuest(passQuestEntity);
     }
 
+    @Transactional
     public void finishQuest(Long questId, String userId) {
         //TODO: в задание вшить сколько опыта грязными будет
         statisticService.updateExperience(userId, 10);
-        //TODO: тут какой-то должен быть механизм отслеживания завершения квеста, в сервисе
+        var passQuest = questRepository.getPassQuestById(questId)
+                .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));
+        if (!passQuest.userId().equals(userId)) {
+            throw new ExceptionInApplication("It's not your quest", ExceptionType.FORBIDDEN);
+        }
+
+        var updatedEntity = new PassQuestEntity(
+                passQuest.passQuestId(),
+                passQuest.questId(),
+                passQuest.routeId(),
+                passQuest.userId(),
+                passQuest.transportType(),
+                passQuest.startTime(),
+                LocalDateTime.now()
+        );
+        questRepository.updatePassQuest(updatedEntity);
+    }
+
+    @Transactional
+    public void cancelQuest(Long questId, String userId) {
+        var passQuest = questRepository.getPassQuestById(questId)
+                .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));
+        if (!passQuest.userId().equals(userId)) {
+            throw new ExceptionInApplication("It's not your quest", ExceptionType.FORBIDDEN);
+        }
+
+        questRepository.deletePassQuest(questId);
+    }
+
+    public PointToPointQuestDto getPointToPointQuest(Long questId) {
+        var quest = questRepository.getQuestById(questId)
+                .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));
+        var pointToPointQuest = questRepository.getPointToPointQuestByQuestId(questId)
+                .orElseThrow(() -> new ExceptionInApplication("Point to point quest not found", ExceptionType.NOT_FOUND));
+        return new PointToPointQuestDto(
+                toDto(quest),
+                routeService.getRoute(pointToPointQuest.routeId())
+        );
+    }
+
+    public DistanceQuestDto getDistanceQuest(Long questId) {
+        var quest = questRepository.getQuestById(questId)
+                .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));
+        var distanceQuest = questRepository.getDistanceQuestByQuestId(questId)
+                .orElseThrow(() -> new ExceptionInApplication("Distance quest not found", ExceptionType.NOT_FOUND));
+
+        return new DistanceQuestDto(
+                toDto(quest),
+                distanceQuest.routeDistance(),
+                distanceQuest.longitude(),
+                distanceQuest.latitude()
+        );
     }
 
     public void saveQuestImage(MultipartFile image, Long questId) {
@@ -245,5 +351,45 @@ public class QuestService {
 
     private void deleteImage(String fileName) {
         fileStorageService.deleteFile(fileName).subscribe();
+    }
+
+    private CommonQuestDto toDto(QuestEntity entity) {
+        var photos = questRepository.getQuestPhotosByQuestId(entity.questId())
+                .parallelStream()
+                .map(photoEntity -> "quest_%d_photo_%d".formatted(entity.questId(), photoEntity.questPhotoId()))
+                .map(fileStorageService::getDownloadLinkByName)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+
+        var cord = getCoordinates(entity);
+        return new CommonQuestDto(
+                entity.questId(),
+                entity.name(),
+                entity.description(),
+                entity.difficultyType(),
+                entity.questType(),
+                entity.transportType(),
+                cord.longitude(),
+                cord.latitude(),
+                photos
+        );
+    }
+
+    private PointEntity getCoordinates(QuestEntity entity) {
+        switch (entity.questType()) {
+            case POINT_TO_POINT -> {
+                var pointToPointQuest = questRepository.getPointToPointQuestByQuestId(entity.questId())
+                        .orElseThrow(() -> new ExceptionInApplication("Point to point quest not found", ExceptionType.NOT_FOUND));
+                var route = routeService.getRoute(pointToPointQuest.routeId());
+                return new PointEntity(route.points().getFirst().longitude(), route.points().getFirst().latitude());
+            }
+            case DISTANCE -> {
+                var distanceQuest = questRepository.getDistanceQuestByQuestId(entity.questId())
+                        .orElseThrow(() -> new ExceptionInApplication("Distance quest not found", ExceptionType.NOT_FOUND));
+                return new PointEntity(distanceQuest.longitude(), distanceQuest.latitude());
+            }
+            default -> throw new ExceptionInApplication("Quest type not found", ExceptionType.NOT_FOUND);
+        }
     }
 }
