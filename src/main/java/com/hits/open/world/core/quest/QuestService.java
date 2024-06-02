@@ -2,6 +2,7 @@ package com.hits.open.world.core.quest;
 
 import com.hits.open.world.core.file.FileMetadata;
 import com.hits.open.world.core.file.FileStorageService;
+import com.hits.open.world.core.multipolygon.repository.MultipolygonRepository;
 import com.hits.open.world.core.quest.repository.QuestRepository;
 import com.hits.open.world.core.quest.repository.entity.PointEntity;
 import com.hits.open.world.core.quest.repository.entity.pass_quest.PassQuestEntity;
@@ -33,6 +34,9 @@ import com.hits.open.world.public_interface.quest.review.CreateQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.DeleteImageQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.DeleteQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.UpdateQuestReviewDto;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +53,7 @@ public class QuestService {
     private final RouteService routeService;
     private final StatisticService statisticService;
     private final FileStorageService fileStorageService;
+    private final MultipolygonRepository multipolygonRepository;
 
     private Long createQuest(CreateQuestDto dto) {
         var questEntity = new QuestEntity(
@@ -92,6 +97,12 @@ public class QuestService {
     public List<CommonQuestDto> getQuests(GetQuestsDto dto) {
         return questRepository.getQuestsByName(dto.name())
                 .stream()
+                .filter(quest -> {
+                    var cord = getCoordinates(quest);
+                    var coordinate = new Coordinate(Double.parseDouble(cord.longitude()), Double.parseDouble(cord.latitude()));
+                    var point = new GeometryFactory().createPoint(coordinate);
+                    return multipolygonRepository.isPointInPolygon(point, dto.userId());
+                })
                 .map(this::toDto)
                 .toList();
     }
@@ -112,7 +123,6 @@ public class QuestService {
 
     @Transactional
     public void deleteQuest(Long questId) {
-        //TODO: надо дочерние сущности подчищать
         var quest = questRepository.getQuestById(questId)
                 .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));
         questRepository.deleteQuest(questId);

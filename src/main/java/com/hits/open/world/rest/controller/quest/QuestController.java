@@ -236,9 +236,13 @@ public class QuestController {
     }
 
     @GetMapping(path = "/list")
-    public List<CommonQuestDto> getQuestsList(@RequestParam(value = "name", required = false) Optional<String> name) {
+    public List<CommonQuestDto> getQuestsList(
+            @RequestParam(value = "name", required = false) Optional<String> name,
+            JwtAuthenticationToken token) {
+        var userId = token.getTokenAttributes().get("sub").toString();
         var dto = new GetQuestsDto(
-                name.orElse("")
+                name.orElse(""),
+                userId
         );
         return questService.getQuests(dto);
     }
