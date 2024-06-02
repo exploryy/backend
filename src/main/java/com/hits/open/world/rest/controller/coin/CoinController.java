@@ -1,4 +1,4 @@
-package com.hits.open.world.rest.coin;
+package com.hits.open.world.rest.controller.coin;
 
 import com.hits.open.world.core.coin.CoinService;
 import com.hits.open.world.public_interface.coin.CoinRequestDto;

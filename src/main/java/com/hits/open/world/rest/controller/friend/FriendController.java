@@ -1,4 +1,4 @@
-package com.hits.open.world.rest.friend;
+package com.hits.open.world.rest.controller.friend;
 
 import com.hits.open.world.core.friend.FriendService;
 import com.hits.open.world.public_interface.friend.AllFriendDto;

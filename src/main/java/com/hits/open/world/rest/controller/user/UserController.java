@@ -1,4 +1,4 @@
-package com.hits.open.world.rest.user;
+package com.hits.open.world.rest.controller.user;
 
 import com.hits.open.world.core.user.UserService;
 import com.hits.open.world.public_interface.user.CreateUserDto;
