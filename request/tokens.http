@@ -1,4 +1,8 @@
 POST http://158.160.69.160:8082/realms/hits-project/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
-client_id=users-app&client_secret=123456789&grant_type=password&username=gfgdg5&password=123456
+client_id=users-app&client_secret=123456789&grant_type=password&username=clown&password=123456
+
+// clown 123456 9bf9d48a-d277-46c3-a5c1-4d1c22454036
+// gfgdg5 123456
+// sanya228 12345 31d37216-9caf-4526-9080-f2f55c7a3380 с него на clown смотреть
