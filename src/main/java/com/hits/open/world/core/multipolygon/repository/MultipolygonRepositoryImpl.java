@@ -50,9 +50,13 @@ public class MultipolygonRepositoryImpl implements MultipolygonRepository {
     public BigDecimal calculateArea(String userId) {
         try {
             var sql = """
-                    SELECT ST_Area(ST_Transform(geom, 26986)) AS sqm
-                    FROM multipolygon
-                    WHERE client_id = :clientId;
+                    WITH polygons AS (
+                        SELECT geom FROM multipolygon
+                        WHERE client_id = :clientId
+                    )
+                                                
+                    SELECT SUM(ST_Area(ST_Transform(geom, 26986))) AS sqm
+                    FROM polygons;                    
                     """;
 
             MapSqlParameterSource params = new MapSqlParameterSource();
