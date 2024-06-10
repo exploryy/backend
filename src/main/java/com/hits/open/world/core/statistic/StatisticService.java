@@ -12,6 +12,8 @@ import com.hits.open.world.public_interface.user.ProfileDto;
 import com.hits.open.world.public_interface.user_location.LocationStatisticDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Comparator;
@@ -95,6 +97,7 @@ public class StatisticService {
         sendClientInfo(userId, calculatedExperience);
     }
 
+    @Transactional
     public void updateStatistic(UpdateStatisticDto dto) {
         var statistic = statisticRepository.findByClientId(dto.userId());
 
