@@ -19,7 +19,9 @@ import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.OptionalInt;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static com.hits.open.world.core.statistic.ExperienceService.calculateExperienceByDistance;
 import static com.hits.open.world.core.statistic.ExperienceService.calculateExperienceByTask;
@@ -54,9 +56,17 @@ public class StatisticService {
     }
 
     public List<LocationStatisticDto> getLocationsMyFriend(String userId) {
-        var friends = friendService.getFriends(userId);
-        return friends.friends().stream()
+        var allFriends = friendService.getFriends(userId);
+
+        var friend = allFriends.friends().stream()
                 .map(friendDto -> getInfo(friendDto.userId()))
+                .toList();
+
+        var bestFriend = allFriends.friends().stream()
+                .map(friendDto -> getInfo(friendDto.userId()))
+                .toList();
+
+        return Stream.concat(friend.stream(), bestFriend.stream())
                 .toList();
     }
 

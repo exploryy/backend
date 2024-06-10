@@ -7,6 +7,8 @@ import com.hits.open.world.public_interface.location.LocationDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.Stream;
+
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +23,13 @@ public class NotificationFriendService {
         var responseMessage = objectMapper.toJson(dto);
 
         var friends = friendService.getFriends(userId);
-        var allFriends = friends.friends();
+        var friend = friends.friends().stream()
+                .toList();
+        var bestFriend = friends.friends().stream()
+                .toList();
+
+        var allFriends = Stream.concat(friend.stream(), bestFriend.stream())
+                .toList();
 
         allFriends.forEach(friendDto -> webSocketClient.sendFriendsPosition(friendDto.userId(), responseMessage));
     }
