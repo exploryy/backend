@@ -85,7 +85,7 @@ public class StatisticService {
 
         int level = calculateLevel(statistic.experience());
         return new LocationStatisticDto(profile.username(), profile.email(), profile.userId(), statistic.previousLatitude(),
-                statistic.previousLongitude(), statistic.experience(), statistic.distance(), level);
+                statistic.previousLongitude(), statistic.experience(), statistic.distance(), level, profile.avatarUrl());
     }
 
     public void updateExperience(String userId, int addedExperience) {

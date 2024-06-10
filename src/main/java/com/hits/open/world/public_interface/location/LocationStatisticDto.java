@@ -1,5 +1,7 @@
 package com.hits.open.world.public_interface.location;
 
+import java.util.Optional;
+
 public record LocationStatisticDto(
         String name,
         String email,
@@ -8,6 +10,7 @@ public record LocationStatisticDto(
         String previousLongitude,
         int experience,
         int distance,
-        int level
+        int level,
+        Optional<String> photoUrl
 ) {
 }

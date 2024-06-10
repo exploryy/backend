@@ -56,8 +56,8 @@ create table pass_quest
     quest_id       bigint                                                      not null,
     client_id      varchar(60)                                                 not null,
     start_time     timestamp                                                   not null,
-    end_time       timestamp                                                   not null,
-    route_id       bigint                                                      not null,
+    end_time       timestamp,
+    route_id       bigint,
     transport_type varchar(20) check ( transport_type in ('WALK', 'BICYCLE') ) not null,
     primary key (pass_quest_id),
     foreign key (quest_id) references quest (quest_id),
@@ -245,12 +245,12 @@ create sequence s_cosmetic_item_id start with 1 increment by 1;
 create table cosmetic_item
 (
     item_id       bigint default nextval('s_cosmetic_item_id'),
-    name          varchar(60)                                                                                       not null,
-    description   varchar(255)                                                                                      not null,
-    price         integer                                                                                           not null,
-    rarity_type   varchar(20) check ( rarity_type in ('COMMON', 'RARE', 'EPIC', 'LEGENDARY') )                      not null,
+    name          varchar(60)                                                                  not null,
+    description   varchar(255)                                                                 not null,
+    price         integer                                                                      not null,
+    rarity_type   varchar(20) check ( rarity_type in ('COMMON', 'RARE', 'EPIC', 'LEGENDARY') ) not null,
     cosmetic_type varchar(20) check ( cosmetic_type in ('FOOTPRINT', 'AVATAR_FRAMES', 'APPLICATION_IMAGE',
-                                                        'FOG') )                                                    not null,
+                                                        'FOG') )                               not null,
     primary key (item_id)
 );
 
@@ -303,11 +303,11 @@ create table item_battle_pass_level
 
 create table client_battle_pass
 (
-    client_id varchar(60) not null,
-    battle_pass_id bigint not null,
-    level integer not null,
-    current_battle_pass boolean not null,
-    current_experience integer not null,
+    client_id           varchar(60) not null,
+    battle_pass_id      bigint      not null,
+    level               integer     not null,
+    current_battle_pass boolean     not null,
+    current_experience  integer     not null,
     primary key (client_id, battle_pass_id, level),
     foreign key (battle_pass_id, level) references battle_pass_level (battle_pass_id, level)
 );
@@ -322,9 +322,9 @@ create table client_battle_pass
 
 create table client_item
 (
-    client_id varchar(60) not null,
-    item_id bigint not null,
-    is_equipped boolean not null,
+    client_id   varchar(60) not null,
+    item_id     bigint      not null,
+    is_equipped boolean     not null,
     primary key (client_id, item_id),
     foreign key (item_id) references cosmetic_item (item_id)
 );
@@ -335,12 +335,12 @@ create table client_item
 
 create table client_statistic
 (
-    client_id          varchar(60)  not null,
-    experience         integer      not null default 0,
+    client_id          varchar(60)              not null,
+    experience         integer                  not null default 0,
     web_session_id     varchar(255),
     previous_latitude  varchar(60),
     previous_longitude varchar(60),
-    distance           integer      not null default 0,
+    distance           integer                  not null default 0,
     last_update        timestamp with time zone not null default current_timestamp,
     primary key (client_id)
 );
