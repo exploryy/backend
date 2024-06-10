@@ -43,22 +43,6 @@ public class WebSocketStorage {
         }
     }
 
-    public void remove(final SessionKey sessionKey) {
-        WebSocketSession session = sessions.remove(sessionKey);
-
-        if (session != null) {
-            try {
-                if (session.isOpen()) {
-                    session.close();
-                }
-            } catch (IOException e) {
-                throw new ExceptionInApplication("Exception while removing a message", ExceptionType.INVALID);
-            }
-        } else {
-            throw new ExceptionInApplication("Session not open or not exists", ExceptionType.INVALID);
-        }
-    }
-
     public void remove(final WebSocketSession session) {
         if (session != null) {
             try {
