@@ -16,7 +16,6 @@ import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
 import java.security.Principal;
 
-import static org.springframework.web.socket.CloseStatus.SERVER_ERROR;
 
 @Slf4j
 @Component
@@ -33,13 +32,12 @@ public class FriendPositionHandler extends AbstractWebSocketHandler {
 
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-        log.info("Exception occurred: {} on session: {}", exception.getMessage(), session.getId());
-        session.close(SERVER_ERROR.withReason(exception.getMessage()));
+        webSocketStorage.remove(session);
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) {
-        log.info("Connection closed on session: {} with status: {}", session.getId(), closeStatus.getCode());
+    public void afterConnectionClosed(@NonNull WebSocketSession session, @NonNull CloseStatus closeStatus) {
+        webSocketStorage.remove(session);
     }
 
     private String getUserId(WebSocketSession session) {

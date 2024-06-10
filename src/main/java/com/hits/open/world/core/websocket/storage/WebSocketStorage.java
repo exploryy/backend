@@ -13,16 +13,16 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 @Setter
 @Component
 @RequiredArgsConstructor
 public class WebSocketStorage {
-    private static final Map<SessionKey, WebSocketSession> sessions = new HashMap<>();
+    private static final Map<SessionKey, WebSocketSession> sessions = new ConcurrentHashMap<>();
     private final Gson gson = new Gson();
 
     public void add(final SessionKey sessionKey, final WebSocketSession session) {
@@ -56,6 +56,21 @@ public class WebSocketStorage {
             }
         } else {
             throw new ExceptionInApplication("Session not open or not exists", ExceptionType.INVALID);
+        }
+    }
+
+    public void remove(final WebSocketSession session) {
+        if (session != null) {
+            try {
+                if (session.isOpen()) {
+                    session.close();
+                }
+                sessions.entrySet().removeIf(entry -> entry.getValue().equals(session));
+            } catch (IOException e) {
+                throw new ExceptionInApplication("Exception while removing a session", ExceptionType.INVALID);
+            }
+        } else {
+            throw new ExceptionInApplication("Session is null", ExceptionType.INVALID);
         }
     }
 
