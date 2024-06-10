@@ -10,7 +10,7 @@ import com.hits.open.world.public_interface.multipolygon.CreatePolygonRequestDto
 import com.hits.open.world.public_interface.multipolygon.CreatePolygonResponseDto;
 import com.hits.open.world.public_interface.multipolygon.geo.GeoDto;
 import com.hits.open.world.public_interface.statistic.UpdateStatisticDto;
-import com.hits.open.world.public_interface.user_location.LocationDto;
+import com.hits.open.world.public_interface.location.LocationDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

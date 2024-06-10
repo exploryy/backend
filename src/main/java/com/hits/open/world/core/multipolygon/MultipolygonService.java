@@ -9,7 +9,7 @@ import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.multipolygon.AreaDtoResponse;
 import com.hits.open.world.public_interface.multipolygon.CreatePolygonRequestDto;
 import com.hits.open.world.public_interface.multipolygon.geo.GeoDto;
-import com.hits.open.world.public_interface.user_location.LocationDto;
+import com.hits.open.world.public_interface.location.LocationDto;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;

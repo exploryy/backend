@@ -9,7 +9,7 @@ import com.hits.open.world.public_interface.statistic.TotalStatisticDto;
 import com.hits.open.world.public_interface.statistic.UpdateStatisticDto;
 import com.hits.open.world.public_interface.statistic.UserStatisticDto;
 import com.hits.open.world.public_interface.user.ProfileDto;
-import com.hits.open.world.public_interface.user_location.LocationStatisticDto;
+import com.hits.open.world.public_interface.location.LocationStatisticDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -3,7 +3,7 @@ package com.hits.open.world.rest.controller.statistic;
 import com.hits.open.world.core.statistic.StatisticService;
 import com.hits.open.world.public_interface.statistic.TotalStatisticDto;
 import com.hits.open.world.public_interface.statistic.UserStatisticDto;
-import com.hits.open.world.public_interface.user_location.LocationStatisticDto;
+import com.hits.open.world.public_interface.location.LocationStatisticDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
