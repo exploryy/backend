@@ -4,7 +4,7 @@ import com.hits.open.world.core.friend.FriendService;
 import com.hits.open.world.core.statistic.repository.StatisticEntity;
 import com.hits.open.world.core.statistic.repository.StatisticRepository;
 import com.hits.open.world.core.user.UserService;
-import com.hits.open.world.core.websocket.WebSocketClient;
+import com.hits.open.world.core.websocket.client.WebSocketClient;
 import com.hits.open.world.public_interface.statistic.TotalStatisticDto;
 import com.hits.open.world.public_interface.statistic.UpdateStatisticDto;
 import com.hits.open.world.public_interface.statistic.UserStatisticDto;

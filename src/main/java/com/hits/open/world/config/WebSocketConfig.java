@@ -2,6 +2,9 @@ package com.hits.open.world.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hits.open.world.websocket.exception.WebSocketExceptionInterceptor;
+import com.hits.open.world.websocket.experience.ExperienceHandler;
+import com.hits.open.world.websocket.friend.FriendPositionHandler;
+import com.hits.open.world.websocket.level.LevelHandler;
 import com.hits.open.world.websocket.multipolygon.MultipolygonHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -25,15 +28,22 @@ import java.util.List;
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer, WebSocketConfigurer {
     private final MultipolygonHandler polygonWebSocketHandler;
+    private final ExperienceHandler experienceHandler;
+    private final FriendPositionHandler friendPositionHandler;
+    private final LevelHandler levelHandler;
 
-    public WebSocketConfig(@Lazy MultipolygonHandler polygonWebSocketHandler) {
+    public WebSocketConfig(@Lazy MultipolygonHandler polygonWebSocketHandler, @Lazy ExperienceHandler experienceHandler,
+                           @Lazy LevelHandler levelHandler, @Lazy FriendPositionHandler friendPositionHandler) {
         this.polygonWebSocketHandler = polygonWebSocketHandler;
+        this.experienceHandler = experienceHandler;
+        this.levelHandler = levelHandler;
+        this.friendPositionHandler = friendPositionHandler;
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/user", "/topic");
-        registry.setUserDestinationPrefix("/user");
+        /*registry.enableSimpleBroker("/user", "/topic");
+        registry.setUserDestinationPrefix("/user");*/
     }
 
     @Override
@@ -60,5 +70,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer, WebSoc
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(polygonWebSocketHandler, "/ws/location")
                 .setAllowedOrigins("*");
+        registry.addHandler(experienceHandler, "ws/experience")
+                .setAllowedOriginPatterns("*");
+        registry.addHandler(levelHandler, "ws/level")
+                .setAllowedOriginPatterns("*");
+        registry.addHandler(friendPositionHandler, "ws/friendPosition")
+                .setAllowedOriginPatterns("*");
     }
 }
