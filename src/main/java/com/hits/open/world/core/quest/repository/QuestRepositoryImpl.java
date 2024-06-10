@@ -272,9 +272,10 @@ public class QuestRepositoryImpl implements QuestRepository {
     }
 
     @Override
-    public Optional<PassQuestEntity> getPassQuestById(Long passQuestId) {
+    public Optional<PassQuestEntity> getPassQuestById(String userId, Long questId) {
         return create.selectFrom(PASS_QUEST)
-                .where(PASS_QUEST.PASS_QUEST_ID.eq(passQuestId))
+                .where(PASS_QUEST.CLIENT_ID.eq(userId))
+                .and(PASS_QUEST.QUEST_ID.eq(questId))
                 .fetchOptional(passQuestEntityMapper);
     }
 

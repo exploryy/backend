@@ -28,7 +28,8 @@ public class RestInterceptor extends ResponseEntityExceptionHandler {
             ExceptionType.INVALID, HttpStatus.BAD_REQUEST,
             ExceptionType.NOT_FOUND, HttpStatus.NOT_FOUND,
             ExceptionType.FORBIDDEN, HttpStatus.FORBIDDEN,
-            ExceptionType.UNAUTHORIZED, HttpStatus.UNAUTHORIZED
+            ExceptionType.UNAUTHORIZED, HttpStatus.UNAUTHORIZED,
+            ExceptionType.ALREADY_EXISTS, HttpStatus.CONFLICT
     );
 
     @ExceptionHandler(value = {ExceptionInApplication.class})

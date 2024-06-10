@@ -62,7 +62,7 @@ public interface QuestRepository {
 
     void updatePassQuest(PassQuestEntity entity);
 
-    Optional<PassQuestEntity> getPassQuestById(Long passQuestId);
+    Optional<PassQuestEntity> getPassQuestById(String userId, Long questId);
 
     void deletePassQuest(Long passQuestId);
 

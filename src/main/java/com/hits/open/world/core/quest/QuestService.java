@@ -179,7 +179,7 @@ public class QuestService {
 
     public void finishQuest(Long questId, String userId) {
         statisticService.updateExperience(userId, 10);
-        var passQuest = questRepository.getPassQuestById(questId)
+        var passQuest = questRepository.getPassQuestById(userId, questId)
                 .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));
         if (!passQuest.userId().equals(userId)) {
             throw new ExceptionInApplication("It's not your quest", ExceptionType.FORBIDDEN);
@@ -244,7 +244,7 @@ public class QuestService {
 
     @Transactional
     public void cancelQuest(Long questId, String userId) {
-        var passQuest = questRepository.getPassQuestById(questId)
+        var passQuest = questRepository.getPassQuestById(userId, questId)
                 .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));
         if (!passQuest.userId().equals(userId)) {
             throw new ExceptionInApplication("It's not your quest", ExceptionType.FORBIDDEN);
