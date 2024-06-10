@@ -62,7 +62,7 @@ public class StatisticService {
                 .map(friendDto -> getInfo(friendDto.userId()))
                 .toList();
 
-        var bestFriend = allFriends.friends().stream()
+        var bestFriend = allFriends.favoriteFriends().stream()
                 .map(friendDto -> getInfo(friendDto.userId()))
                 .toList();
 

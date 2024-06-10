@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,4 +43,8 @@ public class StatisticController {
         return statisticService.getLocationsMyFriend(userId);
     }
 
+    @GetMapping(path = "/friend/{client_id}")
+    public UserStatisticDto getFriendStatistics(@PathVariable("client_id") String clientId) {
+        return statisticService.getUserStatistics(clientId);
+    }
 }
