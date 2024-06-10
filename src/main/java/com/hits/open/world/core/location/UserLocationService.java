@@ -6,7 +6,7 @@ import com.hits.open.world.core.location.repository.UserLocationEntity;
 import com.hits.open.world.core.location.repository.UserLocationRepository;
 import com.hits.open.world.core.quest.QuestService;
 import com.hits.open.world.core.statistic.StatisticService;
-import com.hits.open.world.public_interface.user_location.LocationDto;
+import com.hits.open.world.public_interface.location.LocationDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

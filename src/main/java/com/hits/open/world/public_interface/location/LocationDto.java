@@ -1,4 +1,4 @@
-package com.hits.open.world.public_interface.user_location;
+package com.hits.open.world.public_interface.location;
 
 import java.math.BigDecimal;
 

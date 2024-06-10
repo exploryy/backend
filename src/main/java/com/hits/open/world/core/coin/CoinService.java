@@ -5,7 +5,7 @@ import com.hits.open.world.core.coin.repository.CoinRepository;
 import com.hits.open.world.public_interface.coin.CoinResponseDto;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
-import com.hits.open.world.public_interface.user_location.LocationDto;
+import com.hits.open.world.public_interface.location.LocationDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
