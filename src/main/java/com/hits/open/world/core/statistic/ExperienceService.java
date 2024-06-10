@@ -26,7 +26,8 @@ public final class ExperienceService {
     }
 
     public static int calculateExperienceByDistance(StatisticEntity statistic, UpdateStatisticDto dto, int distanceInMeters) {
-        long speedMetersInSeconds = distanceInMeters / Math.abs(ChronoUnit.SECONDS.between(OffsetDateTime.now(), statistic.lastUpdate()));
+        var time = Math.abs(ChronoUnit.SECONDS.between(OffsetDateTime.now(), statistic.lastUpdate()));
+        long speedMetersInSeconds = time == 0 ? 0 : distanceInMeters / Math.abs(ChronoUnit.SECONDS.between(OffsetDateTime.now(), statistic.lastUpdate()));
         TransportType transportType = TransportType.fromSpeedMetersInSeconds(speedMetersInSeconds);
         int level = calculateLevel(statistic.experience());
 
