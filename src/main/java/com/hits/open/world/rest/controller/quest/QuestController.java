@@ -3,7 +3,9 @@ package com.hits.open.world.rest.controller.quest;
 import com.hits.open.world.core.quest.QuestService;
 import com.hits.open.world.core.quest.repository.entity.quest.QuestType;
 import com.hits.open.world.core.quest.repository.entity.quest.TransportType;
+import com.hits.open.world.public_interface.quest.AllQuestDto;
 import com.hits.open.world.public_interface.quest.CommonQuestDto;
+import com.hits.open.world.public_interface.quest.CompletedQuestDto;
 import com.hits.open.world.public_interface.quest.CreateDistanceQuestDto;
 import com.hits.open.world.public_interface.quest.CreatePointToPointQuestDto;
 import com.hits.open.world.public_interface.quest.CreateQuestDto;
@@ -236,7 +238,7 @@ public class QuestController {
     }
 
     @GetMapping(path = "/list")
-    public List<CommonQuestDto> getQuestsList(
+    public AllQuestDto getQuestsList(
             @RequestParam(value = "name", required = false) Optional<String> name,
             JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
@@ -248,7 +250,7 @@ public class QuestController {
     }
 
     @GetMapping(path = "/my/completed")
-    public List<CommonQuestDto> getMyCompletedQuests(JwtAuthenticationToken token) {
+    public List<CompletedQuestDto> getMyCompletedQuests(JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
         return questService.getMyCompletedQuests(userId);
     }

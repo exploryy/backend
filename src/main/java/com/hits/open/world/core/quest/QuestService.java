@@ -23,7 +23,9 @@ import com.hits.open.world.public_interface.event.EventDto;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.file.UploadFileDto;
+import com.hits.open.world.public_interface.quest.AllQuestDto;
 import com.hits.open.world.public_interface.quest.CommonQuestDto;
+import com.hits.open.world.public_interface.quest.CompletedQuestDto;
 import com.hits.open.world.public_interface.quest.CreateDistanceQuestDto;
 import com.hits.open.world.public_interface.quest.CreatePointToPointQuestDto;
 import com.hits.open.world.public_interface.quest.CreateQuestDto;
@@ -48,8 +50,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.hits.open.world.util.DistanceCalculator.calculateDistanceInMeters;
+import static java.util.stream.Collectors.groupingBy;
 
 @Service
 @RequiredArgsConstructor
@@ -100,23 +104,45 @@ public class QuestService {
         questRepository.createDistanceQuest(distanceQuestEntity);
     }
 
-    public List<CommonQuestDto> getQuests(GetQuestsDto dto) {
-        return questRepository.getQuestsByName(dto.name())
+    public AllQuestDto getQuests(GetQuestsDto dto) {
+        var activeQuests = getMyActiveQuests(dto.userId());
+        var completedQuests = getMyCompletedQuests(dto.userId());
+        var allQuests = questRepository.getQuestsByName(dto.name())
                 .stream()
-                .filter(quest -> {
-                    var cord = getCoordinates(quest);
-                    var coordinate = new Coordinate(Double.parseDouble(cord.longitude()), Double.parseDouble(cord.latitude()));
-                    var point = new GeometryFactory().createPoint(coordinate);
-                    return multipolygonRepository.isPointInPolygon(point, dto.userId());
-                })
+                .filter(quest -> inOpenArea(quest, dto.userId()))
                 .map(this::toDto)
-                .toList();
+                .collect(groupingBy(quest -> {
+                    if (activeQuests.stream().anyMatch(activeQuest -> activeQuest.questId().equals(quest.questId()))) {
+                        return QuestStatus.ACTIVE;
+                    } else if (completedQuests.stream().anyMatch(completedQuest -> completedQuest.questId().equals(quest.questId()))) {
+                        return QuestStatus.COMPLETED;
+                    } else {
+                        return QuestStatus.NOT_COMPLETED;
+                    }
+                }));
+
+        return new AllQuestDto(
+                allQuests.getOrDefault(QuestStatus.NOT_COMPLETED, List.of()),
+                allQuests.getOrDefault(QuestStatus.ACTIVE, List.of()),
+                allQuests.getOrDefault(QuestStatus.COMPLETED, List.of())
+                        .stream()
+                        .map(quest -> toDto(quest, dto.userId()))
+                        .toList()
+        );
     }
 
-    public List<CommonQuestDto> getMyCompletedQuests(String userId) {
+    private boolean inOpenArea(QuestEntity dto, String userId) {
+        var cord = getCoordinates(dto);
+        var coordinate = new Coordinate(Double.parseDouble(cord.longitude()), Double.parseDouble(cord.latitude()));
+        var point = new GeometryFactory().createPoint(coordinate);
+        return multipolygonRepository.isPointInPolygon(point, userId);
+    }
+
+    public List<CompletedQuestDto> getMyCompletedQuests(String userId) {
         return questRepository.getFinishedQuests(userId)
                 .stream()
                 .map(this::toDto)
+                .map(quest -> toDto(quest, userId))
                 .toList();
     }
 
@@ -450,5 +476,23 @@ public class QuestService {
             }
             default -> throw new ExceptionInApplication("Quest type not found", ExceptionType.NOT_FOUND);
         }
+    }
+
+    private final CompletedQuestDto toDto(CommonQuestDto dto, String userId) {
+        var completedQuest = questRepository.getPassQuestById(userId, dto.questId())
+                .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));
+        return new CompletedQuestDto(
+                dto.questId(),
+                dto.name(),
+                dto.description(),
+                dto.difficultyType(),
+                dto.questType(),
+                dto.transportType(),
+                dto.longitude(),
+                dto.latitude(),
+                dto.images(),
+                completedQuest.startTime(),
+                completedQuest.endTime()
+        );
     }
 }
