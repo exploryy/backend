@@ -1,5 +1,7 @@
 package com.hits.open.world.core.quest;
 
+import com.hits.open.world.core.event.EventService;
+import com.hits.open.world.core.event.EventType;
 import com.hits.open.world.core.file.FileMetadata;
 import com.hits.open.world.core.file.FileStorageService;
 import com.hits.open.world.core.multipolygon.repository.MultipolygonRepository;
@@ -17,6 +19,7 @@ import com.hits.open.world.core.quest.repository.entity.review.QuestReviewEntity
 import com.hits.open.world.core.quest.repository.entity.review.ReviewPhotoEntity;
 import com.hits.open.world.core.route.RouteService;
 import com.hits.open.world.core.statistic.StatisticService;
+import com.hits.open.world.public_interface.event.EventDto;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.file.UploadFileDto;
@@ -34,6 +37,7 @@ import com.hits.open.world.public_interface.quest.review.CreateQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.DeleteImageQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.DeleteQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.UpdateQuestReviewDto;
+import com.hits.open.world.public_interface.user_location.LocationDto;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -46,6 +50,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.hits.open.world.util.DistanceCalculator.calculateDistanceInMeters;
+
 @Service
 @RequiredArgsConstructor
 public class QuestService {
@@ -54,6 +60,7 @@ public class QuestService {
     private final StatisticService statisticService;
     private final FileStorageService fileStorageService;
     private final MultipolygonRepository multipolygonRepository;
+    private final EventService eventService;
 
     private Long createQuest(CreateQuestDto dto) {
         var questEntity = new QuestEntity(
@@ -171,9 +178,7 @@ public class QuestService {
         questRepository.startQuest(passQuestEntity);
     }
 
-    @Transactional
     public void finishQuest(Long questId, String userId) {
-        //TODO: в задание вшить сколько опыта грязными будет
         statisticService.updateExperience(userId, 10);
         var passQuest = questRepository.getPassQuestById(questId)
                 .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));
@@ -191,6 +196,51 @@ public class QuestService {
                 LocalDateTime.now()
         );
         questRepository.updatePassQuest(updatedEntity);
+
+        var quest = questRepository.getQuestById(questId)
+                .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));
+        var eventDto = new EventDto(
+                "Квест %s выполнен".formatted(quest.name()),
+                EventType.COMPLETE_QUEST
+        );
+        eventService.sendEvent(userId, eventDto);
+    }
+
+    @Transactional
+    public void tryFinishActiveQuests(LocationDto userLocation) {
+        var activeQuests = questRepository.getActiveQuests(userLocation.clientId());
+        for (var quest : activeQuests) {
+            switch (quest.questType()) {
+                case POINT_TO_POINT -> {
+                    final int distance = 10;
+                    var pointToPointQuest = questRepository.getPointToPointQuestByQuestId(quest.questId())
+                            .orElseThrow(() -> new ExceptionInApplication("Point to point quest not found", ExceptionType.NOT_FOUND));
+                    var way = routeService.getRoute(pointToPointQuest.routeId());
+                    var lastPoint = way.points().get(way.points().size() - 1);
+                    if (calculateDistanceInMeters(
+                            Double.parseDouble(lastPoint.latitude()),
+                            Double.parseDouble(lastPoint.longitude()),
+                            userLocation.latitude().doubleValue(),
+                            userLocation.longitude().doubleValue())
+                            > distance) {
+                        return;
+                    }
+                }
+                case DISTANCE -> {
+                    var distanceQuest = questRepository.getDistanceQuestByQuestId(quest.questId())
+                            .orElseThrow(() -> new ExceptionInApplication("Distance quest not found", ExceptionType.NOT_FOUND));
+                    if (calculateDistanceInMeters(
+                            Double.parseDouble(distanceQuest.latitude()),
+                            Double.parseDouble(distanceQuest.longitude()),
+                            userLocation.latitude().doubleValue(),
+                            userLocation.longitude().doubleValue())
+                            > distanceQuest.routeDistance()) {
+                        return;
+                    }
+                }
+            }
+            finishQuest(quest.questId(), userLocation.clientId());
+        }
     }
 
     @Transactional
@@ -392,7 +442,7 @@ public class QuestService {
                 var pointToPointQuest = questRepository.getPointToPointQuestByQuestId(entity.questId())
                         .orElseThrow(() -> new ExceptionInApplication("Point to point quest not found", ExceptionType.NOT_FOUND));
                 var route = routeService.getRoute(pointToPointQuest.routeId());
-                return new PointEntity(route.points().getFirst().longitude(), route.points().getFirst().latitude());
+                return new PointEntity(route.points().get(0).longitude(), route.points().get(0).latitude());
             }
             case DISTANCE -> {
                 var distanceQuest = questRepository.getDistanceQuestByQuestId(entity.questId())

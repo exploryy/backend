@@ -13,3 +13,9 @@ amazonProperties:
 geo:
   earthRadius: 6378137
   maxDistance: 100
+
+websocket:
+  storage:
+    fixedDelay:
+      in:
+        milliseconds: 3600000
