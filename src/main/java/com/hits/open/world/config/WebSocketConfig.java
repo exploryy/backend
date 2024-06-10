@@ -1,6 +1,7 @@
 package com.hits.open.world.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hits.open.world.websocket.event.EventHandler;
 import com.hits.open.world.websocket.exception.WebSocketExceptionInterceptor;
 import com.hits.open.world.websocket.experience.ExperienceHandler;
 import com.hits.open.world.websocket.friend.FriendPositionHandler;
@@ -31,24 +32,25 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer, WebSoc
     private final ExperienceHandler experienceHandler;
     private final FriendPositionHandler friendPositionHandler;
     private final LevelHandler levelHandler;
+    private final EventHandler eventHandler;
 
     public WebSocketConfig(@Lazy MultipolygonHandler polygonWebSocketHandler, @Lazy ExperienceHandler experienceHandler,
-                           @Lazy LevelHandler levelHandler, @Lazy FriendPositionHandler friendPositionHandler) {
+                           @Lazy LevelHandler levelHandler, @Lazy FriendPositionHandler friendPositionHandler, @Lazy EventHandler eventHandler) {
         this.polygonWebSocketHandler = polygonWebSocketHandler;
         this.experienceHandler = experienceHandler;
         this.levelHandler = levelHandler;
         this.friendPositionHandler = friendPositionHandler;
+        this.eventHandler = eventHandler;
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        /*registry.enableSimpleBroker("/user", "/topic");
-        registry.setUserDestinationPrefix("/user");*/
+        registry.enableSimpleBroker("/user", "/topic");
+        registry.setUserDestinationPrefix("/user");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins("*");
         registry.addEndpoint("/ws").setAllowedOrigins("*").withSockJS();
 
         registry.setErrorHandler(new WebSocketExceptionInterceptor());
@@ -75,6 +77,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer, WebSoc
         registry.addHandler(levelHandler, "ws/level")
                 .setAllowedOriginPatterns("*");
         registry.addHandler(friendPositionHandler, "ws/friendPosition")
+                .setAllowedOriginPatterns("*");
+        registry.addHandler(eventHandler, "ws/event")
                 .setAllowedOriginPatterns("*");
     }
 }

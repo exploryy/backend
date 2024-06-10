@@ -4,6 +4,7 @@ import com.hits.open.world.core.coin.CoinService;
 import com.hits.open.world.core.friend.repository.NotificationFriendService;
 import com.hits.open.world.core.location.repository.UserLocationEntity;
 import com.hits.open.world.core.location.repository.UserLocationRepository;
+import com.hits.open.world.core.quest.QuestService;
 import com.hits.open.world.core.statistic.StatisticService;
 import com.hits.open.world.public_interface.user_location.LocationDto;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +24,12 @@ public class UserLocationService {
     private static final double EARTH_RADIUS_KM = 6371.0;
     private static final double RADIUS_IN_KILOMETERS = 1.0;
     private static final int MIN_POINTS_NUMBER = 2;
+
     private final UserLocationRepository userLocationRepository;
     private final StatisticService statisticService;
     private final NotificationFriendService notificationFriendService;
     private final CoinService coinService;
+    private final QuestService questService;
 
     @Transactional
     public void updateUserLocation(LocationDto locationDto) {
@@ -40,6 +43,7 @@ public class UserLocationService {
                 .build();
 
         notificationFriendService.notifyFriendsAboutNewLocation(locationDto);
+        questService.tryFinishActiveQuests(locationDto);
 
         if (savedEntity.isPresent() && checkIfLessOneDay(savedEntity.get())) {
             userLocationRepository.update(entity);
