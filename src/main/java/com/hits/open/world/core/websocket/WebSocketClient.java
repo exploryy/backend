@@ -1,5 +1,6 @@
 package com.hits.open.world.core.websocket;
 
+import com.hits.open.world.public_interface.event.EventDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -21,4 +22,7 @@ public class WebSocketClient {
         messagingTemplate.convertAndSend("/topic/friends/position/" + userId, message);
     }
 
+    public void sendEvent(String userId, EventDto eventDto) {
+        messagingTemplate.convertAndSend("/topic/event/" + userId, eventDto);
+    }
 }
