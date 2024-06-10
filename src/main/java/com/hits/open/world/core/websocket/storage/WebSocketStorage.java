@@ -28,7 +28,7 @@ public class WebSocketStorage {
         sessions.put(sessionKey, session);
     }
 
-    public void sendMessage(final SessionKey sessionKey, final Object message) {
+    public void sendMessage(final SessionKey sessionKey, final String message) {
         WebSocketSession session = sessions.get(sessionKey);
         if (session != null && session.isOpen()) {
             try {
