@@ -35,7 +35,6 @@ public class RestInterceptor extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {ExceptionInApplication.class})
     protected ResponseEntity<Object> handleException(ExceptionInApplication ex, WebRequest request) {
         log.error(ex.getMessage());
-
         final HttpStatus status = STATUS_MAP.get(ex.getType());
         return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), status, request);
     }
