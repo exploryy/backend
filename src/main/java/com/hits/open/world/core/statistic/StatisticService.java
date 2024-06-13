@@ -70,12 +70,25 @@ public class StatisticService {
                 .toList();
     }
 
-    public UserStatisticDto getUserStatistics(String userId) {
+    public LocationStatisticDto getUserStatistics(String userId) {
         var statistic = getUserStatistic(userId);
+        var userProfile = userService.getProfile(userId);
 
         int level = calculateLevel(statistic.experience());
         int totalExperienceInLevel = calculateTotalExperienceInLevel(level);
-        return new UserStatisticDto(level, statistic.experience(), statistic.distance(), totalExperienceInLevel);
+
+        return LocationStatisticDto.builder()
+                .username(userProfile.username())
+                .photoUrl(userProfile.avatarUrl())
+                .email(userProfile.email())
+                .userId(userProfile.userId())
+                .distance(statistic.distance())
+                .experience(statistic.experience())
+                .previousLatitude(statistic.previousLatitude())
+                .previousLongitude(statistic.previousLongitude())
+                .level(level)
+                .totalExperienceInLevel(totalExperienceInLevel)
+                .build();
     }
 
     public LocationStatisticDto getInfo(String userId) {
@@ -84,8 +97,11 @@ public class StatisticService {
         var profile = userService.getProfile(statistic.clientId());
 
         int level = calculateLevel(statistic.experience());
+        int totalExperienceInLevel = calculateTotalExperienceInLevel(level);
+
         return new LocationStatisticDto(profile.username(), profile.email(), profile.userId(), statistic.previousLatitude(),
-                statistic.previousLongitude(), statistic.experience(), statistic.distance(), level, profile.avatarUrl());
+                statistic.previousLongitude(), statistic.experience(), statistic.distance(), level, totalExperienceInLevel,
+                profile.avatarUrl());
     }
 
     public void updateExperience(String userId, int addedExperience) {
