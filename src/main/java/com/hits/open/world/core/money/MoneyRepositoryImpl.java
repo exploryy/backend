@@ -13,6 +13,8 @@ public class MoneyRepositoryImpl implements MoneyRepository {
 
     @Override
     public void addMoney(String userId, int amount) {
+        //TODO: если будет проходить через стандартный путь то не нужно будет создавать баланс
+        tryCreateUserBalance(userId);
         create.update(CLIENT_MONEY)
                 .set(CLIENT_MONEY.MONEY, CLIENT_MONEY.MONEY.add(amount))
                 .where(CLIENT_MONEY.CLIENT_ID.eq(userId))
@@ -21,6 +23,7 @@ public class MoneyRepositoryImpl implements MoneyRepository {
 
     @Override
     public void subtractMoney(String userId, int amount) {
+        tryCreateUserBalance(userId);
         create.update(CLIENT_MONEY)
                 .set(CLIENT_MONEY.MONEY, CLIENT_MONEY.MONEY.subtract(amount))
                 .where(CLIENT_MONEY.CLIENT_ID.eq(userId))
@@ -29,6 +32,7 @@ public class MoneyRepositoryImpl implements MoneyRepository {
 
     @Override
     public int getMoney(String userId) {
+        tryCreateUserBalance(userId);
         return create.select(CLIENT_MONEY.MONEY)
                 .from(CLIENT_MONEY)
                 .where(CLIENT_MONEY.CLIENT_ID.eq(userId))
@@ -41,5 +45,15 @@ public class MoneyRepositoryImpl implements MoneyRepository {
                 .set(CLIENT_MONEY.CLIENT_ID, userId)
                 .set(CLIENT_MONEY.MONEY, 0)
                 .execute();
+    }
+
+    private void tryCreateUserBalance(String userId) {
+        var userBalance = create.select(CLIENT_MONEY.MONEY)
+                .from(CLIENT_MONEY)
+                .where(CLIENT_MONEY.CLIENT_ID.eq(userId))
+                .fetchOne(CLIENT_MONEY.MONEY);
+        if (userBalance == null) {
+            initializeMoney(userId);
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.hits.open.world.core.coin;
 
 import com.hits.open.world.core.coin.repository.CoinEntity;
 import com.hits.open.world.core.coin.repository.CoinRepository;
+import com.hits.open.world.core.money.MoneyService;
 import com.hits.open.world.public_interface.coin.CoinResponseDto;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
@@ -18,6 +19,7 @@ import java.util.List;
 public class CoinService {
     private static final int COIN_CONST = 1;
     private final CoinRepository coinRepository;
+    private final MoneyService moneyService;
 
     public CoinResponseDto save(LocationDto location) {
         //TODO generate value according to LEVEL
@@ -54,8 +56,7 @@ public class CoinService {
             throw new ExceptionInApplication("Client id mismatch", ExceptionType.NOT_FOUND);
         }
 
-        //TODO Consume coin and update user balance, MoneyService should be used here
-
+        moneyService.addMoney(clientId, coin.value());
         coinRepository.deleteById(coin.coinId());
     }
 
