@@ -54,7 +54,7 @@ public class CoinService {
             throw new ExceptionInApplication("Client id mismatch", ExceptionType.NOT_FOUND);
         }
 
-        //TODO Consume coin and update user balance
+        //TODO Consume coin and update user balance, MoneyService should be used here
 
         coinRepository.deleteById(coin.coinId());
     }

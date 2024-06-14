@@ -1,16 +1,21 @@
 package com.hits.open.world.core.friend;
 
+import com.hits.open.world.core.event.EventService;
+import com.hits.open.world.core.event.EventType;
 import com.hits.open.world.core.file.FileStorageService;
 import com.hits.open.world.core.friend.repository.FriendEntity;
 import com.hits.open.world.core.friend.repository.FriendRepository;
 import com.hits.open.world.core.user.UserEntity;
 import com.hits.open.world.keycloak.UserClient;
+import com.hits.open.world.public_interface.event.EventDto;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.friend.AllFriendDto;
 import com.hits.open.world.public_interface.friend.FriendDto;
 import com.hits.open.world.public_interface.friend.RequestFriendsDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,12 +26,14 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.partitioningBy;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FriendService {
     private final FriendRepository friendRepository;
     private final UserClient userClient;
     private final FileStorageService fileStorageService;
+    private final EventService eventService;
 
     @Transactional
     public void addFriendRequest(String userId, String friendId) {
@@ -38,6 +45,11 @@ public class FriendService {
         }
 
         friendRepository.createFriendRequest(userId, friendId);
+
+        //TODO: async
+        var user = userClient.getUser(userId)
+                .orElseThrow(() -> new ExceptionInApplication("User not found", ExceptionType.NOT_FOUND));
+        notifyFriend(userId, friendId,  "%s wants to be your friend".formatted(user.username()), EventType.REQUEST_TO_FRIEND);
     }
 
     @Transactional
@@ -110,6 +122,14 @@ public class FriendService {
                 mapToFriendDto(myFriendRequests).toList(),
                 mapToFriendDto(otherFriendRequests).toList()
         );
+    }
+
+    private void notifyFriend(String userId, String friendId, String message, EventType eventType) {
+        try {
+            eventService.sendEvent(friendId, new EventDto(message, eventType));
+        } catch (Exception e) {
+            log.error("Failed to send event to friend", e);
+        }
     }
 
     private FriendDto mapToFriendDto(UserEntity entity) {

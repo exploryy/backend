@@ -1,6 +1,8 @@
 package com.hits.open.world.rest.controller.coin;
 
 import com.hits.open.world.core.coin.CoinService;
+import com.hits.open.world.core.money.MoneyService;
+import com.hits.open.world.public_interface.coin.BalanceResponseDto;
 import com.hits.open.world.public_interface.coin.CoinRequestDto;
 import com.hits.open.world.public_interface.coin.CoinResponseDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -19,6 +21,7 @@ import java.util.List;
 @Tag(name = "Coin")
 public class CoinController {
     private final CoinService coinService;
+    private final MoneyService moneyService;
 
     @GetMapping(path = "/list")
     public List<CoinResponseDto> findAll(JwtAuthenticationToken token) {
@@ -33,4 +36,11 @@ public class CoinController {
         coinService.consumeCoin(coinId, userId);
     }
 
+    @GetMapping(path = "/balance")
+    public BalanceResponseDto getBalance(JwtAuthenticationToken token) {
+        var userId = token.getTokenAttributes().get("sub").toString();
+        return new BalanceResponseDto(
+                moneyService.getUserMoney(userId)
+        );
+    }
 }
