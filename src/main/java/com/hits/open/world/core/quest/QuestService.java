@@ -377,7 +377,7 @@ public class QuestService {
             throw new ExceptionInApplication("It's not your quest", ExceptionType.FORBIDDEN);
         }
 
-        questRepository.deletePassQuest(questId);
+        questRepository.deletePassQuest(passQuest.passQuestId());
     }
 
     public PointToPointQuestDto getPointToPointQuest(Long questId) {
