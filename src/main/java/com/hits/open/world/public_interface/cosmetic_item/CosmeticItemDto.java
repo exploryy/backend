@@ -11,17 +11,8 @@ public record CosmeticItemDto(
         int price,
         RarityTypeEnum rarityType,
         CosmeticTypeEnum cosmeticType,
-        boolean isOwned
+        boolean isOwned,
+        boolean sellable,
+        String url
 ) {
-    public static CosmeticItemDto fromEntity(CosmeticItemEntity entity, boolean isOwned) {
-        return new CosmeticItemDto(
-                entity.itemId(),
-                entity.name(),
-                entity.description(),
-                entity.price(),
-                entity.rarityType(),
-                entity.cosmeticType(),
-                isOwned
-        );
-    }
 }

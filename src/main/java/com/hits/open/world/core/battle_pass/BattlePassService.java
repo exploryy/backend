@@ -6,6 +6,7 @@ import com.hits.open.world.core.inventory.InventoryRepository;
 import com.hits.open.world.core.inventory.InventoryService;
 import com.hits.open.world.core.money.MoneyService;
 import com.hits.open.world.public_interface.battle_pass.BattlePassDto;
+import com.hits.open.world.public_interface.cosmetic_item.CosmeticItemDto;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import lombok.RequiredArgsConstructor;
@@ -94,7 +95,7 @@ public class BattlePassService {
                                 level.rewards().stream()
                                         .map(reward -> new BattlePassDto.BattlePassLevelDto.BattlePassRewardDto(
                                                 cosmeticItemService.findById(reward.itemId())
-                                                        .map(entity -> CosmeticItemEntity.toDto(entity, inventoryRepository.isItemOwned(userId, entity.itemId())))
+                                                        .map(entity -> toDto(entity, inventoryRepository.isItemOwned(userId, entity.itemId())))
                                                         .orElseThrow(
                                                         () -> new ExceptionInApplication("Cosmetic item not found", ExceptionType.NOT_FOUND)
                                                 )
@@ -104,5 +105,19 @@ public class BattlePassService {
                         .toList()
         );
 
+    }
+
+    private CosmeticItemDto toDto(CosmeticItemEntity entity, boolean isOwned) {
+        return new CosmeticItemDto(
+                entity.itemId(),
+                entity.name(),
+                entity.description(),
+                entity.price(),
+                entity.rarityType(),
+                entity.cosmeticType(),
+                isOwned,
+                entity.sellable(),
+                cosmeticItemService.getPhotoUrl(entity.itemId())
+        );
     }
 }

@@ -16,3 +16,5 @@ databaseChangeLog:
       file: changelog/ddl/battle_pass_init.sql
   - include:
       file: changelog/ddl/achievement_init.sql
+  - include:
+      file: changelog/ddl/user_init.sql

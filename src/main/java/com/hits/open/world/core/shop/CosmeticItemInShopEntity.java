@@ -10,6 +10,7 @@ public record CosmeticItemInShopEntity(
         int price,
         RarityTypeEnum rarityType,
         CosmeticTypeEnum cosmeticType,
-        boolean isOwned
+        boolean isOwned,
+        boolean sellable
 ) {
 }
