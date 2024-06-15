@@ -46,6 +46,7 @@ public class RestInterceptor extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {Exception.class})
     public ResponseEntity<Object> handleAllException(Exception ex, WebRequest request) {
+        log.error("Internal server error", ex);
         final String exceptionBody = "Internal server error";
         return handleExceptionInternal(ex, exceptionBody, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
