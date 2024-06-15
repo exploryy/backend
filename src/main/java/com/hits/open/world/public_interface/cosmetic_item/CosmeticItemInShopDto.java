@@ -11,7 +11,8 @@ public record CosmeticItemInShopDto(
         int price,
         RarityTypeEnum rarityType,
         CosmeticTypeEnum cosmeticType,
-        boolean isOwned
+        boolean isOwned,
+        boolean sellable
 ) {
     public static CosmeticItemInShopDto fromEntity(CosmeticItemInShopEntity entity) {
         return new CosmeticItemInShopDto(
@@ -21,7 +22,8 @@ public record CosmeticItemInShopDto(
                 entity.price(),
                 entity.rarityType(),
                 entity.cosmeticType(),
-                entity.isOwned()
+                entity.isOwned(),
+                entity.sellable()
         );
     }
 }

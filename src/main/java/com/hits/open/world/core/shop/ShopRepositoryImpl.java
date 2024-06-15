@@ -28,7 +28,7 @@ public class ShopRepositoryImpl implements ShopRepository {
         return create.select(COSMETIC_ITEM.ITEM_ID, COSMETIC_ITEM.NAME, COSMETIC_ITEM.DESCRIPTION, COSMETIC_ITEM.PRICE, COSMETIC_ITEM.RARITY_TYPE, COSMETIC_ITEM.COSMETIC_TYPE, CLIENT_ITEM.ITEM_ID)
                 .from(COSMETIC_ITEM)
                 .leftJoin(CLIENT_ITEM)
-                .on(COSMETIC_ITEM.ITEM_ID.eq(CLIENT_ITEM.ITEM_ID).and(condition))
+                .on(COSMETIC_ITEM.ITEM_ID.eq(CLIENT_ITEM.ITEM_ID).and(condition).and(COSMETIC_ITEM.SELLABLE.eq(true)))
                 .fetch(record -> new CosmeticItemInShopEntity(
                         record.get(COSMETIC_ITEM.ITEM_ID),
                         record.get(COSMETIC_ITEM.NAME),
@@ -36,7 +36,8 @@ public class ShopRepositoryImpl implements ShopRepository {
                         record.get(COSMETIC_ITEM.PRICE),
                         RarityTypeEnum.fromString(record.get(COSMETIC_ITEM.RARITY_TYPE)),
                         CosmeticTypeEnum.fromString(record.get(COSMETIC_ITEM.COSMETIC_TYPE)),
-                        record.get(CLIENT_ITEM.ITEM_ID) != null
+                        record.get(CLIENT_ITEM.ITEM_ID) != null,
+                        record.get(COSMETIC_ITEM.SELLABLE)
                 ));
     }
 }

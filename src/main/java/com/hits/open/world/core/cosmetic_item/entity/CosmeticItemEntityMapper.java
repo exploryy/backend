@@ -12,7 +12,8 @@ public class CosmeticItemEntityMapper implements RecordMapper<CosmeticItemRecord
                 cosmeticItemRecord.getDescription(),
                 cosmeticItemRecord.getPrice(),
                 RarityTypeEnum.fromString(cosmeticItemRecord.getRarityType()),
-                CosmeticTypeEnum.fromString(cosmeticItemRecord.getCosmeticType())
+                CosmeticTypeEnum.fromString(cosmeticItemRecord.getCosmeticType()),
+                cosmeticItemRecord.getSellable()
         );
     }
 }

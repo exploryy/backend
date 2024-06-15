@@ -25,6 +25,10 @@ public class ShopService {
     public void buyItem(String userId, Long itemId) {
         var item = cosmeticItemService.findById(itemId)
                 .orElseThrow(() -> new ExceptionInApplication("Item not found", ExceptionType.NOT_FOUND));
+        if (!item.sellable()) {
+            throw new ExceptionInApplication("Item is not sellable", ExceptionType.INVALID);
+        }
+
         var price = item.price();
         var userMoney = moneyService.getUserMoney(userId);
         if (userMoney < price) {
@@ -38,6 +42,10 @@ public class ShopService {
     public void sellItem(String userId, Long itemId) {
         var item = cosmeticItemService.findById(itemId)
                 .orElseThrow(() -> new ExceptionInApplication("Item not found", ExceptionType.NOT_FOUND));
+        if (!item.sellable()) {
+            throw new ExceptionInApplication("Item is not sellable", ExceptionType.INVALID);
+        }
+
         var price = item.price();
         inventoryService.removeItemFromInventory(userId, itemId);
         moneyService.addMoney(userId, price);

@@ -248,6 +248,7 @@ create table cosmetic_item
     name          varchar(60)                                                                  not null,
     description   varchar(255)                                                                 not null,
     price         integer                                                                      not null,
+    sellable      boolean                                                                      not null,
     rarity_type   varchar(20) check ( rarity_type in ('COMMON', 'RARE', 'EPIC', 'LEGENDARY') ) not null,
     cosmetic_type varchar(20) check ( cosmetic_type in ('FOOTPRINT', 'AVATAR_FRAMES', 'APPLICATION_IMAGE',
                                                         'FOG') )                               not null,

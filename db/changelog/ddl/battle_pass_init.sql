@@ -18,9 +18,7 @@ insert into battle_pass_level (level, experience, battle_pass_id)
            (10, 900, 1);
 
 insert into item_battle_pass_level (item_id, level, battle_pass_id)
-    VALUES (2, 2, 1),
-           (4, 5, 1),
-           (3, 8, 1),
-           (1, 10, 1);
+    VALUES
+        (5, 10, 1);
 
 -- rollback delete from battle_pass_id = 1;
