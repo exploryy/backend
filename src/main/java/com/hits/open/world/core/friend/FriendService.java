@@ -1,5 +1,6 @@
 package com.hits.open.world.core.friend;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.hits.open.world.core.event.EventService;
 import com.hits.open.world.core.event.EventType;
@@ -36,7 +37,7 @@ public class FriendService {
     private final FileStorageService fileStorageService;
     private final EventService eventService;
     private final UserService userService;
-    private final Gson objectMapper = new Gson();
+    private final ObjectMapper objectMapper;
 
     @Transactional
     public void addFriendRequest(String userId, String friendId) {
@@ -50,7 +51,12 @@ public class FriendService {
         friendRepository.createFriendRequest(userId, friendId);
 
         var user = userService.getProfile(userId);
-        notifyUser(friendId, objectMapper.toJson(user) , EventType.REQUEST_TO_FRIEND);
+        try {
+            notifyUser(friendId, objectMapper.writeValueAsString(user) , EventType.REQUEST_TO_FRIEND);
+        } catch (Exception e) {
+            log.error("Failed to send friend request", e);
+        }
+
     }
 
     @Transactional
