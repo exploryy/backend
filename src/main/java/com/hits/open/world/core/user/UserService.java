@@ -4,10 +4,12 @@ import com.hits.open.world.client.keycloak.RoleClient;
 import com.hits.open.world.client.keycloak.UserClient;
 import com.hits.open.world.core.file.FileMetadata;
 import com.hits.open.world.core.file.FileStorageService;
+import com.hits.open.world.core.inventory.InventoryService;
 import com.hits.open.world.core.money.MoneyRepository;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.file.UploadFileDto;
+import com.hits.open.world.public_interface.inventory.InventoryDto;
 import com.hits.open.world.public_interface.user.CreateUserDto;
 import com.hits.open.world.public_interface.user.ProfileDto;
 import com.hits.open.world.public_interface.user.UpdateUserDto;
@@ -26,6 +28,7 @@ public class UserService {
     private final RoleClient roleClient;
     private final FileStorageService fileStorageService;
     private final MoneyRepository moneyRepository;
+    private final InventoryService inventoryService;
 
     public String createUser(CreateUserDto dto) {
         checkUserWithUsernameExists(dto.username());
@@ -79,7 +82,8 @@ public class UserService {
                 user.id(),
                 user.username(),
                 user.email(),
-                avatarUrl
+                avatarUrl,
+                inventoryService.getInventory(user.id())
         );
     }
 

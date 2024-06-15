@@ -5,12 +5,14 @@ import com.hits.open.world.core.cosmetic_item.entity.CosmeticTypeEnum;
 import com.hits.open.world.public_interface.cosmetic_item.CosmeticItemInInventoryDto;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
+import com.hits.open.world.public_interface.inventory.InventoryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,5 +75,24 @@ public class InventoryService {
         }
 
         inventoryRepository.deleteItem(userId, itemId);
+    }
+
+    @Transactional(readOnly = true)
+    public InventoryDto getInventory(String userId) {
+        var itemsByType = getInventoryItems(userId).stream()
+                .filter(CosmeticItemInInventoryDto::isEquipped)
+                .collect(Collectors.groupingBy(CosmeticItemInInventoryDto::cosmeticType));
+
+        return new InventoryDto(
+                getEquippedItemByType(itemsByType, CosmeticTypeEnum.FOOTPRINT),
+                getEquippedItemByType(itemsByType, CosmeticTypeEnum.AVATAR_FRAMES),
+                getEquippedItemByType(itemsByType, CosmeticTypeEnum.APPLICATION_IMAGE),
+                getEquippedItemByType(itemsByType, CosmeticTypeEnum.FOG)
+        );
+    }
+
+    private Optional<CosmeticItemInInventoryDto> getEquippedItemByType(Map<CosmeticTypeEnum, List<CosmeticItemInInventoryDto>> itemsByType, CosmeticTypeEnum type) {
+        return Optional.ofNullable(itemsByType.get(type)).flatMap(items -> items.stream()
+                .findFirst());
     }
 }

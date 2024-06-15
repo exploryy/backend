@@ -57,11 +57,11 @@ public class StatisticService {
         var allFriends = friendService.getFriends(userId);
 
         var friend = allFriends.friends().stream()
-                .map(friendDto -> getInfo(friendDto.userId()))
+                .map(friendDto -> getUserStatistics(friendDto.userId()))
                 .toList();
 
         var bestFriend = allFriends.favoriteFriends().stream()
-                .map(friendDto -> getInfo(friendDto.userId()))
+                .map(friendDto -> getUserStatistics(friendDto.userId()))
                 .toList();
 
         return Stream.concat(friend.stream(), bestFriend.stream())
@@ -76,30 +76,14 @@ public class StatisticService {
         int totalExperienceInLevel = calculateTotalExperienceInLevel(level);
 
         return LocationStatisticDto.builder()
-                .username(userProfile.username())
-                .photoUrl(userProfile.avatarUrl())
-                .email(userProfile.email())
-                .userId(userProfile.userId())
                 .distance(statistic.distance())
                 .experience(statistic.experience())
                 .previousLatitude(statistic.previousLatitude())
                 .previousLongitude(statistic.previousLongitude())
                 .level(level)
                 .totalExperienceInLevel(totalExperienceInLevel)
+                .profileDto(userProfile)
                 .build();
-    }
-
-    public LocationStatisticDto getInfo(String userId) {
-        var statistic = getUserStatistic(userId);
-
-        var profile = userService.getProfile(statistic.clientId());
-
-        int level = calculateLevel(statistic.experience());
-        int totalExperienceInLevel = calculateTotalExperienceInLevel(level);
-
-        return new LocationStatisticDto(profile.username(), profile.email(), profile.userId(), statistic.previousLatitude(),
-                statistic.previousLongitude(), statistic.experience(), statistic.distance(), level, totalExperienceInLevel,
-                profile.avatarUrl());
     }
 
     public void updateExperience(String userId, int addedExperience) {
