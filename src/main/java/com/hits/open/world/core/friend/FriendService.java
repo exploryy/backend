@@ -46,10 +46,7 @@ public class FriendService {
 
         friendRepository.createFriendRequest(userId, friendId);
 
-        //TODO: async
-        var user = userClient.getUser(userId)
-                .orElseThrow(() -> new ExceptionInApplication("User not found", ExceptionType.NOT_FOUND));
-        notifyFriend(userId, friendId,  "%s wants to be your friend".formatted(user.username()), EventType.REQUEST_TO_FRIEND);
+        notifyFriend(userId, friendId,  "%s".formatted(userId), EventType.REQUEST_TO_FRIEND);
     }
 
     @Transactional

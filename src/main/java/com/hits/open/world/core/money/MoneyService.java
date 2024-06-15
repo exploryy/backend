@@ -19,7 +19,8 @@ public class MoneyService {
 
     public void addMoney(String userId, int amount) {
         moneyRepository.addMoney(userId, amount);
-        notifyUser(userId);
+        var currentMoney = moneyRepository.getMoney(userId);
+        notifyUser(userId, currentMoney);
     }
 
     @Transactional
@@ -29,16 +30,16 @@ public class MoneyService {
             throw new ExceptionInApplication("Not enough money", ExceptionType.INVALID);
         }
         moneyRepository.subtractMoney(userId, amount);
-        notifyUser(userId);
+        notifyUser(userId, currentMoney - amount);
     }
 
     public int getUserMoney(String userId) {
         return moneyRepository.getMoney(userId);
     }
 
-    private void notifyUser(String userId) {
+    private void notifyUser(String userId, int money) {
         try {
-            eventService.sendEvent(userId, new EventDto("Money updated", EventType.CHANGE_MONEY));
+            eventService.sendEvent(userId, new EventDto("%d".formatted(money), EventType.CHANGE_MONEY));
         } catch (Exception e) {
             log.error("Failed to notify user about money update", e);
         }
