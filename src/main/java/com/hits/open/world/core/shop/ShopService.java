@@ -53,7 +53,21 @@ public class ShopService {
 
     public List<CosmeticItemInShopDto> findCosmeticItemsInShop(String name, String userId) {
         return shopRepository.findCosmeticItemsInShop(name, userId).stream()
-                .map(CosmeticItemInShopDto::fromEntity)
+                .map(this::toDto)
                 .toList();
+    }
+
+    private CosmeticItemInShopDto toDto(CosmeticItemInShopEntity entity) {
+        return new CosmeticItemInShopDto(
+                entity.itemId(),
+                entity.name(),
+                entity.description(),
+                entity.price(),
+                entity.rarityType(),
+                entity.cosmeticType(),
+                entity.isOwned(),
+                entity.sellable(),
+                cosmeticItemService.getPhotoUrl(entity.itemId())
+        );
     }
 }
