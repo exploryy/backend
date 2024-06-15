@@ -1,7 +1,6 @@
 package com.hits.open.world.core.quest.repository.entity.generated;
 
 import com.hits.open.world.core.quest.repository.entity.quest.DifficultyType;
-import com.hits.open.world.core.quest.repository.entity.quest.QuestType;
 import com.hits.open.world.core.quest.repository.entity.quest.TransportType;
 
 public record GeneratedDistanceQuest(

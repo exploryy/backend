@@ -5,11 +5,10 @@ import com.hits.open.world.core.statistic.repository.StatisticEntity;
 import com.hits.open.world.core.statistic.repository.StatisticRepository;
 import com.hits.open.world.core.user.UserService;
 import com.hits.open.world.core.websocket.client.WebSocketClient;
+import com.hits.open.world.public_interface.location.LocationStatisticDto;
 import com.hits.open.world.public_interface.statistic.TotalStatisticDto;
 import com.hits.open.world.public_interface.statistic.UpdateStatisticDto;
-import com.hits.open.world.public_interface.statistic.UserStatisticDto;
 import com.hits.open.world.public_interface.user.ProfileDto;
-import com.hits.open.world.public_interface.location.LocationStatisticDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +18,6 @@ import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.OptionalInt;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -186,7 +184,7 @@ public class StatisticService {
         );
 
         statisticRepository.updateStatistic(updatedStatistic);
-            sendClientInfo(statisticEntity.clientId(), calculatedExperience);
+        sendClientInfo(statisticEntity.clientId(), calculatedExperience);
     }
 
     private void updateCoordinates(StatisticEntity statisticEntity, UpdateStatisticDto dto) {

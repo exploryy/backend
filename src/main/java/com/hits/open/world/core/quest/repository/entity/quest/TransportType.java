@@ -4,15 +4,13 @@ import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @RequiredArgsConstructor
 public enum TransportType {
     WALK(1.0),
     BICYCLE(0.5),
-    CAR(0.1)
-    ;
+    CAR(0.1);
 
     private final double experienceBuff;
 

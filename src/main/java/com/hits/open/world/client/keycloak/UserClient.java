@@ -19,6 +19,8 @@ public interface UserClient {
     Optional<UserEntity> getUserByUsername(String username);
 
     Optional<UserEntity> getUserByEmail(String email);
+
     List<UserEntity> getUsersByUsername(String username);
+
     List<UserEntity> getAllUsers();
 }

@@ -1,10 +1,10 @@
 package com.hits.open.world.core.user;
 
+import com.hits.open.world.client.keycloak.RoleClient;
+import com.hits.open.world.client.keycloak.UserClient;
 import com.hits.open.world.core.file.FileMetadata;
 import com.hits.open.world.core.file.FileStorageService;
 import com.hits.open.world.core.money.MoneyRepository;
-import com.hits.open.world.client.keycloak.RoleClient;
-import com.hits.open.world.client.keycloak.UserClient;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.file.UploadFileDto;

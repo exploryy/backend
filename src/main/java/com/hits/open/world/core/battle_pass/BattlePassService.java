@@ -97,8 +97,8 @@ public class BattlePassService {
                                                 cosmeticItemService.findById(reward.itemId())
                                                         .map(entity -> toDto(entity, inventoryRepository.isItemOwned(userId, entity.itemId())))
                                                         .orElseThrow(
-                                                        () -> new ExceptionInApplication("Cosmetic item not found", ExceptionType.NOT_FOUND)
-                                                )
+                                                                () -> new ExceptionInApplication("Cosmetic item not found", ExceptionType.NOT_FOUND)
+                                                        )
                                         ))
                                         .toList()
                         ))

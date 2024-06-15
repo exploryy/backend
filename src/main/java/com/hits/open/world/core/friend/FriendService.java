@@ -1,14 +1,12 @@
 package com.hits.open.world.core.friend;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
+import com.hits.open.world.client.keycloak.UserClient;
 import com.hits.open.world.core.event.EventService;
 import com.hits.open.world.core.event.EventType;
 import com.hits.open.world.core.file.FileStorageService;
 import com.hits.open.world.core.friend.repository.FriendEntity;
 import com.hits.open.world.core.friend.repository.FriendRepository;
 import com.hits.open.world.core.user.UserEntity;
-import com.hits.open.world.client.keycloak.UserClient;
 import com.hits.open.world.core.user.UserService;
 import com.hits.open.world.public_interface.event.EventDto;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
@@ -37,7 +35,6 @@ public class FriendService {
     private final FileStorageService fileStorageService;
     private final EventService eventService;
     private final UserService userService;
-    private final ObjectMapper objectMapper;
 
     @Transactional
     public void addFriendRequest(String userId, String friendId) {
@@ -52,7 +49,7 @@ public class FriendService {
 
         var user = userService.getProfile(userId);
         try {
-            notifyUser(friendId, user , EventType.REQUEST_TO_FRIEND);
+            notifyUser(friendId, user, EventType.REQUEST_TO_FRIEND);
         } catch (Exception e) {
             log.error("Failed to send friend request", e);
         }

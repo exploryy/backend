@@ -9,7 +9,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -27,7 +26,8 @@ public class PoiService {
     public void init() {
         Resource resource = resourceLoader.getResource("classpath:poi.json");
         try (InputStream inputStream = resource.getInputStream()) {
-            dataList.addAll(objectMapper.readValue(inputStream, new TypeReference<List<PoiEntity>>() {}));
+            dataList.addAll(objectMapper.readValue(inputStream, new TypeReference<List<PoiEntity>>() {
+            }));
         } catch (IOException e) {
             log.error("Error reading file", e);
         }
