@@ -57,7 +57,7 @@ public class MultipolygonHandler extends AbstractWebSocketHandler {
         userLocationService.updateUserLocation(locationInfo);
 
         multipolygonService.save(coordinateDto, userId);
-        BigDecimal areaPercent = multipolygonService.calculatePercentArea(userId);
+        BigDecimal areaPercent = multipolygonService.calculatePercentAreaFromTomsk(userId);
         GeoDto geoDto = multipolygonService.getAllPolygons(userId);
         CreatePolygonResponseDto createPolygonResponseDto = new CreatePolygonResponseDto(geoDto, areaPercent);
         var response = objectMapper.toJson(createPolygonResponseDto);

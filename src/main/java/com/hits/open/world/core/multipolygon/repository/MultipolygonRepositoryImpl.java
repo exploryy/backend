@@ -133,5 +133,33 @@ public class MultipolygonRepositoryImpl implements MultipolygonRepository {
         return jdbcTemplate.queryForObject(sql, params, Boolean.class);
     }
 
+    @Override
+    public BigDecimal calculatePercentArea(String firstMultipolygonId, String secondMultipolygonId) {
+        var sql = """
+                WITH
+                    intersection AS (
+                        SELECT ST_Intersection(p1.geom, p2.geom) AS geom
+                        FROM multipolygon p1, multipolygon p2
+                        WHERE p1.client_id = :firstMultipolygonId AND p2.client_id = :secondMultipolygonId
+                    ),
+                    intersection_area AS (
+                        SELECT ST_Area(geom) AS area
+                        FROM intersection
+                    ),
+                    second_area AS (
+                        SELECT ST_Area(geom) AS area
+                        FROM multipolygon
+                        WHERE client_id = :secondMultipolygonId
+                    )
+                SELECT (i.area / t.area) * 100 AS percentage
+                FROM intersection_area i, second_area t;
+                """;
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("firstMultipolygonId", firstMultipolygonId);
+        params.addValue("secondMultipolygonId", secondMultipolygonId);
+        return jdbcTemplate.queryForObject(sql, params, BigDecimal.class);
+    }
+
 }
 

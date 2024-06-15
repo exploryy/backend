@@ -18,5 +18,7 @@ public interface MultipolygonRepository {
     String getPolygonByPoint(Point point, String userId);
 
     boolean isPointInPolygon(Point point, String userId);
+
+    BigDecimal calculatePercentArea(String firstMultipolygonId, String secondMultipolygonId);
 }
 
