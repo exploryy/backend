@@ -33,4 +33,8 @@ public enum TransportType {
             return CAR;
         }
     }
+
+    public static TransportType getRandomTransportType() {
+        return TransportType.values()[(int) (Math.random() * TransportType.values().length)];
+    }
 }
