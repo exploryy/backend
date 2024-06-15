@@ -12,18 +12,7 @@ public record CosmeticItemInShopDto(
         RarityTypeEnum rarityType,
         CosmeticTypeEnum cosmeticType,
         boolean isOwned,
-        boolean sellable
+        boolean sellable,
+        String url
 ) {
-    public static CosmeticItemInShopDto fromEntity(CosmeticItemInShopEntity entity) {
-        return new CosmeticItemInShopDto(
-                entity.itemId(),
-                entity.name(),
-                entity.description(),
-                entity.price(),
-                entity.rarityType(),
-                entity.cosmeticType(),
-                entity.isOwned(),
-                entity.sellable()
-        );
-    }
 }
