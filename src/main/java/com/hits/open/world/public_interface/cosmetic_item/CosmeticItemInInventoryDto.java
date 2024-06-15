@@ -10,6 +10,7 @@ public record CosmeticItemInInventoryDto(
         int price,
         RarityTypeEnum rarityType,
         CosmeticTypeEnum cosmeticType,
-        boolean isEquipped
+        boolean isEquipped,
+        String url
 ) {
 }

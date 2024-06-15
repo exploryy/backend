@@ -1,5 +1,6 @@
 package com.hits.open.world.core.statistic;
 
+import com.hits.open.world.core.event.EventService;
 import com.hits.open.world.core.friend.FriendService;
 import com.hits.open.world.core.statistic.repository.StatisticEntity;
 import com.hits.open.world.core.statistic.repository.StatisticRepository;
@@ -34,6 +35,7 @@ public class StatisticService {
     private final UserService userService;
     private final FriendService friendService;
     private final WebSocketClient webSocketClient;
+    private final EventService eventService;
 
     public TotalStatisticDto getTotal(String userId, int count) {
         List<StatisticEntity> allStatistics = statisticRepository.findAllStatistic();

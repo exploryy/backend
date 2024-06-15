@@ -13,15 +13,4 @@ public record InventoryItemEntity(
         CosmeticTypeEnum cosmeticType,
         boolean isEquipped
 ) {
-    public static CosmeticItemInInventoryDto fromEntity(InventoryItemEntity entity) {
-        return new CosmeticItemInInventoryDto(
-                entity.itemId(),
-                entity.name(),
-                entity.description(),
-                entity.price(),
-                entity.rarityType(),
-                entity.cosmeticType(),
-                entity.isEquipped()
-        );
-    }
 }

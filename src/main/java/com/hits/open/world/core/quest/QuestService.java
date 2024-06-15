@@ -4,6 +4,7 @@ import com.hits.open.world.core.event.EventService;
 import com.hits.open.world.core.event.EventType;
 import com.hits.open.world.core.file.FileMetadata;
 import com.hits.open.world.core.file.FileStorageService;
+import com.hits.open.world.core.money.MoneyService;
 import com.hits.open.world.core.multipolygon.repository.MultipolygonRepository;
 import com.hits.open.world.core.poi.PoiService;
 import com.hits.open.world.core.quest.repository.QuestRepository;
@@ -73,6 +74,7 @@ public class QuestService {
     private final EventService eventService;
     private final QuestGenerationService questGenerationService;
     private final PoiService poiService;
+    private final MoneyService moneyService;
 
     @Scheduled(fixedRateString = "${quest.generateQuestsFixedRate}")
     public void generateQuests() {
@@ -262,12 +264,16 @@ public class QuestService {
     }
 
     public void finishQuest(Long questId, String userId) {
-        statisticService.updateExperience(userId, 10);
         var passQuest = questRepository.getPassQuestById(userId, questId)
                 .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));
         if (!passQuest.userId().equals(userId)) {
             throw new ExceptionInApplication("It's not your quest", ExceptionType.FORBIDDEN);
         }
+
+        var quest = questRepository.getQuestById(questId)
+                .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));
+        statisticService.updateExperience(userId, getExperienceForQuest(quest.difficultyType()));
+        moneyService.addMoney(userId, getMoneyForQuest(quest.difficultyType()));
 
         var updatedEntity = new PassQuestEntity(
                 passQuest.passQuestId(),
@@ -280,13 +286,51 @@ public class QuestService {
         );
         questRepository.updatePassQuest(updatedEntity);
 
-        var quest = questRepository.getQuestById(questId)
-                .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));
         var eventDto = new EventDto(
                 "Квест %s выполнен".formatted(quest.name()),
                 EventType.COMPLETE_QUEST
         );
         eventService.sendEvent(userId, eventDto);
+    }
+
+    @Transactional
+    public void tryNotifyUserAboutNewQuest(LocationDto userLocation) {
+        var questInOpenArea = questRepository.getQuestsByName("")
+                .stream()
+                .filter(questEntity -> {
+                    switch (questEntity.questType()) {
+                        case POINT_TO_POINT -> {
+                            var pointToPointQuest = questRepository.getPointToPointQuestByQuestId(questEntity.questId())
+                                    .orElseThrow(() -> new ExceptionInApplication("Point to point quest not found", ExceptionType.NOT_FOUND));
+                            var way = routeService.getRoute(pointToPointQuest.routeId());
+                            var firstPoint = way.points().get(0);
+                            return calculateDistanceInMeters(
+                                    Double.parseDouble(firstPoint.latitude()),
+                                    Double.parseDouble(firstPoint.longitude()),
+                                    userLocation.latitude().doubleValue(),
+                                    userLocation.longitude().doubleValue()) <= 100;
+                        }
+                        case DISTANCE -> {
+                            var distanceQuest = questRepository.getDistanceQuestByQuestId(questEntity.questId())
+                                    .orElseThrow(() -> new ExceptionInApplication("Distance quest not found", ExceptionType.NOT_FOUND));
+                            return calculateDistanceInMeters(
+                                    Double.parseDouble(distanceQuest.latitude()),
+                                    Double.parseDouble(distanceQuest.longitude()),
+                                    userLocation.latitude().doubleValue(),
+                                    userLocation.longitude().doubleValue()) <= 100;
+                        }
+                        default -> {
+                            return false;
+                        }
+                    }
+                }).count();
+        if (questInOpenArea > 0) {
+            var eventDto = new EventDto(
+                    "У вас есть квесты поблизости",
+                    EventType.NEW_QUEST
+            );
+            eventService.sendEvent(userLocation.clientId(), eventDto);
+        }
     }
 
     @Transactional
@@ -578,5 +622,35 @@ public class QuestService {
         ));
 
         return pointDtos;
+    }
+
+    private int getMoneyForQuest(DifficultyType type) {
+        switch (type) {
+            case EASY -> {
+                return 10;
+            }
+            case MEDIUM -> {
+                return 20;
+            }
+            case HARD -> {
+                return 30;
+            }
+            default -> throw new ExceptionInApplication("Invalid difficulty type", ExceptionType.INVALID);
+        }
+    }
+
+    private int getExperienceForQuest(DifficultyType type) {
+        switch (type) {
+            case EASY -> {
+                return 30;
+            }
+            case MEDIUM -> {
+                return 60;
+            }
+            case HARD -> {
+                return 100;
+            }
+            default -> throw new ExceptionInApplication("Invalid difficulty type", ExceptionType.INVALID);
+        }
     }
 }

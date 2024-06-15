@@ -24,7 +24,7 @@ public class InventoryService {
     public List<CosmeticItemInInventoryDto> getInventoryItems(String userId) {
         return inventoryRepository.findByUserId(userId)
                 .stream()
-                .map(InventoryItemEntity::fromEntity)
+                .map(this::fromEntity)
                 .toList();
     }
 
@@ -95,4 +95,18 @@ public class InventoryService {
         return Optional.ofNullable(itemsByType.get(type)).flatMap(items -> items.stream()
                 .findFirst());
     }
+
+    private CosmeticItemInInventoryDto fromEntity(InventoryItemEntity entity) {
+        return new CosmeticItemInInventoryDto(
+                entity.itemId(),
+                entity.name(),
+                entity.description(),
+                entity.price(),
+                entity.rarityType(),
+                entity.cosmeticType(),
+                entity.isEquipped(),
+                cosmeticItemService.getPhotoUrl(entity.itemId())
+        );
+    }
+
 }

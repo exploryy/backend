@@ -44,6 +44,7 @@ public class UserLocationService {
 
         notificationFriendService.notifyFriendsAboutNewLocation(locationDto);
         questService.tryFinishActiveQuests(locationDto);
+        questService.tryNotifyUserAboutNewQuest(locationDto);
 
         if (savedEntity.isPresent() && checkIfLessOneDay(savedEntity.get())) {
             userLocationRepository.update(entity);
