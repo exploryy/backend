@@ -47,9 +47,8 @@ public class FriendService {
 
         friendRepository.createFriendRequest(userId, friendId);
 
-        var user = userService.getProfile(userId);
         try {
-            notifyUser(friendId, user, EventType.REQUEST_TO_FRIEND);
+            notifyUser(friendId, userId, EventType.REQUEST_TO_FRIEND);
         } catch (Exception e) {
             log.error("Failed to send friend request", e);
         }
