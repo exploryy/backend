@@ -247,8 +247,8 @@ public class QuestService {
                             Double.parseDouble(lastPoint.longitude()),
                             userLocation.latitude().doubleValue(),
                             userLocation.longitude().doubleValue())
-                            > distance) {
-                        return;
+                            <= distance) {
+                        finishQuest(quest.questId(), userLocation.clientId());
                     }
                 }
                 case DISTANCE -> {
@@ -259,12 +259,11 @@ public class QuestService {
                             Double.parseDouble(distanceQuest.longitude()),
                             userLocation.latitude().doubleValue(),
                             userLocation.longitude().doubleValue())
-                            > distanceQuest.routeDistance()) {
-                        return;
+                            >= distanceQuest.routeDistance()) {
+                        finishQuest(quest.questId(), userLocation.clientId());
                     }
                 }
             }
-            finishQuest(quest.questId(), userLocation.clientId());
         }
     }
 
