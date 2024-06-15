@@ -52,7 +52,7 @@ public class FriendService {
 
         var user = userService.getProfile(userId);
         try {
-            notifyUser(friendId, objectMapper.writeValueAsString(user) , EventType.REQUEST_TO_FRIEND);
+            notifyUser(friendId, user , EventType.REQUEST_TO_FRIEND);
         } catch (Exception e) {
             log.error("Failed to send friend request", e);
         }
@@ -131,7 +131,7 @@ public class FriendService {
         );
     }
 
-    private void notifyUser(String friendId, String message, EventType eventType) {
+    private void notifyUser(String friendId, Object message, EventType eventType) {
         try {
             eventService.sendEvent(friendId, new EventDto(message, eventType));
         } catch (Exception e) {
