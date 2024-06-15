@@ -1,4 +1,4 @@
-package com.hits.open.world.keycloak;
+package com.hits.open.world.client.keycloak;
 
 public interface RoleClient {
     void assignRole(String userId, String roleName);

@@ -7,11 +7,11 @@ create sequence s_quest_id start with 1 increment by 1;
 create table quest
 (
     quest_id        bigint default nextval('s_quest_id'),
-    name            varchar(60)                                                         not null,
-    description     varchar(255)                                                        not null,
+    name            varchar(300)                                                         not null,
+    description     varchar                                                       not null,
     difficulty_type varchar(20) check ( difficulty_type in ('EASY', 'MEDIUM', 'HARD') ) not null,
     quest_type      varchar(20) check ( quest_type in ('POINT_TO_POINT', 'DISTANCE') )  not null,
-    transport_type  varchar(20) check ( transport_type in ('WALK', 'BICYCLE') )         not null,
+    transport_type  varchar(20) check ( transport_type in ('WALK', 'BICYCLE', 'CAR') )         not null,
     primary key (quest_id)
 );
 
@@ -58,7 +58,7 @@ create table pass_quest
     start_time     timestamp                                                   not null,
     end_time       timestamp,
     route_id       bigint,
-    transport_type varchar(20) check ( transport_type in ('WALK', 'BICYCLE') ) not null,
+    transport_type varchar(20) check ( transport_type in ('WALK', 'BICYCLE', 'CAR') ) not null,
     primary key (pass_quest_id),
     foreign key (quest_id) references quest (quest_id),
     foreign key (route_id) references route (route_id)

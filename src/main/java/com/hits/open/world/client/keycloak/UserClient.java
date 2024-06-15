@@ -1,4 +1,4 @@
-package com.hits.open.world.keycloak;
+package com.hits.open.world.client.keycloak;
 
 
 import com.hits.open.world.core.user.UserEntity;
