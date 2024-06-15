@@ -36,7 +36,7 @@ public class FriendService {
     private final FileStorageService fileStorageService;
     private final EventService eventService;
     private final UserService userService;
-    private final Gson objectMapper;
+    private final Gson objectMapper = new Gson();
 
     @Transactional
     public void addFriendRequest(String userId, String friendId) {
@@ -50,7 +50,7 @@ public class FriendService {
         friendRepository.createFriendRequest(userId, friendId);
 
         var user = userService.getProfile(userId);
-        notifyFriend(userId, friendId, objectMapper.toJson(user) , EventType.REQUEST_TO_FRIEND);
+        notifyUser(friendId, objectMapper.toJson(user) , EventType.REQUEST_TO_FRIEND);
     }
 
     @Transactional
@@ -125,7 +125,7 @@ public class FriendService {
         );
     }
 
-    private void notifyFriend(String userId, String friendId, String message, EventType eventType) {
+    private void notifyUser(String friendId, String message, EventType eventType) {
         try {
             eventService.sendEvent(friendId, new EventDto(message, eventType));
         } catch (Exception e) {
