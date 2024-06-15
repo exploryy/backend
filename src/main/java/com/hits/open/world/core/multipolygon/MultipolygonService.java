@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 import static com.hits.open.world.core.multipolygon.factory.geo.GeoDtoFactory.buildMultiPolygonGeoDto;
 import static com.hits.open.world.core.multipolygon.factory.geo.GeoDtoFactory.buildPolygonGeoDto;
@@ -45,10 +44,8 @@ public class MultipolygonService {
         return new AreaDtoResponse(area);
     }
 
-    public BigDecimal calculatePercentArea(String userId) {
-        BigDecimal userArea = multipolygonRepository.calculateArea(userId);
-        BigDecimal tomskArea = multipolygonRepository.calculateArea(TOMSK_ID);
-        return userArea.divide(tomskArea, 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100));
+    public BigDecimal calculatePercentAreaFromTomsk(String userId) {
+        return multipolygonRepository.calculatePercentArea(userId, TOMSK_ID);
     }
 
     public boolean isNewTerritory(LocationDto locationDto) {
