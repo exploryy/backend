@@ -247,6 +247,11 @@ public class QuestController {
         return questService.getQuests(dto);
     }
 
+    @GetMapping(path = "/all")
+    public List<CommonQuestDto> getAllQuests() {
+        return questService.getAllQuest();
+    }
+
     @GetMapping(path = "/my/completed")
     public List<CompletedQuestDto> getMyCompletedQuests(JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();

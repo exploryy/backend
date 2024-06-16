@@ -195,6 +195,14 @@ public class QuestService {
         );
     }
 
+    @Transactional(readOnly = true)
+    public List<CommonQuestDto> getAllQuest() {
+        return questRepository.getQuestsByName("")
+                .stream()
+                .map(this::toDto)
+                .toList();
+    }
+
     private boolean inOpenArea(QuestEntity dto, String userId) {
         var cord = getCoordinates(dto);
         var coordinate = new Coordinate(Double.parseDouble(cord.longitude()), Double.parseDouble(cord.latitude()));
