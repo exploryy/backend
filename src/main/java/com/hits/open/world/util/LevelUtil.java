@@ -7,14 +7,14 @@ public final class LevelUtil {
     }
 
     public static int calculateTotalExperienceInLevel(int level) {
-        if (level == 0) {
+        if (level == 1) {
             return 3000;
         }
         return calculateTotalExperienceInLevel(level - 1) + (3000 + 3000 * (level - 1));
     }
 
     public static int calculateLevel(int experience) {
-        return calculateLevelHelper(experience, 0);
+        return calculateLevelHelper(experience, 1);
     }
 
     private static int calculateLevelHelper(int experience, int level) {

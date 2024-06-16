@@ -41,10 +41,12 @@ public class UserLocationService {
         notificationFriendService.notifyFriendsAboutNewLocation(requestDto);
         questService.tryFinishActiveQuests(requestDto);
 
-        if (!shouldUpdateCoins(savedEntity)) {
+        if (savedEntity.isPresent() && checkIfLessOneDay(savedEntity.get())) {
             userLocationRepository.update(userLocationEntity);
             return;
-        } else if (savedEntity.isPresent()) {
+        }
+
+        if (savedEntity.isPresent()) {
             userLocationRepository.update(userLocationEntity);
         } else {
             userLocationRepository.initLocation(userLocationEntity);
@@ -58,6 +60,10 @@ public class UserLocationService {
         return userLocationRepository.findById(clientId);
     }
 
+    private boolean checkIfLessOneDay(UserLocationEntity entity) {
+        return entity.lastVisitation().isAfter(OffsetDateTime.now().minusDays(1));
+    }
+
     private UserLocationEntity buildEntity(PolygonRequestDto requestDto) {
         return UserLocationEntity.builder()
                 .longitude(String.valueOf(requestDto.createPolygonRequestDto().longitude()))
@@ -65,10 +71,6 @@ public class UserLocationService {
                 .lastVisitation(OffsetDateTime.now())
                 .clientId(requestDto.userId())
                 .build();
-    }
-
-    private boolean shouldUpdateCoins(Optional<UserLocationEntity> entity) {
-        return entity.map(this::isMoreThanOneDayOld).orElse(false);
     }
 
     private boolean isMoreThanOneDayOld(UserLocationEntity entity) {
