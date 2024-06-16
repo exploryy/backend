@@ -6,10 +6,8 @@ import com.hits.open.world.core.file.FileMetadata;
 import com.hits.open.world.core.file.FileStorageService;
 import com.hits.open.world.core.money.MoneyService;
 import com.hits.open.world.core.multipolygon.repository.MultipolygonRepository;
-import com.hits.open.world.core.poi.PoiService;
 import com.hits.open.world.core.quest.repository.QuestRepository;
 import com.hits.open.world.core.quest.repository.entity.PointEntity;
-import com.hits.open.world.core.quest.repository.entity.generated.GeneratedPoint;
 import com.hits.open.world.core.quest.repository.entity.pass_quest.PassQuestEntity;
 import com.hits.open.world.core.quest.repository.entity.quest.DifficultyType;
 import com.hits.open.world.core.quest.repository.entity.quest.QuestEntity;
@@ -26,8 +24,6 @@ import com.hits.open.world.public_interface.event.EventDto;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.file.UploadFileDto;
-import com.hits.open.world.public_interface.location.LocationDto;
-import com.hits.open.world.public_interface.multipolygon.CreatePolygonRequestDto;
 import com.hits.open.world.public_interface.multipolygon.PolygonRequestDto;
 import com.hits.open.world.public_interface.quest.AllQuestDto;
 import com.hits.open.world.public_interface.quest.CommonQuestDto;
@@ -45,19 +41,15 @@ import com.hits.open.world.public_interface.quest.review.CreateQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.DeleteImageQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.DeleteQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.UpdateQuestReviewDto;
-import com.hits.open.world.public_interface.route.CreateRouteDto;
-import com.hits.open.world.public_interface.route.PointDto;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,62 +66,7 @@ public class QuestService {
     private final FileStorageService fileStorageService;
     private final MultipolygonRepository multipolygonRepository;
     private final EventService eventService;
-    private final QuestGenerationService questGenerationService;
-    private final PoiService poiService;
     private final MoneyService moneyService;
-
-    @Scheduled(fixedRateString = "${quest.generateQuestsFixedRate}")
-    public void generateQuests() {
-        try {
-            for (var cityName : poiService.getCities()) {
-                if (Math.random() < 0.5) {
-                    var poi = poiService.getRandomPoiInCity(cityName);
-                    var distanceGeneratedQuest = questGenerationService.generateRandomDistanceQuest(poi);
-                    var createDistanceQuestDto = new CreateDistanceQuestDto(
-                            new CreateQuestDto(
-                                    distanceGeneratedQuest.name(),
-                                    distanceGeneratedQuest.description(),
-                                    distanceGeneratedQuest.difficultyType().name(),
-                                    QuestType.DISTANCE.name(),
-                                    distanceGeneratedQuest.transportType().name(),
-                                    List.of()
-                            ),
-                            distanceGeneratedQuest.routeDistance(),
-                            distanceGeneratedQuest.longitude(),
-                            distanceGeneratedQuest.latitude()
-                    );
-                    createDistanceQuest(createDistanceQuestDto);
-                    log.info("Quest generated: %s".formatted(distanceGeneratedQuest.name()));
-                } else {
-                    var from = poiService.getRandomPoiInCity(cityName);
-                    var to = poiService.getRandomPoiInCity(cityName);
-                    if (from.equals(to)) {
-                        return;
-                    }
-                    var pointToPointGeneratedQuest = questGenerationService.generateRandomPointToPointQuest(from, to);
-                    var createPointToPointQuestDto = new CreatePointToPointQuestDto(
-                            new CreateQuestDto(
-                                    pointToPointGeneratedQuest.name(),
-                                    pointToPointGeneratedQuest.description(),
-                                    pointToPointGeneratedQuest.difficultyType().name(),
-                                    QuestType.POINT_TO_POINT.name(),
-                                    pointToPointGeneratedQuest.transportType().name(),
-                                    List.of()
-                            ),
-                            new CreateRouteDto(
-                                    fromGeneratedPoint(pointToPointGeneratedQuest.points()),
-                                    pointToPointGeneratedQuest.points().get(0).longitude(),
-                                    pointToPointGeneratedQuest.points().get(0).latitude()
-                            )
-                    );
-                    createPointToPointQuest(createPointToPointQuestDto);
-                    log.info("Quest generated: %s".formatted(pointToPointGeneratedQuest.name()));
-                }
-            }
-        } catch (Exception e) {
-            log.error("Error generating quests", e);
-        }
-    }
 
     private Long createQuest(CreateQuestDto dto) {
         var questEntity = new QuestEntity(
@@ -147,6 +84,7 @@ public class QuestService {
         return questInDb.questId();
     }
 
+    @Transactional
     public void createPointToPointQuest(CreatePointToPointQuestDto dto) {
         var questId = createQuest(dto.questDto());
         var routeId = routeService.createRoute(dto.routeDto());
@@ -157,6 +95,7 @@ public class QuestService {
         questRepository.createPointToPointQuest(pointToPointQuestEntity);
     }
 
+    @Transactional
     public void createDistanceQuest(CreateDistanceQuestDto dto) {
         var questId = createQuest(dto.questDto());
         var distanceQuestEntity = new DistanceQuestEntity(
@@ -607,33 +546,6 @@ public class QuestService {
                 completedQuest.startTime(),
                 completedQuest.endTime()
         );
-    }
-
-    private List<PointDto> fromGeneratedPoint(List<GeneratedPoint> generatedPoints) {
-        List<PointDto> pointDtos = new ArrayList<>();
-
-        for (int i = 0; i < generatedPoints.size() - 1; i++) {
-            GeneratedPoint current = generatedPoints.get(i);
-            GeneratedPoint next = generatedPoints.get(i + 1);
-
-            PointDto dto = new PointDto(
-                    current.latitude(),
-                    current.longitude(),
-                    next.latitude(),
-                    next.longitude()
-            );
-
-            pointDtos.add(dto);
-        }
-
-        pointDtos.add(new PointDto(
-                generatedPoints.get(generatedPoints.size() - 1).latitude(),
-                generatedPoints.get(generatedPoints.size() - 1).longitude(),
-                null,
-                null
-        ));
-
-        return pointDtos;
     }
 
     private int getMoneyForQuest(DifficultyType type) {
