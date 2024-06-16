@@ -27,6 +27,7 @@ import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.file.UploadFileDto;
 import com.hits.open.world.public_interface.location.LocationDto;
+import com.hits.open.world.public_interface.multipolygon.CreatePolygonRequestDto;
 import com.hits.open.world.public_interface.multipolygon.PolygonRequestDto;
 import com.hits.open.world.public_interface.quest.AllQuestDto;
 import com.hits.open.world.public_interface.quest.CommonQuestDto;
@@ -297,7 +298,7 @@ public class QuestService {
     }
 
     @Transactional
-    public void tryNotifyUserAboutNewQuest(LocationDto userLocation) {
+    public void tryNotifyUserAboutNewQuest(PolygonRequestDto userLocation) {
         var questInOpenArea = questRepository.getQuestsByName("")
                 .stream()
                 .filter(questEntity -> {
@@ -310,8 +311,8 @@ public class QuestService {
                             return calculateDistanceInMeters(
                                     Double.parseDouble(firstPoint.latitude()),
                                     Double.parseDouble(firstPoint.longitude()),
-                                    userLocation.latitude().doubleValue(),
-                                    userLocation.longitude().doubleValue()) <= 100;
+                                    userLocation.createPolygonRequestDto().latitude().doubleValue(),
+                                    userLocation.createPolygonRequestDto().longitude().doubleValue()) <= 100;
                         }
                         case DISTANCE -> {
                             var distanceQuest = questRepository.getDistanceQuestByQuestId(questEntity.questId())
@@ -319,8 +320,8 @@ public class QuestService {
                             return calculateDistanceInMeters(
                                     Double.parseDouble(distanceQuest.latitude()),
                                     Double.parseDouble(distanceQuest.longitude()),
-                                    userLocation.latitude().doubleValue(),
-                                    userLocation.longitude().doubleValue()) <= 100;
+                                    userLocation.createPolygonRequestDto().latitude().doubleValue(),
+                                    userLocation.createPolygonRequestDto().longitude().doubleValue()) <= 100;
                         }
                         default -> {
                             return false;
@@ -332,7 +333,7 @@ public class QuestService {
                     "У вас есть квесты поблизости",
                     EventType.NEW_QUEST
             );
-            eventService.sendEvent(userLocation.clientId(), eventDto);
+            eventService.sendEvent(userLocation.userId(), eventDto);
         }
     }
 
