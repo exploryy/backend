@@ -1,6 +1,5 @@
 package com.hits.open.world.core.friend;
 
-import com.hits.open.world.client.keycloak.UserClient;
 import com.hits.open.world.core.event.EventService;
 import com.hits.open.world.core.event.EventType;
 import com.hits.open.world.core.file.FileStorageService;
@@ -14,6 +13,7 @@ import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.friend.AllFriendDto;
 import com.hits.open.world.public_interface.friend.FriendDto;
 import com.hits.open.world.public_interface.friend.RequestFriendsDto;
+import com.hits.open.world.public_interface.user.ProfileDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.partitioningBy;
@@ -31,7 +30,6 @@ import static java.util.stream.Collectors.partitioningBy;
 @RequiredArgsConstructor
 public class FriendService {
     private final FriendRepository friendRepository;
-    private final UserClient userClient;
     private final FileStorageService fileStorageService;
     private final EventService eventService;
     private final UserService userService;
@@ -145,11 +143,8 @@ public class FriendService {
         );
     }
 
-    private Stream<FriendDto> mapToFriendDto(List<String> usersId) {
+    private Stream<ProfileDto> mapToFriendDto(List<String> usersId) {
         return usersId.stream()
-                .map(userClient::getUser)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(this::mapToFriendDto);
+                .map(userService::getProfile);
     }
 }

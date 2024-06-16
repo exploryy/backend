@@ -3,7 +3,6 @@ package com.hits.open.world.core.friend.repository;
 import com.google.gson.Gson;
 import com.hits.open.world.core.friend.FriendService;
 import com.hits.open.world.core.websocket.client.WebSocketClient;
-import com.hits.open.world.public_interface.location.LocationDto;
 import com.hits.open.world.public_interface.multipolygon.PolygonRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
