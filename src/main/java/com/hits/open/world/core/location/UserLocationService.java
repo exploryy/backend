@@ -32,7 +32,7 @@ public class UserLocationService {
     private final QuestService questService;
 
     @Transactional
-    public void updateUserLocation(LocationDto locationDto) {
+    public void updateUserLocation(LocationDto locationDto, boolean isNewTerritory) {
         var savedEntity = getUserLocation(locationDto.clientId());
 
         var entity = UserLocationEntity.builder()
@@ -44,7 +44,9 @@ public class UserLocationService {
 
         notificationFriendService.notifyFriendsAboutNewLocation(locationDto);
         questService.tryFinishActiveQuests(locationDto);
-        questService.tryNotifyUserAboutNewQuest(locationDto);
+        if (isNewTerritory) {
+            questService.tryNotifyUserAboutNewQuest(locationDto);
+        }
 
         if (savedEntity.isPresent() && checkIfLessOneDay(savedEntity.get())) {
             userLocationRepository.update(entity);
