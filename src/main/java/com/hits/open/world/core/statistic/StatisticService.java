@@ -65,8 +65,8 @@ public class StatisticService {
         var friends = friendService.getFriends(userId);
 
         return Stream.concat(
-                        friends.friends().stream().map(FriendDto::userId),
-                        friends.favoriteFriends().stream().map(FriendDto::userId)
+                        friends.friends().stream().map(ProfileDto::userId),
+                        friends.favoriteFriends().stream().map(ProfileDto::userId)
                 ).distinct()
                 .map(this::buildLocationStatisticDto)
                 .toList();
