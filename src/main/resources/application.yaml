@@ -25,8 +25,11 @@ openStreetMap:
   footEndpoint: routed-foot/route/v1/driving/
   bikeEndpoint: routed-bike/route/v1/driving/
 
+overpassTurbo:
+  baseUrl: https://overpass-api.de/api/interpreter
+
 quest:
-  generateQuestsFixedRate: 3600000
+  generateQuestsFixedRate: 600000
 
 websocket:
   storage:

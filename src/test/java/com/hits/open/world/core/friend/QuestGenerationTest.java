@@ -19,15 +19,15 @@ class QuestGenerationTest {
 
     @Test
     void generateDistanceQuest() {
-        var randomPoi = poiService.getRandomPoi();
+        var randomPoi = poiService.getRandomPoiInCity("Томск");
         var result = questGenerationService.generateRandomDistanceQuest(randomPoi);
         System.out.println(result);
     }
 
     @Test
     void generatePointToPointQuest() {
-        var randomPoi = poiService.getRandomPoi();
-        var randomPoi2 = poiService.getRandomPoi();
+        var randomPoi = poiService.getRandomPoiInCity("Томск");
+        var randomPoi2 = poiService.getRandomPoiInCity("Томск");
         var result = questGenerationService.generateRandomPointToPointQuest(randomPoi, randomPoi2);
         System.out.println(result);
     }

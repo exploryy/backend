@@ -35,6 +35,12 @@ public class QuestGenerationService {
             );
         } catch (Exception e) {
             log.error("Error generating description", e);
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException ex) {
+                log.error("Error sleeping", ex);
+                throw new RuntimeException(ex);
+            }
             return generateRandomDistanceQuest(poi);
         }
     }
@@ -54,6 +60,12 @@ public class QuestGenerationService {
             );
         } catch (Exception e) {
             log.error("Error generating description", e);
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException ex) {
+                log.error("Error sleeping", ex);
+                throw new RuntimeException(ex);
+            }
             return generateRandomPointToPointQuest(from, to);
         }
     }
