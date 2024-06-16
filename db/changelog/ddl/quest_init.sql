@@ -31,6 +31,6 @@ values (1, 1);
 
 insert into distance_quest (quest_id, route_distance, longitude, latitude)
 values (2, 1000, '84.937013', '56.470304'),
-       (3, 52, '84.951074', '56.492864');
+       (3, 24, '84.951074', '56.492864');
 
 -- rollback delete from route_id = 1;

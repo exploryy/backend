@@ -27,8 +27,15 @@ openStreetMap:
   footEndpoint: routed-foot/route/v1/driving/
   bikeEndpoint: routed-bike/route/v1/driving/
 
+overpassTurbo:
+  baseUrl: https://overpass-api.de/api/interpreter
+
+flickr:
+  baseUrl: https://www.flickr.com/services/rest/
+  apiKey: 2b35589ced3afacca07adeb0b09c77c4
+
 quest:
-  generateQuestsFixedRate: 3600000
+  generateQuestsFixedRate: 600000
 
 websocket:
   storage:

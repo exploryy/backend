@@ -1,11 +1,14 @@
 package com.hits.open.world.core.statistic;
 
 import com.google.gson.Gson;
+import com.hits.open.world.core.event.EventService;
+import com.hits.open.world.core.event.EventType;
 import com.hits.open.world.core.friend.FriendService;
 import com.hits.open.world.core.statistic.repository.StatisticEntity;
 import com.hits.open.world.core.statistic.repository.StatisticRepository;
 import com.hits.open.world.core.user.UserService;
 import com.hits.open.world.core.websocket.client.WebSocketClient;
+import com.hits.open.world.public_interface.event.EventDto;
 import com.hits.open.world.public_interface.friend.FriendDto;
 import com.hits.open.world.public_interface.statistic.ExperienceDto;
 import com.hits.open.world.public_interface.statistic.LevelDto;
@@ -13,6 +16,7 @@ import com.hits.open.world.public_interface.statistic.TotalStatisticDto;
 import com.hits.open.world.public_interface.statistic.UpdateStatisticDto;
 import com.hits.open.world.public_interface.user.ProfileDto;
 import com.hits.open.world.public_interface.location.LocationStatisticDto;
+import com.hits.open.world.util.LevelUtil;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,6 +45,7 @@ public class StatisticService {
     private final UserService userService;
     private final FriendService friendService;
     private final WebSocketClient webSocketClient;
+    private final EventService eventService;
 
     @Transactional
     public TotalStatisticDto getTotal(String userId, int count) {
@@ -65,8 +70,8 @@ public class StatisticService {
         var friends = friendService.getFriends(userId);
 
         return Stream.concat(
-                        friends.friends().stream().map(FriendDto::userId),
-                        friends.favoriteFriends().stream().map(FriendDto::userId)
+                        friends.friends().stream().map(ProfileDto::userId),
+                        friends.favoriteFriends().stream().map(ProfileDto::userId)
                 ).distinct()
                 .map(this::buildLocationStatisticDto)
                 .toList();
@@ -143,8 +148,10 @@ public class StatisticService {
     }
 
     private void sendEventInfo(String userId, int experience) {
-        sendExperience(userId, experience);
-        sendLevel(userId, experience);
+        eventService.sendEvent(userId, new EventDto(experience, EventType.UPDATE_EXPERIENCE));
+        eventService.sendEvent(userId, new EventDto(LevelUtil.calculateLevel(experience), EventType.UPDATE_LEVEL));
+        /*sendExperience(userId, experience);
+        sendLevel(userId, experience);*/
     }
 
     private void sendExperience(String userId, int experience) {

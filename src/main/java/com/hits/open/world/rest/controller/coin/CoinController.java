@@ -2,8 +2,11 @@ package com.hits.open.world.rest.controller.coin;
 
 import com.hits.open.world.core.coin.CoinService;
 import com.hits.open.world.core.money.MoneyService;
+import com.hits.open.world.core.statistic.ExperienceService;
+import com.hits.open.world.core.statistic.StatisticService;
 import com.hits.open.world.public_interface.coin.BalanceResponseDto;
 import com.hits.open.world.public_interface.coin.CoinResponseDto;
+import com.hits.open.world.util.LevelUtil;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,7 @@ import java.util.List;
 public class CoinController {
     private final CoinService coinService;
     private final MoneyService moneyService;
+    private final StatisticService statisticService;
 
     @GetMapping(path = "/list")
     public List<CoinResponseDto> findAll(JwtAuthenticationToken token) {
@@ -42,8 +46,14 @@ public class CoinController {
     @GetMapping(path = "/balance")
     public BalanceResponseDto getBalance(JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
+        var experience = statisticService.getUserStatistics(userId).experience();
+        var level = LevelUtil.calculateLevel(experience);
+
         return new BalanceResponseDto(
-                moneyService.getUserMoney(userId)
+                moneyService.getUserMoney(userId),
+                experience,
+                level,
+                LevelUtil.calculateTotalExperienceInLevel(level)
         );
     }
 }

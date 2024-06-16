@@ -4,6 +4,8 @@ import com.hits.open.world.client.gpt.YandexGptClient;
 import com.hits.open.world.client.keycloak.KeycloakRoleClient;
 import com.hits.open.world.client.keycloak.KeycloakUserClient;
 import com.hits.open.world.client.map.OpenStreetMapClient;
+import com.hits.open.world.client.photo.FlickrPhotoClient;
+import com.hits.open.world.client.poi.OverpassTurboPoiClient;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -74,6 +76,26 @@ public class ClientBeans {
                 carUri,
                 footUri,
                 bicycleUri
+        );
+    }
+
+    @Bean
+    public OverpassTurboPoiClient overpassTurboPoiClient(
+            @Value("${overpassTurbo.baseUrl}") String baseUrl) {
+        return new OverpassTurboPoiClient(WebClient.builder()
+                .baseUrl(baseUrl)
+                .build()
+        );
+    }
+
+    @Bean
+    public FlickrPhotoClient flickrPhotoClient(
+            @Value("${flickr.baseUrl}") String baseUrl,
+            @Value("${flickr.apiKey}") String apiKey) {
+        return new FlickrPhotoClient(WebClient.builder()
+                .baseUrl(baseUrl)
+                .build(),
+                apiKey
         );
     }
 }

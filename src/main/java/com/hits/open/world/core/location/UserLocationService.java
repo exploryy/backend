@@ -4,6 +4,8 @@ import com.hits.open.world.core.coin.CoinService;
 import com.hits.open.world.core.friend.repository.NotificationFriendService;
 import com.hits.open.world.core.location.repository.UserLocationEntity;
 import com.hits.open.world.core.location.repository.UserLocationRepository;
+import com.hits.open.world.core.multipolygon.MultipolygonService;
+import com.hits.open.world.core.poi.PoiService;
 import com.hits.open.world.core.quest.QuestService;
 import com.hits.open.world.core.statistic.StatisticService;
 import com.hits.open.world.public_interface.location.LocationDto;
@@ -31,6 +33,8 @@ public class UserLocationService {
     private final NotificationFriendService notificationFriendService;
     private final CoinService coinService;
     private final QuestService questService;
+    private final PoiService poiService;
+    private final MultipolygonService multipolygonService;
 
     @Transactional
     public void updateUserLocation(PolygonRequestDto requestDto) {
@@ -40,6 +44,11 @@ public class UserLocationService {
 
         notificationFriendService.notifyFriendsAboutNewLocation(requestDto);
         questService.tryFinishActiveQuests(requestDto);
+        poiService.tryLoadPoiData(requestDto.createPolygonRequestDto().place());
+
+        if (multipolygonService.isNewTerritory(requestDto)) {
+            questService.tryNotifyUserAboutNewQuest(requestDto);
+        }
 
         if (savedEntity.isPresent() && checkIfLessOneDay(savedEntity.get())) {
             userLocationRepository.update(userLocationEntity);
