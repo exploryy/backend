@@ -47,11 +47,13 @@ public class CoinController {
     public BalanceResponseDto getBalance(JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
         var experience = statisticService.getUserStatistics(userId).experience();
+        var level = LevelUtil.calculateLevel(experience);
 
         return new BalanceResponseDto(
                 moneyService.getUserMoney(userId),
                 experience,
-                LevelUtil.calculateLevel(experience)
+                level,
+                LevelUtil.calculateTotalExperienceInLevel(level)
         );
     }
 }
