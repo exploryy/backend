@@ -14,6 +14,20 @@ geo:
   earthRadius: 6378137
   maxDistance: 100
 
+yandexApi:
+  foundationModelsUri: ${FOUNDATION_MODELS_URI:https://llm.api.cloud.yandex.net/foundationModels/v1/completion}
+  token: ${GPT_TOKEN:AQVNxf5dzK3AAB5MmmB1nL8OISV5gXyTdE3ej-sH}
+  modelUri: ${GPT_MODEL_URI:gpt://b1go9ij03gceo2iisf9b/yandexgpt}
+
+openStreetMap:
+  baseUrl: https://routing.openstreetmap.de/
+  carEndpoint: routed-car/route/v1/driving/
+  footEndpoint: routed-foot/route/v1/driving/
+  bikeEndpoint: routed-bike/route/v1/driving/
+
+quest:
+  generateQuestsFixedRate: 3600000
+
 websocket:
   storage:
     fixedDelay:

@@ -19,7 +19,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 @Slf4j
 @ControllerAdvice
@@ -46,6 +45,7 @@ public class RestInterceptor extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {Exception.class})
     public ResponseEntity<Object> handleAllException(Exception ex, WebRequest request) {
+        log.error("Internal server error", ex);
         final String exceptionBody = "Internal server error";
         return handleExceptionInternal(ex, exceptionBody, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }

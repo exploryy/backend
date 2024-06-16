@@ -11,22 +11,22 @@ import com.hits.open.world.public_interface.route.RouteDto;
 import com.hits.open.world.util.PointUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class RouteService {
     private final RouteRepository routeRepository;
 
+    @Transactional
     public Long createRoute(CreateRouteDto dto) {
-        var routeEntity = new RouteEntity(
-                null,
-                PointUtil.distance(dto.points(), dto.startPointLongitude(), dto.startPointLatitude()),
-                dto.startPointLatitude(),
-                dto.startPointLongitude()
-        );
-        var route = routeRepository.saveRoute(routeEntity);
+        List<PointDto> reversedPoints = dto.points();
+        Collections.reverse(reversedPoints);
         routeRepository.savePoints(
-                dto.points()
+                reversedPoints
                         .stream()
                         .map(point -> new PointRouteEntity(
                                 point.longitude(),
@@ -36,6 +36,13 @@ public class RouteService {
                         ))
                         .toList()
         );
+        var routeEntity = new RouteEntity(
+                null,
+                PointUtil.distanceInMeters(dto.points()),
+                dto.startPointLatitude(),
+                dto.startPointLongitude()
+        );
+        var route = routeRepository.saveRoute(routeEntity);
         return route.routeId();
     }
 

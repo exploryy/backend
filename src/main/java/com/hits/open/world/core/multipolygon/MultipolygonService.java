@@ -12,7 +12,6 @@ import com.hits.open.world.public_interface.multipolygon.PolygonRequestDto;
 import com.hits.open.world.public_interface.multipolygon.geo.GeoDto;
 import com.hits.open.world.public_interface.multipolygon.geo.MultipolygonGeometry;
 import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

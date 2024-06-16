@@ -12,7 +12,7 @@ liquibase {
     activities {
         main {
             changelogFile "./changelog/root-changelog.yml"
-            url "jdbc:postgresql://${System.getenv().getOrDefault("DB_HOST","localhost")}:${System.getenv().getOrDefault("DB_PORT", "5432")}/${System.getenv().getOrDefault("FORUM_DB", "open_the_world")}"
+            url "jdbc:postgresql://${System.getenv().getOrDefault("DB_HOST", "localhost")}:${System.getenv().getOrDefault("DB_PORT", "5432")}/${System.getenv().getOrDefault("FORUM_DB", "open_the_world")}"
             username System.getenv().getOrDefault("DB_USER", "postgres")
             password System.getenv().getOrDefault("DB_PASSWORD", "cNBxF5Ang977BPz7kUr2jHHBMu6bQfnh")
             defaultSchemaName System.getenv().getOrDefault("DB_SCHEMA", "public")

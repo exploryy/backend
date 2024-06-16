@@ -1,4 +1,4 @@
-package com.hits.open.world.keycloak;
+package com.hits.open.world.client.keycloak;
 
 
 import com.hits.open.world.core.user.UserEntity;
@@ -19,6 +19,8 @@ public interface UserClient {
     Optional<UserEntity> getUserByUsername(String username);
 
     Optional<UserEntity> getUserByEmail(String email);
+
     List<UserEntity> getUsersByUsername(String username);
+
     List<UserEntity> getAllUsers();
 }

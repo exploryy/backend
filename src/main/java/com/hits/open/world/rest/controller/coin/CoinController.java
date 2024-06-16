@@ -3,14 +3,17 @@ package com.hits.open.world.rest.controller.coin;
 import com.hits.open.world.core.coin.CoinService;
 import com.hits.open.world.core.money.MoneyService;
 import com.hits.open.world.public_interface.coin.BalanceResponseDto;
-import com.hits.open.world.public_interface.coin.CoinRequestDto;
 import com.hits.open.world.public_interface.coin.CoinResponseDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 

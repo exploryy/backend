@@ -187,17 +187,15 @@ public class StatisticService {
         int level = calculateLevel(statistic.experience());
         int totalExperienceInLevel = calculateTotalExperienceInLevel(level);
 
+
         return new LocationStatisticDto(
-                profile.username(),
-                profile.email(),
-                profile.userId(),
                 statistic.previousLatitude(),
                 statistic.previousLongitude(),
                 statistic.experience(),
                 statistic.distance(),
                 level,
                 totalExperienceInLevel,
-                profile.avatarUrl()
+                profile
         );
     }
 

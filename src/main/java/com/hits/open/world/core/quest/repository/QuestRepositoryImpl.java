@@ -24,7 +24,6 @@ import org.jooq.RecordMapper;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 

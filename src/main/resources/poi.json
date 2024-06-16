@@ -1,0 +1,653 @@
+[
+  {
+    "name": "Памятник счастью",
+    "review": 4.7,
+    "count_review": 1426,
+    "latitude": 56.4772953,
+    "longitude": 84.9918872
+  },
+  {
+    "name": "Томский мемориальный музей истории политических репрессий",
+    "review": 4.6,
+    "count_review": 473,
+    "latitude": 56.475923,
+    "longitude": 84.9496571
+  },
+  {
+    "name": "Кафедральный Богоявленский Собор",
+    "review": 4.7,
+    "count_review": 245,
+    "latitude": 56.4886274,
+    "longitude": 84.9469064
+  },
+  {
+    "name": "Музей истории Томска",
+    "review": 4.7,
+    "count_review": 1247,
+    "latitude": 56.4888744,
+    "longitude": 84.9525757
+  },
+  {
+    "name": "Томский областной краеведческий музей им. М.Б. Шатилова",
+    "review": 4.7,
+    "count_review": 590,
+    "latitude": 56.4764288,
+    "longitude": 84.9504418
+  },
+  {
+    "name": "Памятник студенчеству Томска",
+    "review": 4.7,
+    "count_review": 792,
+    "latitude": 56.4742801,
+    "longitude": 84.9514575
+  },
+  {
+    "name": "Дом с жар-птицами",
+    "review": 4.9,
+    "count_review": 335,
+    "latitude": 56.470972,
+    "longitude": 84.964766
+  },
+  {
+    "name": "Музей деревянного зодчества",
+    "review": 4.6,
+    "count_review": 209,
+    "latitude": 56.4661726,
+    "longitude": 84.9562744
+  },
+  {
+    "name": "Памятник домашним тапочкам",
+    "review": 4.8,
+    "count_review": 36,
+    "latitude": 56.4609262,
+    "longitude": 84.9887734
+  },
+  {
+    "name": "Воскресенская церковь",
+    "review": 4.8,
+    "count_review": 761,
+    "latitude": 56.493961,
+    "longitude": 84.954609
+  },
+  {
+    "name": "Памятник счастью",
+    "review": 4.7,
+    "count_review": 1426,
+    "latitude": 56.4772953,
+    "longitude": 84.9918872
+  },
+  {
+    "name": "Томский мемориальный музей истории политических репрессий",
+    "review": 4.6,
+    "count_review": 473,
+    "latitude": 56.475923,
+    "longitude": 84.9496571
+  },
+  {
+    "name": "Кафедральный Богоявленский Собор",
+    "review": 4.7,
+    "count_review": 245,
+    "latitude": 56.4886274,
+    "longitude": 84.9469064
+  },
+  {
+    "name": "Музей истории Томска",
+    "review": 4.7,
+    "count_review": 1247,
+    "latitude": 56.4888744,
+    "longitude": 84.9525757
+  },
+  {
+    "name": "Томский областной краеведческий музей им. М.Б. Шатилова",
+    "review": 4.7,
+    "count_review": 590,
+    "latitude": 56.4764288,
+    "longitude": 84.9504418
+  },
+  {
+    "name": "Памятник студенчеству Томска",
+    "review": 4.7,
+    "count_review": 792,
+    "latitude": 56.4742801,
+    "longitude": 84.9514575
+  },
+  {
+    "name": "Дом с жар-птицами",
+    "review": 4.9,
+    "count_review": 335,
+    "latitude": 56.470972,
+    "longitude": 84.964766
+  },
+  {
+    "name": "Музей деревянного зодчества",
+    "review": 4.6,
+    "count_review": 209,
+    "latitude": 56.4661726,
+    "longitude": 84.9562744
+  },
+  {
+    "name": "Памятник домашним тапочкам",
+    "review": 4.8,
+    "count_review": 36,
+    "latitude": 56.4609262,
+    "longitude": 84.9887734
+  },
+  {
+    "name": "Воскресенская церковь",
+    "review": 4.8,
+    "count_review": 761,
+    "latitude": 56.493961,
+    "longitude": 84.954609
+  },
+  {
+    "name": "Памятник любовнику",
+    "review": 4.6,
+    "count_review": 5,
+    "latitude": 56.4887663,
+    "longitude": 84.9525792
+  },
+  {
+    "name": "Памятник беременной женщине",
+    "review": 4.4,
+    "count_review": 53,
+    "latitude": 56.4723874,
+    "longitude": 84.9501905
+  },
+  {
+    "name": "Первый Музей Славянской Мифологии",
+    "review": 4.7,
+    "count_review": 1349,
+    "latitude": 56.4887639,
+    "longitude": 84.9539543
+  },
+  {
+    "name": "Набережная Томска",
+    "review": 4.5,
+    "count_review": 121,
+    "latitude": 56.4865283,
+    "longitude": 84.9445916
+  },
+  {
+    "name": "Памятник лягушке-путешественнице",
+    "review": 4.8,
+    "count_review": 17,
+    "latitude": 56.4608684,
+    "longitude": 84.988768
+  },
+  {
+    "name": "Сибирский Ботанический Сад ТГУ",
+    "review": 4.7,
+    "count_review": 554,
+    "latitude": 56.4665349,
+    "longitude": 84.9465138
+  },
+  {
+    "name": "Городской сад",
+    "review": 4.6,
+    "count_review": 6623,
+    "latitude": 56.4742605,
+    "longitude": 84.9543671
+  },
+  {
+    "name": "Университетская Роща",
+    "review": 4.9,
+    "count_review": 540,
+    "latitude": 56.4697389,
+    "longitude": 84.9489563
+  },
+  {
+    "name": "памятник \"Семейные узы\"",
+    "review": 4.5,
+    "count_review": 12,
+    "latitude": 56.476558,
+    "longitude": 84.9923892
+  },
+  {
+    "name": "Томский областной художественный музей",
+    "review": 4.6,
+    "count_review": 280,
+    "latitude": 56.4824826,
+    "longitude": 84.9466617
+  },
+  {
+    "name": "Фонтан на Ново-соборной",
+    "review": 4.8,
+    "count_review": 114,
+    "latitude": 56.4742829,
+    "longitude": 84.9509588
+  },
+  {
+    "name": "Памятник А.П. Чехову",
+    "review": 4.7,
+    "count_review": 493,
+    "latitude": 56.4853873,
+    "longitude": 84.9449965
+  },
+  {
+    "name": "Памятный камень на месте основания Томска",
+    "review": 4.8,
+    "count_review": 149,
+    "latitude": 56.4887865,
+    "longitude": 84.9521899
+  },
+  {
+    "name": "Игуменский Парк",
+    "review": 4.7,
+    "count_review": 736,
+    "latitude": 56.4688185,
+    "longitude": 84.9605769
+  },
+  {
+    "name": "Дядя Коля",
+    "review": 4.8,
+    "count_review": 93,
+    "latitude": 56.4828542,
+    "longitude": 84.9487388
+  },
+  {
+    "name": "Женщине и подростку, ковавшим Победу в тылу",
+    "review": 5.0,
+    "count_review": 23,
+    "latitude": 56.472913,
+    "longitude": 84.952927
+  },
+  {
+    "name": "Собор во имя святых первоверховных апостолов Петра и Павла",
+    "review": 4.7,
+    "count_review": 486,
+    "latitude": 56.4805844,
+    "longitude": 84.9698287
+  },
+  {
+    "name": "Дом с драконами",
+    "review": 4.8,
+    "count_review": 5,
+    "latitude": 56.4723192,
+    "longitude": 84.9658884
+  },
+  {
+    "name": "Памятник младенцу",
+    "review": 4.6,
+    "count_review": 24,
+    "latitude": 56.4715186,
+    "longitude": 84.9508106
+  },
+  {
+    "name": "Буфф-сад",
+    "review": 4.6,
+    "count_review": 1243,
+    "latitude": 56.4703075,
+    "longitude": 84.96205
+  },
+  {
+    "name": "Точка гравитации. Музей начала наук",
+    "review": 4.9,
+    "count_review": 255,
+    "latitude": 56.462043,
+    "longitude": 84.950451
+  },
+  {
+    "name": "Фонтан Молодости",
+    "review": 4.7,
+    "count_review": 1988,
+    "latitude": 56.4609226,
+    "longitude": 84.9710995
+  },
+  {
+    "name": "Башня Лунева",
+    "review": 4.5,
+    "count_review": 156,
+    "latitude": 56.4476911,
+    "longitude": 84.9724077
+  },
+  {
+    "name": "Татарская Слобода",
+    "review": 5.0,
+    "count_review": 4,
+    "latitude": 56.4787175,
+    "longitude": 84.9450682
+  },
+  {
+    "name": "Особняк архитектора С.В. Хомича",
+    "review": 4.8,
+    "count_review": 49,
+    "latitude": 56.471157,
+    "longitude": 84.957661
+  },
+  {
+    "name": "Монастыри",
+    "review": 4.9,
+    "count_review": 448,
+    "latitude": 56.481845,
+    "longitude": 84.954511
+  },
+  {
+    "name": "Музей \"Профессорская квартира\"",
+    "review": 4.9,
+    "count_review": 61,
+    "latitude": 56.467244,
+    "longitude": 84.9551405
+  },
+  {
+    "name": "Дом с воротами",
+    "review": 5.0,
+    "count_review": 3,
+    "latitude": 56.487973,
+    "longitude": 84.9575642
+  },
+  {
+    "name": "Ново-Соборная площадь",
+    "review": 4.8,
+    "count_review": 4124,
+    "latitude": 56.4742751,
+    "longitude": 84.9509759
+  },
+  {
+    "name": "Сквер деревянного зодчества",
+    "review": 4.6,
+    "count_review": 132,
+    "latitude": 56.4718008,
+    "longitude": 84.9652814
+  },
+  {
+    "name": "Томский Зоопарк",
+    "review": 4.7,
+    "count_review": 420,
+    "latitude": 56.4659957,
+    "longitude": 84.9953231
+  },
+  {
+    "name": "Украшение из цветов",
+    "review": 4.4,
+    "count_review": 8,
+    "latitude": 56.4551308,
+    "longitude": 84.941848
+  },
+  {
+    "name": "Музей Томского Пива",
+    "review": 4.7,
+    "count_review": 7,
+    "latitude": 56.4622119,
+    "longitude": 84.939898
+  },
+  {
+    "name": "Михайловская роща",
+    "review": 4.8,
+    "count_review": 250,
+    "latitude": 56.4925769,
+    "longitude": 84.9832533
+  },
+  {
+    "name": "Учительский сквер",
+    "review": 4.6,
+    "count_review": 220,
+    "latitude": 56.4741297,
+    "longitude": 84.9776727
+  },
+  {
+    "name": "Томский музей леса",
+    "review": 4.7,
+    "count_review": 55,
+    "latitude": 56.4916318,
+    "longitude": 84.8805666
+  },
+  {
+    "name": "металлическая башенка",
+    "review": 1.0,
+    "count_review": 2,
+    "latitude": 56.4613334,
+    "longitude": 84.9516331
+  },
+  {
+    "name": "Мемориал погибшим в Великой Отечественной Войне",
+    "review": 4.8,
+    "count_review": 147,
+    "latitude": 56.4535724,
+    "longitude": 84.9511848
+  },
+  {
+    "name": "Красная соборная мечеть",
+    "review": 4.9,
+    "count_review": 315,
+    "latitude": 56.4784855,
+    "longitude": 84.9455048
+  },
+  {
+    "name": "Гигантский карандаш",
+    "review": 1.0,
+    "count_review": 1,
+    "latitude": 56.5086807,
+    "longitude": 84.9360665
+  },
+  {
+    "name": "Памятник Федору Томскому",
+    "review": 4.6,
+    "count_review": 62,
+    "latitude": 56.4881533,
+    "longitude": 85.0278813
+  },
+  {
+    "name": "Особняк купца Г.М. Голованова",
+    "review": 5.0,
+    "count_review": 11,
+    "latitude": 56.4698041,
+    "longitude": 84.9649111
+  },
+  {
+    "name": "Памятник деревянного зодчества",
+    "review": 4.5,
+    "count_review": 6,
+    "latitude": 56.475908,
+    "longitude": 84.9452013
+  },
+  {
+    "name": "Музей Патологической анатомии СибГМУ",
+    "review": 4.6,
+    "count_review": 59,
+    "latitude": 56.469933,
+    "longitude": 84.944498
+  },
+  {
+    "name": "Родник Людмилин Ключ",
+    "review": 4.0,
+    "count_review": 1,
+    "latitude": 56.4433743,
+    "longitude": 84.9746175
+  },
+  {
+    "name": "Томский планетарий",
+    "review": 4.6,
+    "count_review": 69,
+    "latitude": 56.489613,
+    "longitude": 84.94768
+  },
+  {
+    "name": "Простоквашка",
+    "review": 5.0,
+    "count_review": 1,
+    "latitude": 56.4073555,
+    "longitude": 84.9967045
+  },
+  {
+    "name": "Театральный сквер",
+    "review": 4.6,
+    "count_review": 423,
+    "latitude": 56.483263,
+    "longitude": 84.947608
+  },
+  {
+    "name": "Таловские чаши",
+    "review": 4.6,
+    "count_review": 178,
+    "latitude": 56.2974078,
+    "longitude": 85.4215872
+  },
+  {
+    "name": "Городище Шеломок",
+    "review": 4.9,
+    "count_review": 22,
+    "latitude": 56.3743161,
+    "longitude": 84.9599467
+  },
+  {
+    "name": "Воскресенская гора",
+    "review": 4.2,
+    "count_review": 10,
+    "latitude": 56.49339,
+    "longitude": 84.9539654
+  },
+  {
+    "name": "Каспаранский Яр",
+    "review": 4.9,
+    "count_review": 21,
+    "latitude": 56.5937843,
+    "longitude": 85.0793534
+  },
+  {
+    "name": "Камень Боец",
+    "review": 4.8,
+    "count_review": 177,
+    "latitude": 56.1385401,
+    "longitude": 84.9635943
+  },
+  {
+    "name": "Прятки парк",
+    "review": 4.7,
+    "count_review": 59,
+    "latitude": 56.472519,
+    "longitude": 84.986323
+  },
+  {
+    "name": "Звёздный ключ",
+    "review": 4.9,
+    "count_review": 142,
+    "latitude": 56.2342502,
+    "longitude": 84.9810806
+  },
+  {
+    "name": "Смотровая площадка с видом на реку Томь",
+    "review": 5.0,
+    "count_review": 6,
+    "latitude": 56.440836,
+    "longitude": 84.9832269
+  },
+  {
+    "name": "Сердце с замками",
+    "review": 5.0,
+    "count_review": 3,
+    "latitude": 56.4101291,
+    "longitude": 84.98402
+  },
+  {
+    "name": "набережная реки Томь",
+    "review": 4.4,
+    "count_review": 555,
+    "latitude": 56.4871388,
+    "longitude": 84.9444666
+  },
+  {
+    "name": "Аникин камень",
+    "review": 4.9,
+    "count_review": 57,
+    "latitude": 56.112249,
+    "longitude": 84.9817635
+  },
+  {
+    "name": "Самолёт АН-24Б",
+    "review": 5.0,
+    "count_review": 6,
+    "latitude": 56.3874178,
+    "longitude": 85.2058853
+  },
+  {
+    "name": "Скоморох",
+    "review": 4.7,
+    "count_review": 149,
+    "latitude": 56.496627,
+    "longitude": 84.960359
+  },
+  {
+    "name": "Северский природный парк",
+    "review": 4.3,
+    "count_review": 1019,
+    "latitude": 56.60415,
+    "longitude": 84.8680396
+  },
+  {
+    "name": "Дом Карим-бая",
+    "review": 4.3,
+    "count_review": 4,
+    "latitude": 56.47592,
+    "longitude": 84.942075
+  },
+  {
+    "name": "Томский государственный университет",
+    "review": 4.5,
+    "count_review": 444,
+    "latitude": 56.4695,
+    "longitude": 84.947513
+  },
+  {
+    "name": "Томская Писаница",
+    "review": 4.8,
+    "count_review": 2718,
+    "latitude": 55.6690017,
+    "longitude": 85.6239908
+  },
+  {
+    "name": "Белая соборная мечеть",
+    "review": 4.7,
+    "count_review": 176,
+    "latitude": 56.4684742,
+    "longitude": 84.9387229
+  },
+  {
+    "name": "Каменный мост",
+    "review": 4.6,
+    "count_review": 155,
+    "latitude": 56.4879528,
+    "longitude": 84.9508332
+  },
+  {
+    "name": "Дом архитектора Крячкова А.Д.",
+    "review": 3.5,
+    "count_review": 4,
+    "latitude": 56.466179,
+    "longitude": 84.956203
+  },
+  {
+    "name": "Дом искусств",
+    "review": 4.6,
+    "count_review": 210,
+    "latitude": 56.4880752,
+    "longitude": 84.9566956
+  },
+  {
+    "name": "Славянский Базар",
+    "review": 4.5,
+    "count_review": 327,
+    "latitude": 56.4852787,
+    "longitude": 84.9453602
+  },
+  {
+    "name": "Свято-Троицкая Церковь",
+    "review": 4.7,
+    "count_review": 195,
+    "latitude": 56.4903847,
+    "longitude": 84.964504
+  },
+  {
+    "name": "Томский областной Российско-Немецкий Дом",
+    "review": 4.8,
+    "count_review": 162,
+    "latitude": 56.4698041,
+    "longitude": 84.9648306
+  },
+  {
+    "name": "Музей Судебно-Медицинской Экспертизы",
+    "review": 4.3,
+    "count_review": 16,
+    "latitude": 56.4702379,
+    "longitude": 84.9448467
+  }
+]

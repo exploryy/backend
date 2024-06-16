@@ -16,4 +16,8 @@ public enum DifficultyType {
             throw new ExceptionInApplication("Invalid difficulty type: " + value, ExceptionType.INVALID);
         }
     }
+
+    public static DifficultyType getRandonDifficultyType() {
+        return DifficultyType.values()[(int) (Math.random() * DifficultyType.values().length)];
+    }
 }
