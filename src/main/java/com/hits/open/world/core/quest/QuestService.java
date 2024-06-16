@@ -79,48 +79,50 @@ public class QuestService {
     @Scheduled(fixedRateString = "${quest.generateQuestsFixedRate}")
     public void generateQuests() {
         try {
-            if (Math.random() < 0.5) {
-                var poi = poiService.getRandomPoi();
-                var distanceGeneratedQuest = questGenerationService.generateRandomDistanceQuest(poi);
-                var createDistanceQuestDto = new CreateDistanceQuestDto(
-                        new CreateQuestDto(
-                                distanceGeneratedQuest.name(),
-                                distanceGeneratedQuest.description(),
-                                distanceGeneratedQuest.difficultyType().name(),
-                                QuestType.DISTANCE.name(),
-                                distanceGeneratedQuest.transportType().name(),
-                                List.of()
-                        ),
-                        distanceGeneratedQuest.routeDistance(),
-                        distanceGeneratedQuest.longitude(),
-                        distanceGeneratedQuest.latitude()
-                );
-                createDistanceQuest(createDistanceQuestDto);
-                log.info("Quest generated: %s".formatted(distanceGeneratedQuest.name()));
-            } else {
-                var from = poiService.getRandomPoi();
-                var to = poiService.getRandomPoi();
-                if (from.equals(to)) {
-                    return;
+            for (var cityName : poiService.getCities()) {
+                if (Math.random() < 0.5) {
+                    var poi = poiService.getRandomPoiInCity(cityName);
+                    var distanceGeneratedQuest = questGenerationService.generateRandomDistanceQuest(poi);
+                    var createDistanceQuestDto = new CreateDistanceQuestDto(
+                            new CreateQuestDto(
+                                    distanceGeneratedQuest.name(),
+                                    distanceGeneratedQuest.description(),
+                                    distanceGeneratedQuest.difficultyType().name(),
+                                    QuestType.DISTANCE.name(),
+                                    distanceGeneratedQuest.transportType().name(),
+                                    List.of()
+                            ),
+                            distanceGeneratedQuest.routeDistance(),
+                            distanceGeneratedQuest.longitude(),
+                            distanceGeneratedQuest.latitude()
+                    );
+                    createDistanceQuest(createDistanceQuestDto);
+                    log.info("Quest generated: %s".formatted(distanceGeneratedQuest.name()));
+                } else {
+                    var from = poiService.getRandomPoiInCity(cityName);
+                    var to = poiService.getRandomPoiInCity(cityName);
+                    if (from.equals(to)) {
+                        return;
+                    }
+                    var pointToPointGeneratedQuest = questGenerationService.generateRandomPointToPointQuest(from, to);
+                    var createPointToPointQuestDto = new CreatePointToPointQuestDto(
+                            new CreateQuestDto(
+                                    pointToPointGeneratedQuest.name(),
+                                    pointToPointGeneratedQuest.description(),
+                                    pointToPointGeneratedQuest.difficultyType().name(),
+                                    QuestType.POINT_TO_POINT.name(),
+                                    pointToPointGeneratedQuest.transportType().name(),
+                                    List.of()
+                            ),
+                            new CreateRouteDto(
+                                    fromGeneratedPoint(pointToPointGeneratedQuest.points()),
+                                    pointToPointGeneratedQuest.points().get(0).longitude(),
+                                    pointToPointGeneratedQuest.points().get(0).latitude()
+                            )
+                    );
+                    createPointToPointQuest(createPointToPointQuestDto);
+                    log.info("Quest generated: %s".formatted(pointToPointGeneratedQuest.name()));
                 }
-                var pointToPointGeneratedQuest = questGenerationService.generateRandomPointToPointQuest(from, to);
-                var createPointToPointQuestDto = new CreatePointToPointQuestDto(
-                        new CreateQuestDto(
-                                pointToPointGeneratedQuest.name(),
-                                pointToPointGeneratedQuest.description(),
-                                pointToPointGeneratedQuest.difficultyType().name(),
-                                QuestType.POINT_TO_POINT.name(),
-                                pointToPointGeneratedQuest.transportType().name(),
-                                List.of()
-                        ),
-                        new CreateRouteDto(
-                                fromGeneratedPoint(pointToPointGeneratedQuest.points()),
-                                pointToPointGeneratedQuest.points().get(0).longitude(),
-                                pointToPointGeneratedQuest.points().get(0).latitude()
-                        )
-                );
-                createPointToPointQuest(createPointToPointQuestDto);
-                log.info("Quest generated: %s".formatted(pointToPointGeneratedQuest.name()));
             }
         } catch (Exception e) {
             log.error("Error generating quests", e);

@@ -1,39 +1,41 @@
 package com.hits.open.world.core.poi;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.PostConstruct;
+import com.hits.open.world.client.poi.PoiClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class PoiService {
-    private final ResourceLoader resourceLoader;
-    private final List<PoiEntity> dataList = new ArrayList<>();
-    private final ObjectMapper objectMapper;
+    private final PoiClient poiClient;
+    private final Map<String, List<PoiEntity>> dataInCity = new HashMap<>();
 
-    @PostConstruct
-    public void init() {
-        Resource resource = resourceLoader.getResource("classpath:poi.json");
-        try (InputStream inputStream = resource.getInputStream()) {
-            dataList.addAll(objectMapper.readValue(inputStream, new TypeReference<List<PoiEntity>>() {
-            }));
-        } catch (IOException e) {
-            log.error("Error reading file", e);
+    @Async
+    public void tryLoadPoiData(String cityName) {
+        if (dataInCity.containsKey(cityName)) {
+            return;
+        }
+
+        try {
+            var poiList = poiClient.getPoiByCityName(cityName);
+            dataInCity.put(cityName, poiList);
+        } catch (Exception e) {
+            log.error("Failed to load POI data for city: {}", cityName, e);
         }
     }
 
-    public PoiEntity getRandomPoi() {
-        return dataList.get((int) (Math.random() * dataList.size()));
+    public PoiEntity getRandomPoiInCity(String cityName) {
+        return dataInCity.get(cityName).get((int) (Math.random() * dataInCity.get(cityName).size()));
+    }
+
+    public List<String> getCities() {
+        return dataInCity.keySet().stream().toList();
     }
 }
