@@ -27,6 +27,7 @@ import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.file.UploadFileDto;
 import com.hits.open.world.public_interface.location.LocationDto;
+import com.hits.open.world.public_interface.multipolygon.PolygonRequestDto;
 import com.hits.open.world.public_interface.quest.AllQuestDto;
 import com.hits.open.world.public_interface.quest.CommonQuestDto;
 import com.hits.open.world.public_interface.quest.CompletedQuestDto;
@@ -334,8 +335,8 @@ public class QuestService {
     }
 
     @Transactional
-    public void tryFinishActiveQuests(LocationDto userLocation) {
-        var activeQuests = questRepository.getActiveQuests(userLocation.clientId());
+    public void tryFinishActiveQuests(PolygonRequestDto requestDto) {
+        var activeQuests = questRepository.getActiveQuests(requestDto.userId());
         for (var quest : activeQuests) {
             switch (quest.questType()) {
                 case POINT_TO_POINT -> {
@@ -347,10 +348,10 @@ public class QuestService {
                     if (calculateDistanceInMeters(
                             Double.parseDouble(lastPoint.latitude()),
                             Double.parseDouble(lastPoint.longitude()),
-                            userLocation.latitude().doubleValue(),
-                            userLocation.longitude().doubleValue())
+                            requestDto.createPolygonRequestDto().latitude().doubleValue(),
+                            requestDto.createPolygonRequestDto().longitude().doubleValue())
                             <= distance) {
-                        finishQuest(quest.questId(), userLocation.clientId());
+                        finishQuest(quest.questId(), requestDto.userId());
                     }
                 }
                 case DISTANCE -> {
@@ -359,10 +360,10 @@ public class QuestService {
                     if (calculateDistanceInMeters(
                             Double.parseDouble(distanceQuest.latitude()),
                             Double.parseDouble(distanceQuest.longitude()),
-                            userLocation.latitude().doubleValue(),
-                            userLocation.longitude().doubleValue())
+                            requestDto.createPolygonRequestDto().latitude().doubleValue(),
+                            requestDto.createPolygonRequestDto().longitude().doubleValue())
                             >= distanceQuest.routeDistance()) {
-                        finishQuest(quest.questId(), userLocation.clientId());
+                        finishQuest(quest.questId(), requestDto.userId());
                     }
                 }
             }

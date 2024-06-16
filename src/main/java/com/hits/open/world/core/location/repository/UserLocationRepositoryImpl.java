@@ -15,7 +15,7 @@ public class UserLocationRepositoryImpl implements UserLocationRepository {
     private final DSLContext create;
 
     @Override
-    public void save(UserLocationEntity entity) {
+    public void initLocation(UserLocationEntity entity) {
         boolean exists = findById(entity.clientId()).isPresent();
 
         if (exists) {

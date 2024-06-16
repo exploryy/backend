@@ -6,10 +6,9 @@ import com.hits.open.world.core.multipolygon.MultipolygonService;
 import com.hits.open.world.core.statistic.StatisticService;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
-import com.hits.open.world.public_interface.location.LocationDto;
 import com.hits.open.world.public_interface.multipolygon.CreatePolygonRequestDto;
 import com.hits.open.world.public_interface.multipolygon.CreatePolygonResponseDto;
-import com.hits.open.world.public_interface.multipolygon.geo.GeoDto;
+import com.hits.open.world.public_interface.multipolygon.PolygonRequestDto;
 import com.hits.open.world.public_interface.statistic.UpdateStatisticDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +21,7 @@ import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
-import java.math.BigDecimal;
-import java.security.Principal;
+import java.io.IOException;
 import java.time.OffsetDateTime;
 
 import static org.springframework.web.socket.CloseStatus.SERVER_ERROR;
@@ -33,7 +31,7 @@ import static org.springframework.web.socket.CloseStatus.SERVER_ERROR;
 @Component
 @RequiredArgsConstructor
 public class MultipolygonHandler extends AbstractWebSocketHandler {
-    private static final Gson objectMapper = new Gson();
+    private static final Gson mapper = new Gson();
     private final MultipolygonService multipolygonService;
     private final UserLocationService userLocationService;
     private final StatisticService statisticService;
@@ -41,27 +39,6 @@ public class MultipolygonHandler extends AbstractWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         log.info("Successfully connection established on session: {}", session.getId());
-    }
-
-    @Override
-    public void handleMessage(@NonNull WebSocketSession session, @NonNull WebSocketMessage<?> message) throws Exception {
-        var userId = getUserId(session);
-        var coordinateDto = parseCoordinate(message);
-
-        var locationInfo = new LocationDto(userId, coordinateDto.latitude(), coordinateDto.longitude());
-        boolean isNewTerritory = multipolygonService.isNewTerritory(locationInfo);
-        var updateStatisticDto = new UpdateStatisticDto(userId, session.getId(), coordinateDto.latitude(),
-                coordinateDto.longitude(), isNewTerritory, OffsetDateTime.now());
-
-        statisticService.updateStatistic(updateStatisticDto);
-        userLocationService.updateUserLocation(locationInfo, isNewTerritory);
-
-        multipolygonService.save(coordinateDto, userId);
-        BigDecimal areaPercent = multipolygonService.calculatePercentAreaFromTomsk(userId);
-        GeoDto geoDto = multipolygonService.getAllPolygons(userId);
-        CreatePolygonResponseDto createPolygonResponseDto = new CreatePolygonResponseDto(geoDto, areaPercent);
-        var response = objectMapper.toJson(createPolygonResponseDto);
-        session.sendMessage(new TextMessage(response));
     }
 
     @Override
@@ -75,20 +52,69 @@ public class MultipolygonHandler extends AbstractWebSocketHandler {
         log.info("Connection closed on session: {} with status: {}", session.getId(), closeStatus.getCode());
     }
 
+    @Override
+    public void handleMessage(@NonNull WebSocketSession session, @NonNull WebSocketMessage<?> message) throws IOException {
+        var userId = getUserId(session);
+        var createPolygonRequestDto = parseCoordinate(message);
+
+        var polygonRequestDto = new PolygonRequestDto(createPolygonRequestDto, userId);
+        processLocationInfo(session, polygonRequestDto);
+    }
+
     private String getUserId(WebSocketSession session) {
-        Principal principal = session.getPrincipal();
+        var principal = session.getPrincipal();
+
         if (principal instanceof JwtAuthenticationToken jwtAuthenticationToken) {
             return jwtAuthenticationToken.getTokenAttributes().get("sub").toString();
         }
+
         throw new ExceptionInApplication("Invalid principal", ExceptionType.INVALID);
     }
 
     private CreatePolygonRequestDto parseCoordinate(WebSocketMessage<?> message) {
-        Object payload = message.getPayload();
+        var payload = message.getPayload();
+
         if (payload instanceof String parsedPayload) {
-            return objectMapper.fromJson(parsedPayload, CreatePolygonRequestDto.class);
+            return mapper.fromJson(parsedPayload, CreatePolygonRequestDto.class);
         }
+
         throw new ExceptionInApplication("Invalid payload", ExceptionType.INVALID);
+    }
+
+    private void processLocationInfo(WebSocketSession session, PolygonRequestDto requestDto) throws IOException {
+        updateStatistics(requestDto, session);
+
+        userLocationService.updateUserLocation(requestDto);
+        multipolygonService.save(requestDto);
+
+        var response = buildPolygonResponse(requestDto);
+        session.sendMessage(new TextMessage(response));
+    }
+
+    private void updateStatistics(PolygonRequestDto requestDto, WebSocketSession session) {
+        var isNewTerritory = multipolygonService.isNewTerritory(requestDto);
+        var updateStatisticDto = buildUpdateStatisticDto(requestDto, session, isNewTerritory);
+
+        statisticService.tryUpdateStatistic(updateStatisticDto);
+    }
+
+    private UpdateStatisticDto buildUpdateStatisticDto(PolygonRequestDto requestDto, WebSocketSession session, boolean isNewTerritory) {
+        return UpdateStatisticDto.builder()
+                .lastUpdate(OffsetDateTime.now())
+                .longitude(requestDto.createPolygonRequestDto().longitude())
+                .latitude(requestDto.createPolygonRequestDto().latitude())
+                .isNewTerritory(isNewTerritory)
+                .userId(requestDto.userId())
+                .webSessionId(session.getId())
+                .build();
+    }
+
+    private String buildPolygonResponse(PolygonRequestDto requestDto) {
+        var areaPercent = multipolygonService.calculatePercentArea(requestDto);
+        var geoDto = multipolygonService.getAllPolygons(requestDto.userId());
+
+        var createPolygonResponseDto = new CreatePolygonResponseDto(geoDto, areaPercent);
+        return mapper.toJson(createPolygonResponseDto);
     }
 
 }

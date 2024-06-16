@@ -3,7 +3,7 @@ package com.hits.open.world.core.location.repository;
 import java.util.Optional;
 
 public interface UserLocationRepository {
-    void save(UserLocationEntity entity);
+    void initLocation(UserLocationEntity entity);
 
     Optional<UserLocationEntity> findById(String id);
 

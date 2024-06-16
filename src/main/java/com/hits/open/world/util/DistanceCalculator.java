@@ -4,6 +4,10 @@ public final class DistanceCalculator {
     private static final double EQUATORIAL_EARTH_RADIUS = 6378.1370D;
     private static final double D2R = (Math.PI / 180D);
 
+    private DistanceCalculator() {
+        throw new UnsupportedOperationException();
+    }
+
     public static int calculateDistanceInMeters(double lat1, double long1, double lat2, double long2) {
         return (int) (calculateHaversineInKM(lat1, long1, lat2, long2) * 1000D);
     }
