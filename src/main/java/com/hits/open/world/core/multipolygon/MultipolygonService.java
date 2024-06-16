@@ -1,6 +1,6 @@
 package com.hits.open.world.core.multipolygon;
 
-import com.hits.open.world.core.multipolygon.client.PolygonClient;
+import com.hits.open.world.client.polygon.PolygonClient;
 import com.hits.open.world.core.multipolygon.enums.FigureType;
 import com.hits.open.world.core.friend.FriendService;
 import com.hits.open.world.core.multipolygon.factory.polygon.PolygonService;

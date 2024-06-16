@@ -1,4 +1,4 @@
-package com.hits.open.world.core.multipolygon.client;
+package com.hits.open.world.client.polygon;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;

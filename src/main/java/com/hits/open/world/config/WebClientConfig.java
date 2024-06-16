@@ -11,6 +11,9 @@ public class WebClientConfig {
     public WebClient nominatimWebClient() {
         return WebClient.builder()
                 .baseUrl("https://nominatim.openstreetmap.org")
+                .codecs(codecs -> codecs
+                        .defaultCodecs()
+                        .maxInMemorySize(500 * 1024))
                 .build();
     }
 
@@ -18,6 +21,9 @@ public class WebClientConfig {
     public WebClient polygonsWebClient() {
         return WebClient.builder()
                 .baseUrl("https://polygons.openstreetmap.fr")
+                .codecs(codecs -> codecs
+                        .defaultCodecs()
+                        .maxInMemorySize(500 * 1024))
                 .build();
     }
 }
