@@ -28,6 +28,10 @@ openStreetMap:
 overpassTurbo:
   baseUrl: https://overpass-api.de/api/interpreter
 
+flickr:
+  baseUrl: https://www.flickr.com/services/rest/
+  apiKey: 2b35589ced3afacca07adeb0b09c77c4
+
 quest:
   generateQuestsFixedRate: 600000
 
