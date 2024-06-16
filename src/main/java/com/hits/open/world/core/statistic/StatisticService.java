@@ -1,25 +1,28 @@
 package com.hits.open.world.core.statistic;
 
+import com.google.gson.Gson;
 import com.hits.open.world.core.friend.FriendService;
 import com.hits.open.world.core.statistic.repository.StatisticEntity;
 import com.hits.open.world.core.statistic.repository.StatisticRepository;
 import com.hits.open.world.core.user.UserService;
 import com.hits.open.world.core.websocket.client.WebSocketClient;
+import com.hits.open.world.public_interface.friend.FriendDto;
+import com.hits.open.world.public_interface.statistic.ExperienceDto;
+import com.hits.open.world.public_interface.statistic.LevelDto;
 import com.hits.open.world.public_interface.statistic.TotalStatisticDto;
 import com.hits.open.world.public_interface.statistic.UpdateStatisticDto;
-import com.hits.open.world.public_interface.statistic.UserStatisticDto;
 import com.hits.open.world.public_interface.user.ProfileDto;
 import com.hits.open.world.public_interface.location.LocationStatisticDto;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.OptionalInt;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -29,88 +32,107 @@ import static com.hits.open.world.util.DistanceCalculator.calculateDistanceInMet
 import static com.hits.open.world.util.LevelUtil.calculateLevel;
 import static com.hits.open.world.util.LevelUtil.calculateTotalExperienceInLevel;
 
+
 @Service
 @RequiredArgsConstructor
 public class StatisticService {
+    private static final Gson mapper = new Gson();
     private final StatisticRepository statisticRepository;
     private final UserService userService;
     private final FriendService friendService;
     private final WebSocketClient webSocketClient;
 
+    @Transactional
     public TotalStatisticDto getTotal(String userId, int count) {
         List<StatisticEntity> allStatistics = statisticRepository.findAllStatistic();
 
-        List<StatisticEntity> sortedStatistics = allStatistics.stream()
-                .sorted(Comparator.comparingInt(StatisticEntity::experience).reversed()
-                        .thenComparingInt(StatisticEntity::distance).reversed())
-                .limit(count)
-                .toList();
+        List<StatisticEntity> sortedStatistics = sortStatistics(allStatistics, count);
 
-        List<ProfileDto> profiles = sortedStatistics.stream()
-                .map(statisticEntity -> userService.getProfile(statisticEntity.clientId()))
-                .toList();
-
+        List<ProfileDto> profiles = getProfiles(sortedStatistics);
 
         int userPosition = findUserPosition(profiles, userId);
+
         return new TotalStatisticDto(profiles, userPosition);
     }
 
-    public List<LocationStatisticDto> getLocationsMyFriend(String userId) {
-        var allFriends = friendService.getFriends(userId);
-
-        var friend = allFriends.friends().stream()
-                .map(friendDto -> getInfo(friendDto.userId()))
-                .toList();
-
-        var bestFriend = allFriends.favoriteFriends().stream()
-                .map(friendDto -> getInfo(friendDto.userId()))
-                .toList();
-
-        return Stream.concat(friend.stream(), bestFriend.stream())
-                .toList();
-    }
-
+    @Transactional
     public LocationStatisticDto getUserStatistics(String userId) {
-        var statistic = getUserStatistic(userId);
-        var userProfile = userService.getProfile(userId);
-
-        int level = calculateLevel(statistic.experience());
-        int totalExperienceInLevel = calculateTotalExperienceInLevel(level);
-
-        return LocationStatisticDto.builder()
-                .username(userProfile.username())
-                .photoUrl(userProfile.avatarUrl())
-                .email(userProfile.email())
-                .userId(userProfile.userId())
-                .distance(statistic.distance())
-                .experience(statistic.experience())
-                .previousLatitude(statistic.previousLatitude())
-                .previousLongitude(statistic.previousLongitude())
-                .level(level)
-                .totalExperienceInLevel(totalExperienceInLevel)
-                .build();
+        return buildLocationStatisticDto(userId);
     }
 
-    public LocationStatisticDto getInfo(String userId) {
-        var statistic = getUserStatistic(userId);
+    @Transactional
+    public List<LocationStatisticDto> getLocationsMyFriend(String userId) {
+        var friends = friendService.getFriends(userId);
 
-        var profile = userService.getProfile(statistic.clientId());
-
-        int level = calculateLevel(statistic.experience());
-        int totalExperienceInLevel = calculateTotalExperienceInLevel(level);
-
-        return new LocationStatisticDto(profile.username(), profile.email(), profile.userId(), statistic.previousLatitude(),
-                statistic.previousLongitude(), statistic.experience(), statistic.distance(), level, totalExperienceInLevel,
-                profile.avatarUrl());
+        return Stream.concat(
+                        friends.friends().stream().map(FriendDto::userId),
+                        friends.favoriteFriends().stream().map(FriendDto::userId)
+                ).distinct()
+                .map(this::buildLocationStatisticDto)
+                .toList();
     }
 
+    @Transactional
+    public void tryUpdateStatistic(UpdateStatisticDto updateStatisticDto) {
+        Optional<StatisticEntity> optionalStatistic = statisticRepository.findByClientId(updateStatisticDto.userId());
+
+        if (optionalStatistic.isPresent()) {
+            updateUserStatistic(updateStatisticDto, optionalStatistic.get());
+            return;
+        }
+
+        initializeUserStatistic(updateStatisticDto);
+    }
+
+    @Transactional
     public void updateExperience(String userId, int addedExperience) {
         var statistic = getUserStatistic(userId);
 
         int calculatedExperience = calculateExperienceByTask(statistic.experience(), addedExperience);
 
-        var updatedStatistic = StatisticEntity.builder()
-                .experience(calculatedExperience)
+        var updatedStatistic = updateStatisticEntity(userId, calculatedExperience, statistic);
+
+        statisticRepository.updateStatistic(updatedStatistic);
+        sendEventInfo(userId, calculatedExperience);
+    }
+
+    private void updateUserStatistic(UpdateStatisticDto updateStatisticDto, StatisticEntity statisticEntity) {
+        if (shouldUpdateUserMetrics(statisticEntity, updateStatisticDto)) {
+            updateUserMetrics(statisticEntity, updateStatisticDto);
+            return;
+        }
+
+        updateUserPosition(statisticEntity, updateStatisticDto);
+    }
+
+    private boolean shouldUpdateUserMetrics(@NonNull StatisticEntity statisticEntity, @NonNull UpdateStatisticDto updateStatisticDto) {
+        return statisticEntity.webSessionId() != null &&
+                statisticEntity.webSessionId().equals(updateStatisticDto.webSessionId()) &&
+                isCoordinateValid(statisticEntity.previousLatitude()) &&
+                isCoordinateValid(statisticEntity.previousLongitude());
+    }
+
+    private List<StatisticEntity> sortStatistics(List<StatisticEntity> statistics, int count) {
+        return statistics.stream()
+                .sorted(Comparator.comparingInt(StatisticEntity::experience).reversed()
+                        .thenComparingInt(StatisticEntity::distance).reversed())
+                .limit(count)
+                .toList();
+    }
+
+    private List<ProfileDto> getProfiles(List<StatisticEntity> statistics) {
+        return statistics.stream()
+                .map(statisticEntity -> getUserProfile(statisticEntity.clientId()))
+                .toList();
+    }
+
+    private ProfileDto getUserProfile(String userId) {
+        return userService.getProfile(userId);
+    }
+
+    private StatisticEntity updateStatisticEntity(String userId, int experience, StatisticEntity statistic) {
+        return StatisticEntity.builder()
+                .experience(experience)
                 .distance(statistic.distance())
                 .previousLatitude(statistic.previousLatitude())
                 .previousLongitude(statistic.previousLongitude())
@@ -118,60 +140,73 @@ public class StatisticService {
                 .lastUpdate(OffsetDateTime.now())
                 .clientId(userId)
                 .build();
-
-        statisticRepository.updateStatistic(updatedStatistic);
-        sendClientInfo(userId, calculatedExperience);
     }
 
-    @Transactional
-    public void updateStatistic(UpdateStatisticDto dto) {
-        var statistic = statisticRepository.findByClientId(dto.userId());
-
-        if (statistic.isPresent()) {
-            var statisticEntity = statistic.get();
-
-            if (statisticEntity.webSessionId() != null && statisticEntity.webSessionId().equals(dto.webSessionId()) &&
-                    isCoordinateValid(statisticEntity.previousLatitude()) &&
-                    isCoordinateValid(statisticEntity.previousLongitude())) {
-                updateUserInfo(statisticEntity, dto);
-                return;
-            }
-
-            updateCoordinates(statisticEntity, dto);
-            return;
-        }
-
-        initUserStatistic(dto);
+    private void sendEventInfo(String userId, int experience) {
+        sendExperience(userId, experience);
+        sendLevel(userId, experience);
     }
 
-    private void sendClientInfo(String userId, int experience) {
+    private void sendExperience(String userId, int experience) {
+        var experienceDto = new ExperienceDto(experience);
+        var response = mapper.toJson(experienceDto);
+
+        webSocketClient.sendEvent(userId, response);
+    }
+
+    private void sendLevel(String userId, int experience) {
         int level = calculateLevel(experience);
-        webSocketClient.sendUserExperience(userId, String.valueOf(experience));
-        webSocketClient.sendUserLevel(userId, String.valueOf(level));
+        var levelDto = new LevelDto(level);
+
+        var response = mapper.toJson(levelDto);
+
+        webSocketClient.sendEvent(userId, response);
     }
 
     private StatisticEntity getUserStatistic(String userId) {
         var statistic = statisticRepository.findByClientId(userId);
 
         if (statistic.isEmpty()) {
-            var initialStatistic = StatisticEntity.builder()
-                    .clientId(userId)
-                    .lastUpdate(OffsetDateTime.now())
-                    .build();
+            var initialStatistic = buildInitialStatisticEntity(userId);
             return statisticRepository.save(initialStatistic);
         }
 
         return statistic.get();
     }
 
+    private StatisticEntity buildInitialStatisticEntity(String userId) {
+        return StatisticEntity.builder()
+                .clientId(userId)
+                .lastUpdate(OffsetDateTime.now())
+                .build();
+    }
+
+    private LocationStatisticDto buildLocationStatisticDto(String userId) {
+        var statistic = getUserStatistic(userId);
+        var profile = getUserProfile(statistic.clientId());
+        int level = calculateLevel(statistic.experience());
+        int totalExperienceInLevel = calculateTotalExperienceInLevel(level);
+
+        return new LocationStatisticDto(
+                profile.username(),
+                profile.email(),
+                profile.userId(),
+                statistic.previousLatitude(),
+                statistic.previousLongitude(),
+                statistic.experience(),
+                statistic.distance(),
+                level,
+                totalExperienceInLevel,
+                profile.avatarUrl()
+        );
+    }
+
     private boolean isCoordinateValid(String coordinate) {
         return coordinate != null && !coordinate.isEmpty();
     }
 
-    private void updateUserInfo(StatisticEntity statisticEntity, UpdateStatisticDto dto) {
-        int distanceInMeters = calculateDistanceInMeters(dto.latitude().doubleValue(), dto.longitude().doubleValue(),
-                new BigDecimal(statisticEntity.previousLatitude()).doubleValue(),
-                new BigDecimal(statisticEntity.previousLongitude()).doubleValue());
+    private void updateUserMetrics(StatisticEntity statisticEntity, UpdateStatisticDto dto) {
+        int distanceInMeters = getDistanceInMeters(statisticEntity, dto);
 
         int calculatedExperience = calculateExperienceByDistance(statisticEntity, dto, distanceInMeters);
 
@@ -186,10 +221,20 @@ public class StatisticService {
         );
 
         statisticRepository.updateStatistic(updatedStatistic);
-            sendClientInfo(statisticEntity.clientId(), calculatedExperience);
+        sendEventInfo(statisticEntity.clientId(), calculatedExperience);
     }
 
-    private void updateCoordinates(StatisticEntity statisticEntity, UpdateStatisticDto dto) {
+    private int getDistanceInMeters(StatisticEntity statisticEntity, UpdateStatisticDto dto) {
+        var firstLatitude = dto.latitude().doubleValue();
+        var firstLongitude = dto.longitude().doubleValue();
+
+        var secondLatitude = Double.parseDouble(statisticEntity.previousLatitude());
+        var secondLongitude = Double.parseDouble(statisticEntity.previousLongitude());
+
+        return calculateDistanceInMeters(firstLatitude, firstLongitude, secondLatitude, secondLongitude);
+    }
+
+    private void updateUserPosition(StatisticEntity statisticEntity, UpdateStatisticDto dto) {
         var updatedStatistic = new StatisticEntity(
                 statisticEntity.clientId(),
                 statisticEntity.experience(),
@@ -203,7 +248,7 @@ public class StatisticService {
         statisticRepository.updateStatistic(updatedStatistic);
     }
 
-    private void initUserStatistic(UpdateStatisticDto dto) {
+    private void initializeUserStatistic(UpdateStatisticDto dto) {
         var statistic = new StatisticEntity(
                 dto.userId(),
                 0,

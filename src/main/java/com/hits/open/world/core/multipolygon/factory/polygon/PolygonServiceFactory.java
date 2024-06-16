@@ -5,14 +5,15 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 @Service
 @RequiredArgsConstructor
 public class PolygonServiceFactory {
-    private static final Map<FigureType, PolygonService> polygonServiceMap = new HashMap<>();
+    private static final Map<FigureType, PolygonService> polygonServiceMap = new ConcurrentHashMap<>();
     private final List<PolygonService> polygonServices;
 
     public static PolygonService getPolygonService(FigureType figureType) {

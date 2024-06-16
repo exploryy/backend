@@ -11,16 +11,6 @@ import org.springframework.stereotype.Service;
 public class WebSocketClient {
     private final WebSocketStorage webSocketStorage;
 
-    public void sendUserExperience(String userId, String message) {
-        var sessionKey = new SessionKey(userId, WebSocketHandlerType.EXPERIENCE);
-        webSocketStorage.sendMessage(sessionKey, message);
-    }
-
-    public void sendUserLevel(String userId, String message) {
-        var sessionKey = new SessionKey(userId, WebSocketHandlerType.LEVEL);
-        webSocketStorage.sendMessage(sessionKey, message);
-    }
-
     public void sendFriendsPosition(String userId, String message) {
         var sessionKey = new SessionKey(userId, WebSocketHandlerType.FRIEND_POSITION);
         webSocketStorage.sendMessage(sessionKey, message);

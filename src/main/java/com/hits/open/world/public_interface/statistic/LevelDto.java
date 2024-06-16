@@ -1,6 +1,6 @@
 package com.hits.open.world.public_interface.statistic;
 
-public record ExperienceDto(
-        int experience
+public record LevelDto(
+        int level
 ) {
 }

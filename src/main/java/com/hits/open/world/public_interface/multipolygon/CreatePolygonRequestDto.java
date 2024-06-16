@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 public record CreatePolygonRequestDto(
         BigDecimal longitude,
         BigDecimal latitude,
-        FigureType figureType
+        FigureType figureType,
+        String place
 ) {
 }

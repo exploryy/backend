@@ -7,6 +7,7 @@ import com.hits.open.world.core.location.repository.UserLocationRepository;
 import com.hits.open.world.core.quest.QuestService;
 import com.hits.open.world.core.statistic.StatisticService;
 import com.hits.open.world.public_interface.location.LocationDto;
+import com.hits.open.world.public_interface.multipolygon.PolygonRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,56 +33,65 @@ public class UserLocationService {
     private final QuestService questService;
 
     @Transactional
-    public void updateUserLocation(LocationDto locationDto) {
-        var savedEntity = getUserLocation(locationDto.clientId());
+    public void updateUserLocation(PolygonRequestDto requestDto) {
+        var savedEntity = getUserLocation(requestDto.userId());
 
-        var entity = UserLocationEntity.builder()
-                .longitude(String.valueOf(locationDto.longitude()))
-                .latitude(String.valueOf(locationDto.latitude()))
-                .lastVisitation(OffsetDateTime.now())
-                .clientId(locationDto.clientId())
-                .build();
+        var userLocationEntity = buildEntity(requestDto);
 
-        notificationFriendService.notifyFriendsAboutNewLocation(locationDto);
-        questService.tryFinishActiveQuests(locationDto);
+        notificationFriendService.notifyFriendsAboutNewLocation(requestDto);
+        questService.tryFinishActiveQuests(requestDto);
 
-        if (savedEntity.isPresent() && checkIfLessOneDay(savedEntity.get())) {
-            userLocationRepository.update(entity);
+        if (!shouldUpdateCoins(savedEntity)) {
+            userLocationRepository.update(userLocationEntity);
             return;
-        }
-
-        if (savedEntity.isPresent()) {
-            userLocationRepository.update(entity);
+        } else if (savedEntity.isPresent()) {
+            userLocationRepository.update(userLocationEntity);
         } else {
-            userLocationRepository.save(entity);
+            userLocationRepository.initLocation(userLocationEntity);
         }
 
-        coinService.deleteAllClientCoins(locationDto.clientId());
-        generateNewCoins(locationDto);
+        coinService.deleteAllClientCoins(requestDto.userId());
+        generateNewCoins(requestDto);
     }
 
-    private void generateNewCoins(LocationDto locationDto) {
-        var userStatistic = statisticService.getUserStatistics(locationDto.clientId());
+    private Optional<UserLocationEntity> getUserLocation(String clientId) {
+        return userLocationRepository.findById(clientId);
+    }
+
+    private UserLocationEntity buildEntity(PolygonRequestDto requestDto) {
+        return UserLocationEntity.builder()
+                .longitude(String.valueOf(requestDto.createPolygonRequestDto().longitude()))
+                .latitude(String.valueOf(requestDto.createPolygonRequestDto().latitude()))
+                .lastVisitation(OffsetDateTime.now())
+                .clientId(requestDto.userId())
+                .build();
+    }
+
+    private boolean shouldUpdateCoins(Optional<UserLocationEntity> entity) {
+        return entity.map(this::isMoreThanOneDayOld).orElse(false);
+    }
+
+    private boolean isMoreThanOneDayOld(UserLocationEntity entity) {
+        var dayBefore = OffsetDateTime.now().minusDays(1);
+        var lastVisit = entity.lastVisitation();
+
+        return lastVisit.isBefore(dayBefore);
+    }
+
+    private void generateNewCoins(PolygonRequestDto requestDto) {
+        var userStatistic = statisticService.getUserStatistics(requestDto.userId());
         int userLevel = userStatistic.level();
         int coinsCount = Math.max(userLevel, MIN_POINTS_NUMBER);
 
         for (int i = 0; i < coinsCount; i++) {
-            LocationDto newLocation = generateRandomLocation(locationDto);
+            LocationDto newLocation = generateRandomLocation(requestDto);
             coinService.save(newLocation);
         }
     }
 
-    public Optional<UserLocationEntity> getUserLocation(String clientId) {
-        return userLocationRepository.findById(clientId);
-    }
-
-    private boolean checkIfLessOneDay(UserLocationEntity entity) {
-        return entity.lastVisitation().isAfter(OffsetDateTime.now().minusDays(1));
-    }
-
-    private LocationDto generateRandomLocation(LocationDto baseLocation) {
-        double lat = baseLocation.latitude().doubleValue();
-        double lon = baseLocation.longitude().doubleValue();
+    private LocationDto generateRandomLocation(PolygonRequestDto dto) {
+        double lat = dto.createPolygonRequestDto().latitude().doubleValue();
+        double lon = dto.createPolygonRequestDto().longitude().doubleValue();
 
         double angle = secureRandom.nextDouble() * 2 * Math.PI;
         double distance = secureRandom.nextDouble() * RADIUS_IN_KILOMETERS;
@@ -95,7 +105,7 @@ public class UserLocationService {
         BigDecimal latitude = BigDecimal.valueOf(newLat).setScale(20, BigDecimal.ROUND_HALF_UP);
         BigDecimal longitude = BigDecimal.valueOf(newLon).setScale(20, BigDecimal.ROUND_HALF_UP);
 
-        return new LocationDto(baseLocation.clientId(), latitude, longitude);
+        return new LocationDto(dto.userId(), latitude, longitude);
     }
 
 }

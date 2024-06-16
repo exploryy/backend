@@ -40,6 +40,7 @@ dependencies {
     implementation libs.gson
     implementation libs.jts
     implementation libs.jackson.geo
+    implementation libs.spring.reactive
 
     liquibaseRuntime libs.liquibase.core
     liquibaseRuntime libs.postgresql.driver

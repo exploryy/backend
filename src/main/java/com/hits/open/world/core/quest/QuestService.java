@@ -23,6 +23,7 @@ import com.hits.open.world.public_interface.event.EventDto;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.file.UploadFileDto;
+import com.hits.open.world.public_interface.multipolygon.PolygonRequestDto;
 import com.hits.open.world.public_interface.quest.AllQuestDto;
 import com.hits.open.world.public_interface.quest.CommonQuestDto;
 import com.hits.open.world.public_interface.quest.CompletedQuestDto;
@@ -39,7 +40,6 @@ import com.hits.open.world.public_interface.quest.review.CreateQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.DeleteImageQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.DeleteQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.UpdateQuestReviewDto;
-import com.hits.open.world.public_interface.location.LocationDto;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +50,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.hits.open.world.util.DistanceCalculator.calculateDistanceInMeters;
 import static java.util.stream.Collectors.groupingBy;
@@ -232,8 +231,8 @@ public class QuestService {
     }
 
     @Transactional
-    public void tryFinishActiveQuests(LocationDto userLocation) {
-        var activeQuests = questRepository.getActiveQuests(userLocation.clientId());
+    public void tryFinishActiveQuests(PolygonRequestDto requestDto) {
+        var activeQuests = questRepository.getActiveQuests(requestDto.userId());
         for (var quest : activeQuests) {
             switch (quest.questType()) {
                 case POINT_TO_POINT -> {
@@ -245,10 +244,10 @@ public class QuestService {
                     if (calculateDistanceInMeters(
                             Double.parseDouble(lastPoint.latitude()),
                             Double.parseDouble(lastPoint.longitude()),
-                            userLocation.latitude().doubleValue(),
-                            userLocation.longitude().doubleValue())
+                            requestDto.createPolygonRequestDto().latitude().doubleValue(),
+                            requestDto.createPolygonRequestDto().longitude().doubleValue())
                             <= distance) {
-                        finishQuest(quest.questId(), userLocation.clientId());
+                        finishQuest(quest.questId(), requestDto.userId());
                     }
                 }
                 case DISTANCE -> {
@@ -257,10 +256,10 @@ public class QuestService {
                     if (calculateDistanceInMeters(
                             Double.parseDouble(distanceQuest.latitude()),
                             Double.parseDouble(distanceQuest.longitude()),
-                            userLocation.latitude().doubleValue(),
-                            userLocation.longitude().doubleValue())
+                            requestDto.createPolygonRequestDto().latitude().doubleValue(),
+                            requestDto.createPolygonRequestDto().longitude().doubleValue())
                             >= distanceQuest.routeDistance()) {
-                        finishQuest(quest.questId(), userLocation.clientId());
+                        finishQuest(quest.questId(), requestDto.userId());
                     }
                 }
             }

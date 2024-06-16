@@ -5,7 +5,6 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import java.math.BigDecimal;
 
-
 public interface MultipolygonRepository {
     String insert(String userId, Polygon polygon);
 
