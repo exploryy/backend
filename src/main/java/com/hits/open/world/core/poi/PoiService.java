@@ -7,17 +7,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class PoiService {
     private final PoiClient poiClient;
-    private final Map<String, List<PoiEntity>> dataInCity = new HashMap<>();
+    private final Map<String, List<PoiEntity>> dataInCity = new ConcurrentHashMap<>();
+    private final Random random = new SecureRandom();
 
     @Async
     public void tryLoadPoiData(String cityName) {
@@ -34,7 +36,7 @@ public class PoiService {
     }
 
     public PoiEntity getRandomPoiInCity(String cityName) {
-        return dataInCity.get(cityName).get((int) (Math.random() * dataInCity.get(cityName).size()));
+        return dataInCity.get(cityName).get(random.nextInt(dataInCity.get(cityName).size()));
     }
 
     public List<String> getCities() {
