@@ -223,8 +223,11 @@ public class QuestService {
 
         var quest = questRepository.getQuestById(questId)
                 .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));
-        statisticService.updateExperience(userId, getExperienceForQuest(quest.difficultyType()));
-        moneyService.addMoney(userId, getMoneyForQuest(quest.difficultyType()));
+
+        var addedExperience = getExperienceForQuest(quest.difficultyType());
+        statisticService.updateExperience(userId, addedExperience);
+        var addedMoney = getMoneyForQuest(quest.difficultyType());
+        moneyService.addMoney(userId, addedMoney);
 
         var updatedEntity = new PassQuestEntity(
                 passQuest.passQuestId(),
@@ -238,7 +241,7 @@ public class QuestService {
         questRepository.updatePassQuest(updatedEntity);
 
         var eventDto = new EventDto(
-                quest.name().replace("\"", ""),
+                "%s;%s;%s".formatted(quest.name(), addedExperience, addedMoney),
                 EventType.COMPLETE_QUEST
         );
         eventService.sendEvent(userId, eventDto);

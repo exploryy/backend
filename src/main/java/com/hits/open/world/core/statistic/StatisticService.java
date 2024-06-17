@@ -143,8 +143,9 @@ public class StatisticService {
     }
 
     private void sendEventInfo(String userId, int experience) {
+        var level = LevelUtil.calculateLevel(experience);
         eventService.sendEvent(userId, new EventDto(String.valueOf(experience), EventType.UPDATE_EXPERIENCE));
-        eventService.sendEvent(userId, new EventDto(String.valueOf(LevelUtil.calculateLevel(experience)), EventType.UPDATE_LEVEL));
+        eventService.sendEvent(userId, new EventDto("%s;%s".formatted(level, LevelUtil.calculateTotalExperienceInLevel(level)), EventType.UPDATE_LEVEL));
     }
 
     private StatisticEntity getUserStatistic(String userId) {
