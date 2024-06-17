@@ -159,11 +159,15 @@ public class QuestGenerationService {
                 .split("Название квеста:")[1]
                 .replace("«", "")
                 .replace("»", "")
+                .replace("\"", "")
                 .trim();
     }
 
     private String getDescriptionQuest(String generatedText) {
-        return generatedText.split("Описание квеста:")[1].trim();
+        return generatedText.split("Описание квеста:")[1]
+                .replace("«", "")
+                .replace("»", "")
+                .trim();
     }
 
     private double getRandomDistance() {

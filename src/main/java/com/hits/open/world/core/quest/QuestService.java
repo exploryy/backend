@@ -238,7 +238,7 @@ public class QuestService {
         questRepository.updatePassQuest(updatedEntity);
 
         var eventDto = new EventDto(
-                quest.name(),
+                quest.name().replace("\"", ""),
                 EventType.COMPLETE_QUEST
         );
         eventService.sendEvent(userId, eventDto);
