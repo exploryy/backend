@@ -13,10 +13,12 @@ import com.hits.open.world.public_interface.multipolygon.geo.GeoDto;
 import com.hits.open.world.public_interface.multipolygon.geo.MultipolygonGeometry;
 import com.vividsolutions.jts.geom.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static com.hits.open.world.core.multipolygon.factory.geo.GeoDtoFactory.buildMultiPolygonGeoDto;
 import static com.hits.open.world.core.multipolygon.factory.geo.GeoDtoFactory.buildPolygonGeoDto;
@@ -45,6 +47,10 @@ public class MultipolygonService {
 
     public BigDecimal calculatePercentArea(PolygonRequestDto requestDto) {
         var placeName = requestDto.createPolygonRequestDto().place();
+
+        if (StringUtils.isBlank(placeName)) {
+            return null;
+        }
 
         var multiPolygon = multipolygonRepository.getAllCoordinates(placeName);
 

@@ -39,7 +39,7 @@ public class MoneyService {
 
     private void notifyUser(String userId, int money) {
         try {
-            eventService.sendEvent(userId, new EventDto(money, EventType.CHANGE_MONEY));
+            eventService.sendEvent(userId, new EventDto(String.valueOf(money), EventType.CHANGE_MONEY));
         } catch (Exception e) {
             log.error("Failed to notify user about money update", e);
         }

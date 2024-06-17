@@ -125,22 +125,12 @@ public class FriendService {
         );
     }
 
-    private void notifyUser(String friendId, Object message, EventType eventType) {
+    private void notifyUser(String friendId, String message, EventType eventType) {
         try {
             eventService.sendEvent(friendId, new EventDto(message, eventType));
         } catch (Exception e) {
             log.error("Failed to send event to friend", e);
         }
-    }
-
-    private FriendDto mapToFriendDto(UserEntity entity) {
-        var avatarUrl = fileStorageService.getDownloadLinkByName(entity.getPhotoName());
-        return new FriendDto(
-                entity.id(),
-                entity.username(),
-                entity.email(),
-                avatarUrl
-        );
     }
 
     private Stream<ProfileDto> mapToFriendDto(List<String> usersId) {
