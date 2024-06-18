@@ -1,13 +1,11 @@
 package com.hits.open.world.core.statistic;
 
-import com.google.gson.Gson;
 import com.hits.open.world.core.event.EventService;
 import com.hits.open.world.core.event.EventType;
 import com.hits.open.world.core.friend.FriendService;
 import com.hits.open.world.core.statistic.repository.StatisticEntity;
 import com.hits.open.world.core.statistic.repository.StatisticRepository;
 import com.hits.open.world.core.user.UserService;
-import com.hits.open.world.core.websocket.client.WebSocketClient;
 import com.hits.open.world.public_interface.event.EventDto;
 import com.hits.open.world.public_interface.statistic.TotalStatisticDto;
 import com.hits.open.world.public_interface.statistic.UpdateStatisticDto;
@@ -92,8 +90,7 @@ public class StatisticService {
 
         var updatedStatistic = updateStatisticEntity(userId, calculatedExperience, statistic);
 
-        statisticRepository.updateStatistic(updatedStatistic);
-        sendEventInfo(userId, calculatedExperience);
+        handleUserStatistic(statistic, updatedStatistic);
     }
 
     private void updateUserStatistic(UpdateStatisticDto updateStatisticDto, StatisticEntity statisticEntity) {
@@ -142,12 +139,6 @@ public class StatisticService {
                 .build();
     }
 
-    private void sendEventInfo(String userId, int experience) {
-        var level = LevelUtil.calculateLevel(experience);
-        eventService.sendEvent(userId, new EventDto(String.valueOf(experience), EventType.UPDATE_EXPERIENCE));
-        eventService.sendEvent(userId, new EventDto("%s;%s".formatted(level, LevelUtil.calculateTotalExperienceInLevel(level)), EventType.UPDATE_LEVEL));
-    }
-
     private StatisticEntity getUserStatistic(String userId) {
         var statistic = statisticRepository.findByClientId(userId);
 
@@ -189,12 +180,14 @@ public class StatisticService {
     }
 
     private void updateUserMetrics(StatisticEntity statisticEntity, UpdateStatisticDto dto) {
+        var userId = statisticEntity.clientId();
+
         int distanceInMeters = getDistanceInMeters(statisticEntity, dto);
 
         int calculatedExperience = calculateExperienceByDistance(statisticEntity, dto, distanceInMeters);
 
-        var updatedStatistic = new StatisticEntity(
-                statisticEntity.clientId(),
+        var updatedStatisticEntity = new StatisticEntity(
+                userId,
                 calculatedExperience,
                 statisticEntity.distance() + distanceInMeters,
                 statisticEntity.webSessionId(),
@@ -203,8 +196,19 @@ public class StatisticService {
                 OffsetDateTime.now()
         );
 
-        statisticRepository.updateStatistic(updatedStatistic);
-        sendEventInfo(statisticEntity.clientId(), calculatedExperience);
+        handleUserStatistic(statisticEntity, updatedStatisticEntity);
+    }
+
+    private void handleUserStatistic(StatisticEntity statisticEntity, StatisticEntity updatedStatisticEntity) {
+        var userId = updatedStatisticEntity.clientId();
+        statisticRepository.updateStatistic(updatedStatisticEntity);
+        eventService.sendEvent(userId, new EventDto(String.valueOf(updatedStatisticEntity.experience()), EventType.UPDATE_EXPERIENCE));
+
+        var prevLevel = LevelUtil.calculateLevel(statisticEntity.experience());
+        var newLevel = LevelUtil.calculateLevel(updatedStatisticEntity.experience());
+        if (prevLevel != newLevel) {
+            eventService.sendEvent(userId, new EventDto("%s;%s".formatted(newLevel, LevelUtil.calculateTotalExperienceInLevel(newLevel)), EventType.UPDATE_LEVEL));
+        }
     }
 
     private int getDistanceInMeters(StatisticEntity statisticEntity, UpdateStatisticDto dto) {

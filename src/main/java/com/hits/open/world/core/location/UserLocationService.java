@@ -82,13 +82,6 @@ public class UserLocationService {
                 .build();
     }
 
-    private boolean isMoreThanOneDayOld(UserLocationEntity entity) {
-        var dayBefore = OffsetDateTime.now().minusDays(1);
-        var lastVisit = entity.lastVisitation();
-
-        return lastVisit.isBefore(dayBefore);
-    }
-
     private void generateNewCoins(PolygonRequestDto requestDto) {
         var userStatistic = statisticService.getUserStatistics(requestDto.userId());
         int userLevel = userStatistic.level();
