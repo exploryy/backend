@@ -11,4 +11,5 @@ cd db || exit
 docker build -t migration .
 cd ../ || exit
 
+docker compose up -d db migration
 docker compose up -d
