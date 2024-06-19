@@ -1,5 +1,6 @@
 package com.hits.open.world.public_interface.quest;
 
+import com.hits.open.world.public_interface.quest.review.FullQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.QuestReviewDto;
 
 import java.util.List;
@@ -9,6 +10,6 @@ public record DistanceQuestDto(
         Double distance,
         String longitude,
         String latitude,
-        List<QuestReviewDto> questReviews
+        FullQuestReviewDto fullReviewDto
 ) {
 }

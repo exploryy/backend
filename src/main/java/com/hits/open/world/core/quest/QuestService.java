@@ -41,6 +41,7 @@ import com.hits.open.world.public_interface.quest.review.AddImageQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.CreateQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.DeleteImageQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.DeleteQuestReviewDto;
+import com.hits.open.world.public_interface.quest.review.FullQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.QuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.UpdateQuestReviewDto;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -352,7 +353,6 @@ public class QuestService {
                             review.questReviewId(),
                             review.score(),
                             review.message(),
-                            review.clientId(),
                             review.questId(),
                             images,
                             userService.getProfile(review.clientId())
@@ -366,10 +366,15 @@ public class QuestService {
                 .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));
         var pointToPointQuest = questRepository.getPointToPointQuestByQuestId(questId)
                 .orElseThrow(() -> new ExceptionInApplication("Point to point quest not found", ExceptionType.NOT_FOUND));
+
+        var reviews = getQuestReviews(questId);
         return new PointToPointQuestDto(
                 toDto(quest),
                 routeService.getRoute(pointToPointQuest.routeId()),
-                getQuestReviews(questId)
+                new FullQuestReviewDto(
+                        reviews.stream().map(QuestReviewDto::score).mapToInt(Integer::intValue).average().orElse(0),
+                        reviews
+                )
         );
     }
 
@@ -379,12 +384,16 @@ public class QuestService {
         var distanceQuest = questRepository.getDistanceQuestByQuestId(questId)
                 .orElseThrow(() -> new ExceptionInApplication("Distance quest not found", ExceptionType.NOT_FOUND));
 
+        var reviews = getQuestReviews(questId);
         return new DistanceQuestDto(
                 toDto(quest),
                 distanceQuest.routeDistance(),
                 distanceQuest.longitude(),
                 distanceQuest.latitude(),
-                getQuestReviews(questId)
+                new FullQuestReviewDto(
+                        reviews.stream().map(QuestReviewDto::score).mapToInt(Integer::intValue).average().orElse(0),
+                        reviews
+                )
         );
     }
 

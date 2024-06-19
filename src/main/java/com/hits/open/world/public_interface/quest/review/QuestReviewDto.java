@@ -8,7 +8,6 @@ public record QuestReviewDto(
         Long questReviewId,
         Integer score,
         String message,
-        String clientId,
         Long questId,
         List<String> reviewPhotos,
         ProfileDto profile
