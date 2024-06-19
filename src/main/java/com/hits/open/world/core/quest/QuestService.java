@@ -20,6 +20,7 @@ import com.hits.open.world.core.quest.repository.entity.review.QuestReviewEntity
 import com.hits.open.world.core.quest.repository.entity.review.ReviewPhotoEntity;
 import com.hits.open.world.core.route.RouteService;
 import com.hits.open.world.core.statistic.StatisticService;
+import com.hits.open.world.core.user.UserService;
 import com.hits.open.world.public_interface.event.EventDto;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
@@ -40,6 +41,7 @@ import com.hits.open.world.public_interface.quest.review.AddImageQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.CreateQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.DeleteImageQuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.DeleteQuestReviewDto;
+import com.hits.open.world.public_interface.quest.review.QuestReviewDto;
 import com.hits.open.world.public_interface.quest.review.UpdateQuestReviewDto;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -67,6 +69,7 @@ public class QuestService {
     private final MultipolygonRepository multipolygonRepository;
     private final EventService eventService;
     private final MoneyService moneyService;
+    private final UserService userService;
 
     private Long createQuest(CreateQuestDto dto) {
         var questEntity = new QuestEntity(
@@ -334,6 +337,30 @@ public class QuestService {
         questRepository.deletePassQuest(passQuest.passQuestId());
     }
 
+    public List<QuestReviewDto> getQuestReviews(Long questId) {
+        return questRepository.getQuestReviewsByQuestId(questId)
+                .stream()
+                .map(review -> {
+                    var images = questRepository.getReviewPhotosByReviewId(review.questReviewId())
+                            .parallelStream()
+                            .map(photoEntity -> "quest_review_%d_photo_%d".formatted(review.questReviewId(), photoEntity.reviewPhotoId()))
+                            .map(fileStorageService::getDownloadLinkByName)
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .toList();
+                    return new QuestReviewDto(
+                            review.questReviewId(),
+                            review.score(),
+                            review.message(),
+                            review.clientId(),
+                            review.questId(),
+                            images,
+                            userService.getProfile(review.clientId())
+                    );
+                })
+                .toList();
+    }
+
     public PointToPointQuestDto getPointToPointQuest(Long questId) {
         var quest = questRepository.getQuestById(questId)
                 .orElseThrow(() -> new ExceptionInApplication("Quest not found", ExceptionType.NOT_FOUND));
@@ -341,7 +368,8 @@ public class QuestService {
                 .orElseThrow(() -> new ExceptionInApplication("Point to point quest not found", ExceptionType.NOT_FOUND));
         return new PointToPointQuestDto(
                 toDto(quest),
-                routeService.getRoute(pointToPointQuest.routeId())
+                routeService.getRoute(pointToPointQuest.routeId()),
+                getQuestReviews(questId)
         );
     }
 
@@ -355,7 +383,8 @@ public class QuestService {
                 toDto(quest),
                 distanceQuest.routeDistance(),
                 distanceQuest.longitude(),
-                distanceQuest.latitude()
+                distanceQuest.latitude(),
+                getQuestReviews(questId)
         );
     }
 

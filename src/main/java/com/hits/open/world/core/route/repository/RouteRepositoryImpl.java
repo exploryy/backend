@@ -1,9 +1,5 @@
 package com.hits.open.world.core.route.repository;
 
-import com.hits.open.world.core.route.repository.mapper.PointRouteEntityMapper;
-import com.hits.open.world.core.route.repository.mapper.RouteEntityMapper;
-import com.hits.open.world.public_interface.exception.ExceptionInApplication;
-import com.hits.open.world.public_interface.exception.ExceptionType;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
@@ -11,93 +7,89 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.open_the_world.public_.Tables.POINT_ROUTE;
+import static com.example.open_the_world.public_.Tables.POINTS;
 import static com.example.open_the_world.public_.Tables.ROUTE;
-import static org.jooq.impl.DSL.field;
-import static org.jooq.impl.DSL.name;
-import static org.jooq.impl.DSL.table;
+import static com.example.open_the_world.public_.Tables.ROUTE_POINTS;
+import static org.jooq.impl.DSL.row;
 
 @Repository
 @RequiredArgsConstructor
 public class RouteRepositoryImpl implements RouteRepository {
-    private static final PointRouteEntityMapper POINT_ROUTE_ENTITY_MAPPER = new PointRouteEntityMapper();
-    private static final RouteEntityMapper ROUTE_ENTITY_MAPPER = new RouteEntityMapper();
-
     private final DSLContext create;
 
     @Override
-    public void savePoints(List<PointRouteEntity> pointRouteEntity) {
-        create.batchInsert(
-                pointRouteEntity.stream()
-                        .map(point -> create.newRecord(POINT_ROUTE)
-                                .values(point.latitude(), point.longitude(), point.nextLatitude(), point.nextLongitude())
-                        ).toList()
-        ).execute();
-
-    }
-
-    @Override
     public RouteEntity saveRoute(RouteEntity routeEntity) {
-        return create.insertInto(ROUTE)
+        var routeId = create.insertInto(ROUTE)
                 .set(ROUTE.DISTANCE, routeEntity.distance())
-                .set(ROUTE.POINT_LATITUDE, routeEntity.pointLatitude())
-                .set(ROUTE.POINT_LONGITUDE, routeEntity.pointLongitude())
-                .returning(ROUTE.ROUTE_ID, ROUTE.DISTANCE, ROUTE.POINT_LATITUDE, ROUTE.POINT_LONGITUDE)
-                .fetchOne(ROUTE_ENTITY_MAPPER);
+                .returning(ROUTE.ROUTE_ID)
+                .fetchOne()
+                .getRouteId();
+        var pointsId = savePoints(routeEntity.points());
+        create.insertInto(ROUTE_POINTS, ROUTE_POINTS.ROUTE_ID, ROUTE_POINTS.POINT_ID, ROUTE_POINTS.NUMBER)
+                .valuesOfRows(pointsId.stream()
+                        .map(pointId -> row(routeId, pointId, pointsId.indexOf(pointId)))
+                        .toList())
+                .execute();
+        return new RouteEntity(
+                routeId,
+                routeEntity.distance(),
+                routeEntity.points().stream()
+                        .map(point -> new PointEntity(
+                                point.latitude(),
+                                point.longitude(),
+                                pointsId.get(routeEntity.points().indexOf(point))
+                        ))
+                        .toList()
+        );
     }
 
     @Override
     public Optional<RouteEntity> getRoute(Long routeId) {
-        return create.selectFrom(ROUTE)
+        var route = create.selectFrom(ROUTE)
                 .where(ROUTE.ROUTE_ID.eq(routeId))
-                .fetchOptional(ROUTE_ENTITY_MAPPER);
+                .fetchOptional();
+        if (route.isEmpty()) {
+            return Optional.empty();
+        }
+
+        var points = create.select(POINTS.LAT, POINTS.LON, POINTS.POINT_ID)
+                .from(POINTS)
+                .join(ROUTE_POINTS)
+                .on(POINTS.POINT_ID.eq(ROUTE_POINTS.POINT_ID))
+                .where(ROUTE_POINTS.ROUTE_ID.eq(routeId))
+                .orderBy(ROUTE_POINTS.NUMBER)
+                .fetch()
+                .map(record -> new PointEntity(
+                        record.get(POINTS.LAT),
+                        record.get(POINTS.LON),
+                        record.get(POINTS.POINT_ID)
+                ));
+        return Optional.of(new RouteEntity(
+                routeId,
+                route.get().getDistance(),
+                points
+        ));
     }
 
     @Override
-    public List<PointRouteEntity> getPointsInRoute(Long routeId) {
-        var route = getRoute(routeId)
-                .orElseThrow(() -> new ExceptionInApplication("Route not found", ExceptionType.NOT_FOUND));
-
-        var cte = name("cte")
-                .fields("latitude", "longitude", "next_latitude", "next_longitude")
-                .as(
-                        create.select(
-                                        POINT_ROUTE.LATITUDE.as("latitude"),
-                                        POINT_ROUTE.LONGITUDE.as("longitude"),
-                                        POINT_ROUTE.NEXT_LATITUDE.as("next_latitude"),
-                                        POINT_ROUTE.NEXT_LONGITUDE.as("next_longitude"))
-                                .from(POINT_ROUTE)
-                                .where(POINT_ROUTE.LATITUDE.eq(route.pointLatitude())
-                                        .and(POINT_ROUTE.LONGITUDE.eq(route.pointLongitude()))
-                                )
-                                .unionAll(
-                                        create.select(
-                                                        POINT_ROUTE.LATITUDE.as("latitude"),
-                                                        POINT_ROUTE.LONGITUDE.as("longitude"),
-                                                        POINT_ROUTE.NEXT_LATITUDE.as("next_latitude"),
-                                                        POINT_ROUTE.NEXT_LONGITUDE.as("next_longitude"))
-                                                .from(POINT_ROUTE)
-                                                .join(table(name("cte")))
-                                                .on(field(name("cte", "next_latitude")).eq(POINT_ROUTE.LATITUDE)
-                                                        .and(field(name("cte", "next_longitude")).eq(POINT_ROUTE.LONGITUDE))
-                                                )
-                                )
-                );
-
-        return create.withRecursive(cte)
-                .select(
-                        field(name("cte", "latitude")),
-                        field(name("cte", "longitude")),
-                        field(name("cte", "next_latitude")),
-                        field(name("cte", "next_longitude"))
-                )
-                .from(table(name("cte")))
-                .fetch(record -> new PointRouteEntity(
-                        record.get("longitude", String.class),
-                        record.get("latitude", String.class),
-                        record.get("next_longitude", String.class),
-                        record.get("next_latitude", String.class)
-                ));
+    public List<Long> savePoints(List<PointEntity> points) {
+        return create.insertInto(POINTS, POINTS.LAT, POINTS.LON)
+                .valuesOfRows(points.stream()
+                        .map(point -> row(point.latitude(), point.longitude()))
+                        .toList())
+                .returningResult(POINTS.POINT_ID)
+                .fetchInto(Long.class);
     }
 
+    @Override
+    public Optional<PointEntity> getPoint(Long pointId) {
+        return create.selectFrom(POINTS)
+                .where(POINTS.POINT_ID.eq(pointId))
+                .fetchOptional()
+                .map(record -> new PointEntity(
+                        record.get(POINTS.LAT),
+                        record.get(POINTS.LON),
+                        record.get(POINTS.POINT_ID)
+                ));
+    }
 }

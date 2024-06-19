@@ -20,14 +20,14 @@ public class FlickrPhotoClient implements PhotoClient {
                         .queryParam("lon", longitude)
                         .queryParam("format", "json")
                         .queryParam("nojsoncallback", 1)
-                        .queryParam("radius", 0.3)
+                        .queryParam("radius", 0.1)
                         .build())
                 .retrieve()
                 .bodyToMono(FlickrPhotoResponse.class)
                 .block();
         return response.photos().photo().stream()
                 .map(FlickrPhotoResponse.Photos.Photo::getUrl)
-                .limit(3)
+                .limit(5)
                 .toList();
     }
 }

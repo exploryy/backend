@@ -22,29 +22,37 @@ create table quest
 
 create sequence s_route_id start with 1 increment by 1;
 
-create table point_route
-(
-    latitude       varchar(60) not null,
-    longitude      varchar(60) not null,
-    next_latitude  varchar(60),
-    next_longitude varchar(60),
-    primary key (latitude, longitude),
-    foreign key (next_latitude, next_longitude) references point_route (latitude, longitude)
-);
-
 create table route
 (
-    route_id        bigint default nextval('s_route_id'),
-    distance        double precision not null,
-    point_latitude  varchar(60)      not null,
-    point_longitude varchar(60)      not null,
-    primary key (route_id),
-    foreign key (point_latitude, point_longitude) references point_route (latitude, longitude)
+    route_id bigint default nextval('s_route_id'),
+    distance double precision not null,
+    primary key (route_id)
 );
 
+create sequence s_point_id start with 1 increment by 1;
+
+CREATE TABLE points
+(
+    point_id bigint default nextval('s_point_id'),
+    lat      varchar(60) NOT NULL,
+    lon      varchar(60) NOT NULL,
+    PRIMARY KEY (point_id)
+);
+
+CREATE TABLE route_points
+(
+    route_id bigint  NOT NULL,
+    point_id bigint  NOT NULL,
+    number   INTEGER NOT NULL,
+    PRIMARY KEY (route_id, point_id, number),
+    FOREIGN KEY (route_id) REFERENCES route (route_id),
+    FOREIGN KEY (point_id) REFERENCES points (point_id)
+);
+
+-- rollback DROP TABLE points;
+-- rollback DROP SEQUENCE s_point_id
+-- rollback DROP TABLE route_points;
 -- rollback DROP TABLE route;
--- rollback DROP SEQUENCE s_route_id;
--- rollback DROP TABLE point_route;
 
 -- changeset gordey_dovydenko:3
 
@@ -348,3 +356,27 @@ create table client_statistic
 
 -- rollback DROP TABLE client_statistic
 
+-- changeset gordey_dovydenko:21
+
+create sequence s_note_id start with 1 increment by 1;
+
+create table client_notes
+(
+    note_id    bigint                            default nextval('s_note_id'),
+    client_id  varchar(60)              not null,
+    note       varchar                  not null,
+    created_at timestamp with time zone not null default current_timestamp,
+    point_id   bigint                   not null,
+    primary key (note_id),
+    foreign key (point_id) references points (point_id)
+);
+
+create sequence s_note_photo_id start with 1 increment by 1;
+
+create table note_photo
+(
+    photo_id bigint default nextval('s_note_photo_id'),
+    note_id  bigint not null,
+    primary key (photo_id),
+    foreign key (note_id) references client_notes (note_id)
+);

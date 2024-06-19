@@ -7,12 +7,12 @@ import java.util.List;
 public class PointUtil {
     public static double distanceInMeters(List<PointDto> points) {
         return points.stream()
-                .filter(point -> point.nextLatitude() != null && point.nextLongitude() != null)
+                .limit(points.size() - 1)
                 .mapToDouble(point -> DistanceCalculator.calculateDistanceInMeters(
                         Double.parseDouble(point.latitude()),
                         Double.parseDouble(point.longitude()),
-                        Double.parseDouble(point.nextLatitude()),
-                        Double.parseDouble(point.nextLongitude())
+                        Double.parseDouble(points.get(points.indexOf(point) + 1).latitude()),
+                        Double.parseDouble(points.get(points.indexOf(point) + 1).longitude())
                 ))
                 .sum();
     }

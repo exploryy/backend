@@ -9,7 +9,6 @@ import com.hits.open.world.core.money.MoneyRepository;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.file.UploadFileDto;
-import com.hits.open.world.public_interface.inventory.InventoryDto;
 import com.hits.open.world.public_interface.user.CreateUserDto;
 import com.hits.open.world.public_interface.user.ProfileDto;
 import com.hits.open.world.public_interface.user.UpdateUserDto;

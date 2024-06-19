@@ -1,6 +1,6 @@
 package com.hits.open.world.core.route;
 
-import com.hits.open.world.core.route.repository.PointRouteEntity;
+import com.hits.open.world.core.route.repository.PointEntity;
 import com.hits.open.world.core.route.repository.RouteEntity;
 import com.hits.open.world.core.route.repository.RouteRepository;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
@@ -13,9 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class RouteService {
@@ -23,24 +20,16 @@ public class RouteService {
 
     @Transactional
     public Long createRoute(CreateRouteDto dto) {
-        List<PointDto> reversedPoints = dto.points();
-        Collections.reverse(reversedPoints);
-        routeRepository.savePoints(
-                reversedPoints
-                        .stream()
-                        .map(point -> new PointRouteEntity(
-                                point.longitude(),
-                                point.latitude(),
-                                point.nextLongitude(),
-                                point.nextLatitude()
-                        ))
-                        .toList()
-        );
         var routeEntity = new RouteEntity(
                 null,
                 PointUtil.distanceInMeters(dto.points()),
-                dto.startPointLatitude(),
-                dto.startPointLongitude()
+                dto.points().stream()
+                        .map(pointDto -> new PointEntity(
+                                pointDto.latitude(),
+                                pointDto.longitude(),
+                                null
+                        ))
+                        .toList()
         );
         var route = routeRepository.saveRoute(routeEntity);
         return route.routeId();
@@ -50,13 +39,10 @@ public class RouteService {
         var routeEntity = routeRepository.getRoute(routeId)
                 .orElseThrow(() -> new ExceptionInApplication("Route not found", ExceptionType.NOT_FOUND));
         return new RouteDto(
-                routeRepository.getPointsInRoute(routeId)
-                        .stream()
-                        .map(pointRouteEntity -> new PointDto(
-                                pointRouteEntity.latitude(),
-                                pointRouteEntity.longitude(),
-                                pointRouteEntity.nextLatitude(),
-                                pointRouteEntity.nextLongitude()
+                routeEntity.points().stream()
+                        .map(pointEntity -> new PointDto(
+                                pointEntity.latitude(),
+                                pointEntity.longitude()
                         ))
                         .toList(),
                 routeEntity.distance(),

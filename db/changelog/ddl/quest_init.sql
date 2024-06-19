@@ -2,16 +2,24 @@
 
 -- changeset gordey_dovydenko:1
 
-insert into point_route (longitude, latitude, next_longitude, next_latitude)
-values ('84.937810', '56.470569', '84.939779', '56.470287'),
-       ('84.939779', '56.470287', '84.941356', '56.470157'),
-       ('84.941356', '56.470157', '84.940758', '56.467706'),
-       ('84.940758', '56.467706', '84.939986', '56.464763'),
-       ('84.939986', '56.464763', '84.939546', '56.462596'),
-       ('84.939546', '56.462596', null, null);
+insert into route (distance)
+values (1000);
 
-insert into route (distance, point_latitude, point_longitude)
-values (1000, '56.470569', '84.937810');
+insert into points (lon, lat)
+values ('84.937810', '56.470569'),
+       ('84.939779', '56.470287'),
+       ('84.941356', '56.470157'),
+       ('84.940758', '56.467706'),
+       ('84.939986', '56.464763'),
+       ('84.939546', '56.462596');
+
+insert into route_points (route_id, point_id, number)
+values (1, 1, 0),
+       (1, 2, 1),
+       (1, 3, 2),
+       (1, 4, 3),
+       (1, 5, 4),
+       (1, 6, 5);
 
 insert into quest (name, description, difficulty_type, quest_type, transport_type)
 values ('Пойдем бухнем', 'Давайте сходим и прибухнем', 'EASY', 'POINT_TO_POINT', 'WALK'),

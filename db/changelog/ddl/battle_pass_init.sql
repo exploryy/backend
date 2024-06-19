@@ -18,6 +18,8 @@ VALUES (1, 0, 1),
        (10, 900, 1);
 
 insert into item_battle_pass_level (item_id, level, battle_pass_id)
-VALUES (5, 10, 1);
+VALUES (5, 10, 1),
+       (9, 2, 1),
+       (11, 5, 1);
 
 -- rollback delete from battle_pass_id = 1;

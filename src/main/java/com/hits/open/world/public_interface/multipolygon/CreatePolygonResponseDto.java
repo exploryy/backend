@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.hits.open.world.public_interface.multipolygon.geo.GeoDto;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 public record CreatePolygonResponseDto(
         GeoDto geo,

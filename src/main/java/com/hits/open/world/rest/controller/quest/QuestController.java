@@ -51,10 +51,7 @@ public class QuestController {
                                         @RequestParam("description") String description,
                                         @RequestParam("difficulty_type") String difficultyType,
                                         @RequestParam("transport_type") String transportType,
-                                        @RequestParam("images") List<MultipartFile> images,
-                                        @RequestParam("points") List<PointDto> points,
-                                        @RequestParam("start_point_longitude") String startPointLongitude,
-                                        @RequestParam("start_point_latitude") String startPointLatitude) {
+                                        @RequestParam("images") List<MultipartFile> images) {
         var createDto = new CreateQuestDto(
                 name,
                 description,
@@ -64,9 +61,7 @@ public class QuestController {
                 images
         );
         var routeDto = new CreateRouteDto(
-                points,
-                startPointLongitude,
-                startPointLatitude
+                List.of(new PointDto("56.470569", "84.937810"), new PointDto("56.470287", "84.939779"))
         );
         questService.createPointToPointQuest(new CreatePointToPointQuestDto(createDto, routeDto));
     }

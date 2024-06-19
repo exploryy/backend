@@ -1,6 +1,5 @@
 package com.hits.open.world.core.multipolygon.repository;
 
-import com.hits.open.world.public_interface.multipolygon.geo.MultipolygonGeometry;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 
 @Repository

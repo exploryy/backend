@@ -26,13 +26,9 @@ public class RouteController {
     private final RouteService routeService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void createRoute(@RequestParam("points") List<PointDto> points,
-                            @RequestParam("start_point_longitude") String startPointLongitude,
-                            @RequestParam("start_point_latitude") String startPointLatitude) {
+    public void createRoute(@RequestParam("points") List<PointDto> points) {
         var createDto = new CreateRouteDto(
-                points,
-                startPointLongitude,
-                startPointLatitude
+                points
         );
         routeService.createRoute(createDto);
     }
