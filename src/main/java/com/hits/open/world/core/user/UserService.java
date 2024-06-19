@@ -2,6 +2,7 @@ package com.hits.open.world.core.user;
 
 import com.hits.open.world.client.keycloak.RoleClient;
 import com.hits.open.world.client.keycloak.UserClient;
+import com.hits.open.world.core.battle_pass.BattlePassService;
 import com.hits.open.world.core.file.FileMetadata;
 import com.hits.open.world.core.file.FileStorageService;
 import com.hits.open.world.core.inventory.InventoryService;
@@ -28,6 +29,7 @@ public class UserService {
     private final FileStorageService fileStorageService;
     private final MoneyRepository moneyRepository;
     private final InventoryService inventoryService;
+    private final BattlePassService battlePassService;
 
     public String createUser(CreateUserDto dto) {
         checkUserWithUsernameExists(dto.username());
@@ -42,6 +44,7 @@ public class UserService {
         var oauthId = userClient.registerUser(userEntity);
         roleClient.assignRole(oauthId, "ROLE_USER");
         moneyRepository.initializeMoney(oauthId);
+        battlePassService.tryInitializeUserInBattlePass(oauthId);
         return oauthId;
     }
 

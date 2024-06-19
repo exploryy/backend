@@ -42,6 +42,8 @@ public class BattlePassService {
 
     @Transactional
     public void addExperience(String userId, int countExperience) {
+        //TODO: убрать после тестирования
+        tryInitializeUserInBattlePass(userId);
         var currentBattlePass = battlePassRepository.getCurrentBattlePass()
                 .orElseThrow(() -> new ExceptionInApplication("No current battle pass found", ExceptionType.NOT_FOUND));
         var userLevelInBattlePass = battlePassRepository.getUserStatisticInBattlePass(userId, currentBattlePass.battlePassId())
@@ -57,6 +59,14 @@ public class BattlePassService {
                     userLevelInBattlePass.level(),
                     countExperience + userLevelInBattlePass.currentExperience()
             );
+        }
+    }
+
+    public void tryInitializeUserInBattlePass(String userId) {
+        var currentBattlePass = battlePassRepository.getCurrentBattlePass()
+                .orElseThrow(() -> new ExceptionInApplication("No current battle pass found", ExceptionType.NOT_FOUND));
+        if (battlePassRepository.getUserStatisticInBattlePass(userId, currentBattlePass.battlePassId()).isEmpty()) {
+            battlePassRepository.addUserToBattlePass(userId, currentBattlePass.battlePassId());
         }
     }
 
