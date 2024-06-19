@@ -7,5 +7,6 @@ public enum EventType {
     NEW_QUEST,
     UPDATE_EXPERIENCE,
     UPDATE_LEVEL,
+    UPDATE_BATTLE_PASS_LEVEL,
     ;
 }

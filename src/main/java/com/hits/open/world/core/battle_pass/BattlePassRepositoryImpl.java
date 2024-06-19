@@ -73,7 +73,7 @@ public class BattlePassRepositoryImpl implements BattlePassRepository {
         return create.select(sum(BATTLE_PASS_LEVEL.EXPERIENCE))
                 .from(BATTLE_PASS_LEVEL)
                 .where(BATTLE_PASS_LEVEL.BATTLE_PASS_ID.eq(battlePassId)
-                        .and(BATTLE_PASS_LEVEL.LEVEL.lessThan(level)))
+                        .and(BATTLE_PASS_LEVEL.LEVEL.lessOrEqual(level)))
                 .groupBy(BATTLE_PASS_LEVEL.BATTLE_PASS_ID)
                 .fetchOptionalInto(Integer.class)
                 .orElse(0);

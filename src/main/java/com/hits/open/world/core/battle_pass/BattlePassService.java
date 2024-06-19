@@ -2,11 +2,14 @@ package com.hits.open.world.core.battle_pass;
 
 import com.hits.open.world.core.cosmetic_item.CosmeticItemService;
 import com.hits.open.world.core.cosmetic_item.entity.CosmeticItemEntity;
+import com.hits.open.world.core.event.EventService;
+import com.hits.open.world.core.event.EventType;
 import com.hits.open.world.core.inventory.InventoryRepository;
 import com.hits.open.world.core.inventory.InventoryService;
 import com.hits.open.world.core.money.MoneyService;
 import com.hits.open.world.public_interface.battle_pass.BattlePassDto;
 import com.hits.open.world.public_interface.cosmetic_item.CosmeticItemDto;
+import com.hits.open.world.public_interface.event.EventDto;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ public class BattlePassService {
     private final InventoryService inventoryService;
     private final MoneyService moneyService;
     private final InventoryRepository inventoryRepository;
+    private final EventService eventService;
 
     public BattlePassDto getCurrentBattlePass(String userId) {
         var currentBattlePass = battlePassRepository.getCurrentBattlePass()
@@ -44,7 +48,7 @@ public class BattlePassService {
                 .orElseThrow(() -> new ExceptionInApplication("User not found in battle pass", ExceptionType.NOT_FOUND));
 
         var sumExperienceBeforeLevel = battlePassRepository.sumPreviousLevelsExperience(currentBattlePass.battlePassId(), userLevelInBattlePass.level());
-        if (countExperience + sumExperienceBeforeLevel >= currentBattlePass.levels().get(userLevelInBattlePass.level()).experienceNeeded() + sumExperienceBeforeLevel) {
+        if (countExperience + userLevelInBattlePass.currentExperience() >= currentBattlePass.levels().get(userLevelInBattlePass.level()).experienceNeeded() + sumExperienceBeforeLevel) {
             increaseLevel(userId, currentBattlePass, userLevelInBattlePass, countExperience);
         } else {
             battlePassRepository.updateLevelAndExperience(
@@ -67,6 +71,13 @@ public class BattlePassService {
                     moneyService.addMoney(userId, cosmeticItemService.findById(reward.itemId()).get().price());
                 }
             }
+            eventService.sendEvent(
+                    userId,
+                    new EventDto(
+                            "%d".formatted(userLevelInBattlePass.level() + 1),
+                            EventType.UPDATE_BATTLE_PASS_LEVEL
+                    )
+            );
         }
         battlePassRepository.updateLevelAndExperience(
                 userId,
