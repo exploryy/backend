@@ -72,6 +72,11 @@ public class ClientBeans {
             @Value("${openStreetMap.bikeEndpoint}") String bicycleUri) {
         return new OpenStreetMapClient(WebClient.builder()
                 .baseUrl(baseUrl)
+                .codecs(clientCodecConfigurer ->
+                        clientCodecConfigurer
+                                .defaultCodecs()
+                                .maxInMemorySize(500 * 1024)
+                )
                 .build(),
                 carUri,
                 footUri,
@@ -84,6 +89,11 @@ public class ClientBeans {
             @Value("${overpassTurbo.baseUrl}") String baseUrl) {
         return new OverpassTurboPoiClient(WebClient.builder()
                 .baseUrl(baseUrl)
+                .codecs(clientCodecConfigurer ->
+                        clientCodecConfigurer
+                                .defaultCodecs()
+                                .maxInMemorySize(500 * 1024)
+                )
                 .build()
         );
     }
@@ -94,6 +104,11 @@ public class ClientBeans {
             @Value("${flickr.apiKey}") String apiKey) {
         return new FlickrPhotoClient(WebClient.builder()
                 .baseUrl(baseUrl)
+                .codecs(clientCodecConfigurer ->
+                        clientCodecConfigurer
+                                .defaultCodecs()
+                                .maxInMemorySize(500 * 1024)
+                )
                 .build(),
                 apiKey
         );
