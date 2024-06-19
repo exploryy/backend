@@ -94,6 +94,7 @@ public class BattlePassRepositoryImpl implements BattlePassRepository {
         return create.select(max(BATTLE_PASS_LEVEL.LEVEL))
                 .from(BATTLE_PASS_LEVEL)
                 .where(BATTLE_PASS_LEVEL.BATTLE_PASS_ID.eq(battlePassId))
+                .groupBy(BATTLE_PASS_LEVEL.BATTLE_PASS_ID)
                 .fetchOptionalInto(Integer.class)
                 .orElse(0);
     }

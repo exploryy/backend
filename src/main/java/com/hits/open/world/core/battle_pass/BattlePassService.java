@@ -71,7 +71,7 @@ public class BattlePassService {
     }
 
     private void increaseLevel(String userId, BattlePassEntity currentBattlePass, BattlePassUserStatisticEntity userLevelInBattlePass, int countExperience) {
-        var needIncreaseLevel = battlePassRepository.getMaxLevel(currentBattlePass.battlePassId()) == userLevelInBattlePass.level();
+        var needIncreaseLevel = battlePassRepository.getMaxLevel(currentBattlePass.battlePassId()) != userLevelInBattlePass.level();
         if (needIncreaseLevel) {
             var rewards = currentBattlePass.levels().get(userLevelInBattlePass.level()).rewards();
             for (var reward : rewards) {
