@@ -1,5 +1,6 @@
 package com.hits.open.world.core.statistic;
 
+import com.hits.open.world.core.battle_pass.BattlePassService;
 import com.hits.open.world.core.event.EventService;
 import com.hits.open.world.core.event.EventType;
 import com.hits.open.world.core.friend.FriendService;
@@ -38,6 +39,7 @@ public class StatisticService {
     private final StatisticRepository statisticRepository;
     private final UserService userService;
     private final FriendService friendService;
+    private final BattlePassService battlePassService;
     private final EventService eventService;
 
     @Transactional
@@ -203,6 +205,7 @@ public class StatisticService {
         var userId = updatedStatisticEntity.clientId();
         statisticRepository.updateStatistic(updatedStatisticEntity);
         eventService.sendEvent(userId, new EventDto(String.valueOf(updatedStatisticEntity.experience()), EventType.UPDATE_EXPERIENCE));
+        battlePassService.addExperience(userId, updatedStatisticEntity.experience() - statisticEntity.experience());
 
         var prevLevel = LevelUtil.calculateLevel(statisticEntity.experience());
         var newLevel = LevelUtil.calculateLevel(updatedStatisticEntity.experience());
