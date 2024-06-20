@@ -4,10 +4,13 @@ import com.hits.open.world.core.battle_pass.BattlePassService;
 import com.hits.open.world.core.event.EventService;
 import com.hits.open.world.core.event.EventType;
 import com.hits.open.world.core.friend.FriendService;
+import com.hits.open.world.core.privacy.ClientPrivacyService;
 import com.hits.open.world.core.statistic.repository.StatisticEntity;
 import com.hits.open.world.core.statistic.repository.StatisticRepository;
 import com.hits.open.world.core.user.UserService;
 import com.hits.open.world.public_interface.event.EventDto;
+import com.hits.open.world.public_interface.exception.ExceptionInApplication;
+import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.location.LocationStatisticDto;
 import com.hits.open.world.public_interface.statistic.TotalStatisticDto;
 import com.hits.open.world.public_interface.statistic.UpdateStatisticDto;
@@ -16,6 +19,7 @@ import com.hits.open.world.util.LevelUtil;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
@@ -42,6 +46,7 @@ public class StatisticService {
     private final FriendService friendService;
     private final BattlePassService battlePassService;
     private final EventService eventService;
+    private final ClientPrivacyService clientPrivacyService;
 
     @Transactional
     public TotalStatisticDto getTopExperienceDistance(String userId, int count) {
@@ -75,6 +80,26 @@ public class StatisticService {
     }
 
     @Transactional
+    public LocationStatisticDto getFriendStatistic(String userId, String friendId) {
+        var friends = friendService.getFriends(userId);
+        var allFriends = Stream.concat(
+                        friends.friends().stream().map(ProfileDto::userId),
+                        friends.favoriteFriends().stream().map(ProfileDto::userId)
+                ).distinct()
+                .toList();
+
+        if (!allFriends.contains(friendId)) {
+            throw new ExceptionInApplication("User is not your friend", ExceptionType.NOT_FOUND);
+        }
+
+        if (!clientPrivacyService.isPublic(friendId)) {
+            throw new ExceptionInApplication("User statistic is not public", ExceptionType.NOT_FOUND);
+        }
+
+        return buildLocationStatisticDto(friendId);
+    }
+
+    @Transactional
     public List<LocationStatisticDto> getLocationsMyFriend(String userId) {
         var friends = friendService.getFriends(userId);
 
@@ -82,20 +107,25 @@ public class StatisticService {
                         friends.friends().stream().map(ProfileDto::userId),
                         friends.favoriteFriends().stream().map(ProfileDto::userId)
                 ).distinct()
+                .filter(clientPrivacyService::isPublic)
                 .map(this::buildLocationStatisticDto)
                 .toList();
     }
 
-    @Transactional
+    @Transactional(propagation=Propagation.REQUIRES_NEW)
     public void tryUpdateStatistic(UpdateStatisticDto updateStatisticDto) {
-        Optional<StatisticEntity> optionalStatistic = statisticRepository.findByClientId(updateStatisticDto.userId());
+        try {
+            Optional<StatisticEntity> optionalStatistic = statisticRepository.findByClientId(updateStatisticDto.userId());
 
-        if (optionalStatistic.isPresent()) {
-            updateUserStatistic(updateStatisticDto, optionalStatistic.get());
-            return;
+            if (optionalStatistic.isPresent()) {
+                updateUserStatistic(updateStatisticDto, optionalStatistic.get());
+                return;
+            }
+
+            initializeUserStatistic(updateStatisticDto);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        initializeUserStatistic(updateStatisticDto);
     }
 
     @Transactional
