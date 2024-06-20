@@ -1,6 +1,8 @@
 package com.hits.open.world.core.statistic;
 
 import com.hits.open.world.core.battle_pass.BattlePassService;
+import com.hits.open.world.core.buff.BuffService;
+import com.hits.open.world.core.buff.repository.enums.BuffStatus;
 import com.hits.open.world.core.event.EventService;
 import com.hits.open.world.core.event.EventType;
 import com.hits.open.world.core.friend.FriendService;
@@ -18,6 +20,7 @@ import com.hits.open.world.public_interface.user.ProfileDto;
 import com.hits.open.world.util.LevelUtil;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +30,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -39,7 +41,6 @@ import static com.hits.open.world.util.LevelUtil.calculateTotalExperienceInLevel
 
 
 @Service
-@RequiredArgsConstructor
 public class StatisticService {
     private final StatisticRepository statisticRepository;
     private final UserService userService;
@@ -47,6 +48,19 @@ public class StatisticService {
     private final BattlePassService battlePassService;
     private final EventService eventService;
     private final ClientPrivacyService clientPrivacyService;
+    private final BuffService buffService;
+
+    public StatisticService(StatisticRepository statisticRepository, UserService userService, FriendService friendService,
+                            BattlePassService battlePassService, EventService eventService, ClientPrivacyService clientPrivacyService,
+                            @Lazy BuffService buffService) {
+        this.statisticRepository = statisticRepository;
+        this.userService = userService;
+        this.friendService = friendService;
+        this.battlePassService = battlePassService;
+        this.eventService = eventService;
+        this.clientPrivacyService = clientPrivacyService;
+        this.buffService = buffService;
+    }
 
     @Transactional
     public TotalStatisticDto getTopExperienceDistance(String userId, int count) {
@@ -82,6 +96,7 @@ public class StatisticService {
     @Transactional
     public LocationStatisticDto getFriendStatistic(String userId, String friendId) {
         var friends = friendService.getFriends(userId);
+
         var allFriends = Stream.concat(
                         friends.friends().stream().map(ProfileDto::userId),
                         friends.favoriteFriends().stream().map(ProfileDto::userId)
@@ -93,7 +108,7 @@ public class StatisticService {
         }
 
         if (!clientPrivacyService.isPublic(friendId)) {
-            throw new ExceptionInApplication("User statistic is not public", ExceptionType.NOT_FOUND);
+            throw new ExceptionInApplication("User statistic is not public", ExceptionType.INVALID);
         }
 
         return buildLocationStatisticDto(friendId);
@@ -112,20 +127,16 @@ public class StatisticService {
                 .toList();
     }
 
-    @Transactional(propagation=Propagation.REQUIRES_NEW)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void tryUpdateStatistic(UpdateStatisticDto updateStatisticDto) {
-        try {
-            Optional<StatisticEntity> optionalStatistic = statisticRepository.findByClientId(updateStatisticDto.userId());
+        Optional<StatisticEntity> optionalStatistic = statisticRepository.findByClientId(updateStatisticDto.userId());
 
-            if (optionalStatistic.isPresent()) {
-                updateUserStatistic(updateStatisticDto, optionalStatistic.get());
-                return;
-            }
-
-            initializeUserStatistic(updateStatisticDto);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (optionalStatistic.isPresent()) {
+            updateUserStatistic(updateStatisticDto, optionalStatistic.get());
+            return;
         }
+
+        initializeUserStatistic(updateStatisticDto);
     }
 
     @Transactional
@@ -177,7 +188,7 @@ public class StatisticService {
                     return Integer.compare(o2.distance(), o1.distance());
                 })
                 .limit(count)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<ProfileDto> getProfiles(List<StatisticEntity> statistics) {
@@ -244,10 +255,10 @@ public class StatisticService {
 
     private void updateUserMetrics(StatisticEntity statisticEntity, UpdateStatisticDto dto) {
         var userId = statisticEntity.clientId();
-
         int distanceInMeters = getDistanceInMeters(statisticEntity, dto);
-
-        int calculatedExperience = calculateExperienceByDistance(statisticEntity, dto, distanceInMeters);
+        var coefficient = buffService.getUserBuffs(userId, BuffStatus.EXPERIENCE);
+        int calculatedExperience = (int) (calculateExperienceByDistance(statisticEntity, dto, distanceInMeters) *
+                        coefficient.doubleValue());
 
         var updatedStatisticEntity = new StatisticEntity(
                 userId,

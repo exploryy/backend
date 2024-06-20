@@ -1,5 +1,7 @@
 package com.hits.open.world.core.location;
 
+import com.hits.open.world.core.buff.BuffService;
+import com.hits.open.world.core.buff.repository.enums.BuffStatus;
 import com.hits.open.world.core.coin.CoinService;
 import com.hits.open.world.core.friend.repository.NotificationFriendService;
 import com.hits.open.world.core.location.repository.UserLocationEntity;
@@ -29,12 +31,12 @@ public class UserLocationService {
     private static final int MIN_POINTS_NUMBER = 2;
 
     private final UserLocationRepository userLocationRepository;
-    private final StatisticService statisticService;
     private final NotificationFriendService notificationFriendService;
     private final CoinService coinService;
     private final QuestService questService;
     private final PoiService poiService;
     private final MultipolygonService multipolygonService;
+    private final BuffService buffService;
 
     @Transactional
     public void updateUserLocation(PolygonRequestDto requestDto) {
@@ -83,9 +85,7 @@ public class UserLocationService {
     }
 
     private void generateNewCoins(PolygonRequestDto requestDto) {
-        var userStatistic = statisticService.getUserStatistics(requestDto.userId());
-        int userLevel = userStatistic.level();
-        int coinsCount = Math.max(userLevel, MIN_POINTS_NUMBER);
+        int coinsCount = MIN_POINTS_NUMBER + buffService.getUserBuffs(requestDto.userId(), BuffStatus.COINS).intValue();
 
         for (int i = 0; i < coinsCount; i++) {
             LocationDto newLocation = generateRandomLocation(requestDto);

@@ -401,9 +401,9 @@ create sequence s_buff_id start with 1 increment by 1;
 create table buff
 (
     buff_id      bigint default nextval('s_buff_id'),
-    experience_factor double precision not null,
-    coins_factor      double precision not null,
-    level_number      integer          not null,
+    value_factor double precision                                        not null,
+    status       varchar(60) check ( status in ('COINS', 'EXPERIENCE') ) not null,
+    level_number integer                                                 not null,
     primary key (buff_id)
 );
 

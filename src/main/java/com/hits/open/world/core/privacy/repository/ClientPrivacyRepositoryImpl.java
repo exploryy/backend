@@ -9,7 +9,7 @@ import static com.example.open_the_world.public_.tables.ClientPrivacy.CLIENT_PRI
 @Repository
 @RequiredArgsConstructor
 public class ClientPrivacyRepositoryImpl implements ClientPrivacyRepository {
-    private DSLContext create;
+    private final DSLContext create;
 
     @Override
     public void setPrivacy(ClientPrivacyEntity clientPrivacyEntity) {

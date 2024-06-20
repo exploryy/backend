@@ -5,12 +5,14 @@ import com.hits.open.world.core.friend.FriendService;
 import com.hits.open.world.core.multipolygon.enums.FigureType;
 import com.hits.open.world.core.multipolygon.factory.polygon.PolygonService;
 import com.hits.open.world.core.multipolygon.repository.MultipolygonRepository;
+import com.hits.open.world.core.privacy.ClientPrivacyService;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import com.hits.open.world.public_interface.multipolygon.AreaDtoResponse;
 import com.hits.open.world.public_interface.multipolygon.PolygonRequestDto;
 import com.hits.open.world.public_interface.multipolygon.geo.GeoDto;
 import com.hits.open.world.public_interface.multipolygon.geo.MultipolygonGeometry;
+import com.hits.open.world.public_interface.user.ProfileDto;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
@@ -34,6 +36,7 @@ public class MultipolygonService {
     private final MultipolygonRepository multipolygonRepository;
     private final FriendService friendService;
     private final PolygonClient polygonClient;
+    private final ClientPrivacyService clientPrivacyService;
 
     public GeoDto getAllPolygons(String userId) {
         var geoString = multipolygonRepository.getAllCoordinates(userId);
@@ -81,11 +84,13 @@ public class MultipolygonService {
     public GeoDto getAllPolygonsFriend(String userId, String friendId) {
         var friends = friendService.getFriends(userId);
         var allFriends = Stream.concat(
-                friends.friends().stream(),
-                friends.favoriteFriends().stream()
-        ).distinct().toList();
+                friends.friends().stream().map(ProfileDto::userId),
+                friends.favoriteFriends().stream().map(ProfileDto::userId)
+                ).distinct()
+                .filter(clientPrivacyService::isPublic)
+                .toList();
 
-        boolean isFriend = allFriends.stream().anyMatch(friendDto -> friendDto.userId().equals(friendId));
+        boolean isFriend = allFriends.stream().anyMatch(clientId -> clientId.equals(friendId));
 
         if (!isFriend) {
             throw new ExceptionInApplication("You don't have a friend", ExceptionType.INVALID);

@@ -14,7 +14,6 @@ import static com.example.open_the_world.public_.Tables.NOTE_PHOTO;
 @RequiredArgsConstructor
 public class NoteRepositoryImpl implements NoteRepository {
     private static final NoteEntityMapper NOTE_ENTITY_MAPPER = new NoteEntityMapper();
-
     private final DSLContext create;
 
     @Override
@@ -64,4 +63,5 @@ public class NoteRepositoryImpl implements NoteRepository {
                 .where(NOTE_PHOTO.NOTE_ID.eq(noteId))
                 .fetch(NOTE_PHOTO.PHOTO_ID);
     }
+
 }

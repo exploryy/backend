@@ -1,5 +1,6 @@
-package com.hits.open.world.rest.controller;
+package com.hits.open.world.rest.controller.buff;
 
+import com.example.open_the_world.public_.tables.Buff;
 import com.hits.open.world.core.buff.BuffService;
 import com.hits.open.world.public_interface.buff.BuffDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -12,19 +13,11 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/buffs")
+@RequestMapping("/buff")
 @SecurityRequirement(name = "oauth2")
-@Tag(name = "Buffs")
+@Tag(name = "Buff")
 public class BuffController {
     private final BuffService buffService;
-
-    @PostMapping("/apply")
-    public void applyBuff(@RequestParam("buffId") Long buffId,
-                          JwtAuthenticationToken token
-    ) {
-        var userId = token.getTokenAttributes().get("sub").toString();
-        buffService.applyBuff(buffId, userId);
-    }
 
     @GetMapping("/my")
     public List<BuffDto> getMyBuffs(JwtAuthenticationToken token) {
@@ -32,9 +25,15 @@ public class BuffController {
         return buffService.getMyBuffs(userId);
     }
 
-    @GetMapping("/available")
-    public List<BuffDto> getAvailableBuffs(@RequestParam(required = false) Integer level) {
+    @GetMapping("/all")
+    public List<BuffDto> getAll(@RequestParam(required = false) Integer level) {
         return buffService.getAll(level);
     }
 
+    @PostMapping("/apply")
+    public BuffDto applyBuff(@RequestParam Long buffId,
+                                   JwtAuthenticationToken token) {
+        var userId = token.getTokenAttributes().get("sub").toString();
+        return buffService.applyBuff(buffId, userId);
+    }
 }

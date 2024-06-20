@@ -14,6 +14,7 @@ import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -70,12 +71,14 @@ public class BattlePassService {
         }
     }
 
-    private void increaseLevel(String userId, BattlePassEntity currentBattlePass, BattlePassUserStatisticEntity userLevelInBattlePass, int countExperience) {
+    public void increaseLevel(String userId, BattlePassEntity currentBattlePass, BattlePassUserStatisticEntity userLevelInBattlePass, int countExperience) {
         var needIncreaseLevel = battlePassRepository.getMaxLevel(currentBattlePass.battlePassId()) != userLevelInBattlePass.level();
         if (needIncreaseLevel) {
             var rewards = currentBattlePass.levels().get(userLevelInBattlePass.level()).rewards();
             for (var reward : rewards) {
-                if (!inventoryService.addItemToInventory(userId, reward.itemId())) {
+                try {
+                    inventoryService.addItemToInventory(userId, reward.itemId());
+                } catch (Exception e) {
                     moneyService.addMoney(userId, cosmeticItemService.findById(reward.itemId()).get().price());
                 }
             }
