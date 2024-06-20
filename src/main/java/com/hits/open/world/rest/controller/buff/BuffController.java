@@ -1,6 +1,5 @@
 package com.hits.open.world.rest.controller.buff;
 
-import com.example.open_the_world.public_.tables.Buff;
 import com.hits.open.world.core.buff.BuffService;
 import com.hits.open.world.public_interface.buff.BuffDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
