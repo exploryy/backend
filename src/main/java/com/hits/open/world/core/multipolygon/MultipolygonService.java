@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.hits.open.world.core.multipolygon.factory.geo.GeoDtoFactory.buildMultiPolygonGeoDto;
 import static com.hits.open.world.core.multipolygon.factory.geo.GeoDtoFactory.buildPolygonGeoDto;
@@ -79,10 +80,15 @@ public class MultipolygonService {
 
     public GeoDto getAllPolygonsFriend(String userId, String friendId) {
         var friends = friendService.getFriends(userId);
-        boolean isFriend = friends.friends().stream().anyMatch(friendDto -> friendDto.userId().equals(friendId));
+        var allFriends = Stream.concat(
+                friends.friends().stream(),
+                friends.favoriteFriends().stream()
+        ).distinct().toList();
+
+        boolean isFriend = allFriends.stream().anyMatch(friendDto -> friendDto.userId().equals(friendId));
 
         if (!isFriend) {
-            throw new ExceptionInApplication("You don't have a friend", ExceptionType.FORBIDDEN);
+            throw new ExceptionInApplication("You don't have a friend", ExceptionType.INVALID);
         }
 
         return getAllPolygons(friendId);

@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -43,14 +44,27 @@ public class StatisticService {
     private final EventService eventService;
 
     @Transactional
-    public TotalStatisticDto getTotal(String userId, int count) {
+    public TotalStatisticDto getTopExperienceDistance(String userId, int count) {
         List<StatisticEntity> allStatistics = statisticRepository.findAllStatistic();
 
-        List<StatisticEntity> sortedStatistics = sortStatistics(allStatistics, count);
+        List<StatisticEntity> sortedStatistics = sortStatisticsByExperienceAndDistance(allStatistics, count);
 
         List<ProfileDto> profiles = getProfiles(sortedStatistics);
 
-        int userPosition = findUserPosition(profiles, userId);
+        int userPosition = findUserPosition(sortedStatistics, userId);
+
+        return new TotalStatisticDto(profiles, userPosition);
+    }
+
+    @Transactional
+    public TotalStatisticDto getTopLevelDistance(String userId, int count) {
+        List<StatisticEntity> allStatistics = statisticRepository.findAllStatistic();
+
+        List<StatisticEntity> sortedStatistics = sortStatisticsByLevelAndDistance(allStatistics, count);
+
+        List<ProfileDto> profiles = getProfiles(sortedStatistics);
+
+        int userPosition = findUserPosition(sortedStatistics, userId);
 
         return new TotalStatisticDto(profiles, userPosition);
     }
@@ -111,12 +125,29 @@ public class StatisticService {
                 isCoordinateValid(statisticEntity.previousLongitude());
     }
 
-    private List<StatisticEntity> sortStatistics(List<StatisticEntity> statistics, int count) {
+    private List<StatisticEntity> sortStatisticsByExperienceAndDistance(List<StatisticEntity> statistics, int count) {
         return statistics.stream()
                 .sorted(Comparator.comparingInt(StatisticEntity::experience).reversed()
                         .thenComparingInt(StatisticEntity::distance).reversed())
                 .limit(count)
                 .toList();
+    }
+
+    private List<StatisticEntity> sortStatisticsByLevelAndDistance(List<StatisticEntity> statistics, int count) {
+        return statistics.stream()
+                .sorted((o1, o2) -> {
+                    int level1 = LevelUtil.calculateLevel(o1.experience());
+                    int level2 = LevelUtil.calculateLevel(o2.experience());
+
+                    int levelComparison = Integer.compare(level2, level1);
+                    if (levelComparison != 0) {
+                        return levelComparison;
+                    }
+
+                    return Integer.compare(o2.distance(), o1.distance());
+                })
+                .limit(count)
+                .collect(Collectors.toList());
     }
 
     private List<ProfileDto> getProfiles(List<StatisticEntity> statistics) {
@@ -252,9 +283,9 @@ public class StatisticService {
         statisticRepository.save(statistic);
     }
 
-    private int findUserPosition(List<ProfileDto> profiles, String userId) {
+    private int findUserPosition(List<StatisticEntity> profiles, String userId) {
         OptionalInt position = IntStream.range(0, profiles.size())
-                .filter(i -> profiles.get(i).userId().equals(userId))
+                .filter(i -> profiles.get(i).clientId().equals(userId))
                 .findFirst();
 
         return position.isPresent() ? position.getAsInt() + 1 : -1;
