@@ -75,9 +75,7 @@ public class BattlePassService {
         if (needIncreaseLevel) {
             var rewards = currentBattlePass.levels().get(userLevelInBattlePass.level()).rewards();
             for (var reward : rewards) {
-                try {
-                    inventoryService.addItemToInventory(userId, reward.itemId());
-                } catch (ExceptionInApplication e) {
+                if (!inventoryService.addItemToInventory(userId, reward.itemId())) {
                     moneyService.addMoney(userId, cosmeticItemService.findById(reward.itemId()).get().price());
                 }
             }

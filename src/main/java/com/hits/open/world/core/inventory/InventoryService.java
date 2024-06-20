@@ -58,13 +58,14 @@ public class InventoryService {
     }
 
     @Transactional
-    public void addItemToInventory(String userId, Long itemId) {
+    public boolean addItemToInventory(String userId, Long itemId) {
         var isItemOwned = inventoryRepository.isItemOwned(userId, itemId);
         if (isItemOwned) {
-            throw new ExceptionInApplication("Item is already owned by user", ExceptionType.INVALID);
+            return false;
         }
 
         inventoryRepository.addItem(userId, itemId);
+        return true;
     }
 
     @Transactional

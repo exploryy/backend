@@ -18,3 +18,5 @@ databaseChangeLog:
       file: changelog/ddl/achievement_init.sql
   - include:
       file: changelog/ddl/user_init.sql
+  - include:
+      file: changelog/ddl/buffs_init.sql

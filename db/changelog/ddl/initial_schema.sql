@@ -392,3 +392,30 @@ create table client_privacy
 );
 
 -- rollback DROP TABLE client_privacy;
+
+
+-- changeset t9404:23
+
+create sequence s_buff_id start with 1 increment by 1;
+
+create table buff
+(
+    buff_id      bigint default nextval('s_buff_id'),
+    experience_factor double precision not null,
+    coins_factor      double precision not null,
+    level_number      integer          not null,
+    primary key (buff_id)
+);
+
+-- rollback DROP TABLE buff;
+
+-- changeset t9404:24
+create table client_buff
+(
+    client_id varchar(60) not null,
+    buff_id   bigint      not null,
+    primary key (client_id, buff_id),
+    foreign key (buff_id) references buff (level_number)
+);
+
+-- rollback DROP TABLE client_buff;

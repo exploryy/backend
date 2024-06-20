@@ -50,7 +50,9 @@ public class StatisticController {
     }
 
     @GetMapping(path = "/friend/{client_id}")
-    public LocationStatisticDto getFriendStatistics(@PathVariable("client_id") String clientId) {
-        return statisticService.getUserStatistics(clientId);
+    public LocationStatisticDto getFriendStatistics(@PathVariable("client_id") String clientId,
+                                                    JwtAuthenticationToken token) {
+        var userId = token.getTokenAttributes().get("sub").toString();
+        return statisticService.getFriendStatistic(userId, clientId);
     }
 }
