@@ -380,3 +380,15 @@ create table note_photo
     primary key (photo_id),
     foreign key (note_id) references client_notes (note_id)
 );
+
+-- rollback DROP TABLE note_photo;
+
+-- changeset t9404:22
+create table client_privacy
+(
+    client_id  varchar(60) not null,
+    is_private boolean     not null,
+    primary key (client_id)
+);
+
+-- rollback DROP TABLE client_privacy;
