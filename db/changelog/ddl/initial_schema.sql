@@ -398,7 +398,7 @@ create table client_privacy
 
 create sequence s_buff_id start with 1 increment by 1;
 
-create table buff
+create table buffs
 (
     buff_id      bigint default nextval('s_buff_id'),
     value_factor double precision                                        not null,
@@ -416,7 +416,7 @@ create table client_buff
     client_id varchar(60) not null,
     buff_id   bigint      not null,
     primary key (client_id, buff_id),
-    foreign key (buff_id) references buff (buff_id)
+    foreign key (buff_id) references buffs (buff_id)
 );
 
 -- rollback DROP TABLE client_buff;

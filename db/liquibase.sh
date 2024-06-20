@@ -7,6 +7,7 @@ echo "***** Operation completed *****"
 
 echo "${DB_URL}"
 echo "${DB_URL}"
+echo "${DB_URL}"
 
 if [[ x"${DB_TAG}" == "x" ]]; then
   echo "***** Setting tag is not required *****"

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.open_the_world.public_.tables.Buff.BUFF;
+import static com.example.open_the_world.public_.tables.Buffs.BUFFS;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,21 +21,21 @@ public class BuffRepositoryImpl implements BuffRepository {
 
     @Override
     public Optional<BuffEntity> findByBuffId(Long buffId) {
-        return create.selectFrom(BUFF)
-                .where(BUFF.BUFF_ID.eq(buffId))
+        return create.selectFrom(BUFFS)
+                .where(BUFFS.BUFF_ID.eq(buffId))
                 .fetchOptional(mapper);
     }
 
     @Override
     public List<BuffEntity> findAll() {
-        return create.selectFrom(BUFF)
+        return create.selectFrom(BUFFS)
                 .fetch(mapper);
     }
 
     @Override
     public List<BuffEntity> findAllByLevel(int levelNumber) {
-        return create.selectFrom(BUFF)
-                .where(BUFF.LEVEL_NUMBER.eq(levelNumber))
+        return create.selectFrom(BUFFS)
+                .where(BUFFS.LEVEL_NUMBER.eq(levelNumber))
                 .fetch(mapper);
     }
 }
