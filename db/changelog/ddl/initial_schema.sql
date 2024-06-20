@@ -408,6 +408,7 @@ create table buff
 );
 
 -- rollback DROP TABLE buff;
+-- rollback DROP SEQUENCE s_buff_id;
 
 -- changeset t9404:24
 create table client_buff
