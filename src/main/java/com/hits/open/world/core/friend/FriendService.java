@@ -2,7 +2,6 @@ package com.hits.open.world.core.friend;
 
 import com.hits.open.world.core.event.EventService;
 import com.hits.open.world.core.event.EventType;
-import com.hits.open.world.core.file.FileStorageService;
 import com.hits.open.world.core.friend.repository.FriendEntity;
 import com.hits.open.world.core.friend.repository.FriendRepository;
 import com.hits.open.world.core.user.UserService;
@@ -28,7 +27,6 @@ import static java.util.stream.Collectors.partitioningBy;
 @RequiredArgsConstructor
 public class FriendService {
     private final FriendRepository friendRepository;
-    private final FileStorageService fileStorageService;
     private final EventService eventService;
     private final UserService userService;
 

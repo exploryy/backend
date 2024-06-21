@@ -67,11 +67,13 @@ public class StatisticService {
 
         List<StatisticEntity> sortedStatistics = sortStatisticsByExperienceAndDistance(allStatistics, count);
 
-        List<ProfileDto> profiles = getProfiles(sortedStatistics);
+        List<LocationStatisticDto> locationStatisticDtos = sortedStatistics.stream()
+                .map(statistic -> buildLocationStatisticDto(statistic.clientId()))
+                .toList();
 
         int userPosition = findUserPosition(sortedStatistics, userId);
 
-        return new TotalStatisticDto(profiles, userPosition);
+        return new TotalStatisticDto(locationStatisticDtos, userPosition);
     }
 
     @Transactional
@@ -80,11 +82,13 @@ public class StatisticService {
 
         List<StatisticEntity> sortedStatistics = sortStatisticsByLevelAndDistance(allStatistics, count);
 
-        List<ProfileDto> profiles = getProfiles(sortedStatistics);
+        List<LocationStatisticDto> locationStatisticDtos = sortedStatistics.stream()
+                .map(statistic -> buildLocationStatisticDto(statistic.clientId()))
+                .toList();
 
         int userPosition = findUserPosition(sortedStatistics, userId);
 
-        return new TotalStatisticDto(profiles, userPosition);
+        return new TotalStatisticDto(locationStatisticDtos, userPosition);
     }
 
     @Transactional
@@ -204,12 +208,6 @@ public class StatisticService {
                 .toList();
     }
 
-    private List<ProfileDto> getProfiles(List<StatisticEntity> statistics) {
-        return statistics.stream()
-                .map(statisticEntity -> getUserProfile(statisticEntity.clientId()))
-                .toList();
-    }
-
     private ProfileDto getUserProfile(String userId) {
         return userService.getProfile(userId);
     }
@@ -249,7 +247,6 @@ public class StatisticService {
         var profile = getUserProfile(statistic.clientId());
         int level = calculateLevel(statistic.experience());
         int totalExperienceInLevel = calculateTotalExperienceInLevel(level);
-
 
         return new LocationStatisticDto(
                 statistic.previousLatitude(),
