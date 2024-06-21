@@ -19,7 +19,6 @@ import com.hits.open.world.public_interface.statistic.UpdateStatisticDto;
 import com.hits.open.world.public_interface.user.ProfileDto;
 import com.hits.open.world.util.LevelUtil;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -108,7 +107,7 @@ public class StatisticService {
         }
 
         if (!clientPrivacyService.isPublic(friendId)) {
-            throw new ExceptionInApplication("User statistic is not public", ExceptionType.INVALID);
+            return buildPrivateStatisticDto(friendId);
         }
 
         return buildLocationStatisticDto(friendId);
@@ -157,6 +156,20 @@ public class StatisticService {
         }
 
         updateUserPosition(statisticEntity, updateStatisticDto);
+    }
+
+    private LocationStatisticDto buildPrivateStatisticDto(String userId) {
+        var profile = getUserProfile(userId);
+
+        return new LocationStatisticDto(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                profile
+        );
     }
 
     private boolean shouldUpdateUserMetrics(@NonNull StatisticEntity statisticEntity, @NonNull UpdateStatisticDto updateStatisticDto) {
