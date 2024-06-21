@@ -52,7 +52,7 @@ public class BattlePassService {
                 .orElseThrow(() -> new ExceptionInApplication("User not found in battle pass", ExceptionType.NOT_FOUND));
 
         var sumExperienceBeforeLevel = battlePassRepository.sumPreviousLevelsExperience(currentBattlePass.battlePassId(), userLevelInBattlePass.level());
-        if (countExperience + userLevelInBattlePass.currentExperience() >= currentBattlePass.levels().get(userLevelInBattlePass.level()).experienceNeeded() + sumExperienceBeforeLevel) {
+        if (countExperience + userLevelInBattlePass.currentExperience() >= currentBattlePass.levels().get(userLevelInBattlePass.level() - 1).experienceNeeded() + sumExperienceBeforeLevel) {
             increaseLevel(userId, currentBattlePass, userLevelInBattlePass, countExperience);
         } else {
             battlePassRepository.updateLevelAndExperience(
