@@ -1,6 +1,7 @@
 package com.hits.open.world.rest.controller;
 
 import com.hits.open.world.core.buff.BuffService;
+import com.hits.open.world.rest.controller.buff.BuffController;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

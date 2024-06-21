@@ -7,10 +7,10 @@ import lombok.Builder;
 public record LocationStatisticDto(
         String previousLatitude,
         String previousLongitude,
-        int experience,
-        int distance,
-        int level,
-        int totalExperienceInLevel,
+        Integer experience,
+        Integer distance,
+        Integer level,
+        Integer totalExperienceInLevel,
         ProfileDto profileDto
 ) {
 }
