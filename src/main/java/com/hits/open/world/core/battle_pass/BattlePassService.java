@@ -13,12 +13,13 @@ import com.hits.open.world.public_interface.event.EventDto;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BattlePassService {
@@ -78,7 +79,8 @@ public class BattlePassService {
             for (var reward : rewards) {
                 try {
                     inventoryService.addItemToInventory(userId, reward.itemId());
-                } catch (Exception e) {
+                } catch (ExceptionInApplication e) {
+                    log.error("add item to inventory", e);
                     moneyService.addMoney(userId, cosmeticItemService.findById(reward.itemId()).get().price());
                 }
             }
