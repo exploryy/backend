@@ -245,7 +245,7 @@ public class QuestService {
         questRepository.updatePassQuest(updatedEntity);
 
         var eventDto = new EventDto(
-                "%s;%s;%s".formatted(quest.name(), addedExperience, addedMoney),
+                "%s;%s;%s;%s".formatted(quest.name(), addedExperience, addedMoney, quest.questId()),
                 EventType.COMPLETE_QUEST
         );
         eventService.sendEvent(userId, eventDto);
