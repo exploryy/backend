@@ -19,6 +19,7 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ import static com.hits.open.world.core.multipolygon.factory.geo.GeoDtoFactory.bu
 import static com.hits.open.world.core.multipolygon.factory.geo.GeoDtoFactory.buildPolygonGeoDto;
 import static com.hits.open.world.core.multipolygon.factory.polygon.PolygonServiceFactory.getPolygonService;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MultipolygonService {
@@ -62,10 +64,16 @@ public class MultipolygonService {
         var multiPolygon = multipolygonRepository.getAllCoordinates(placeName);
 
         if (multiPolygon == null) {
-            var osmId = polygonClient.getNominatimData(placeName);
-            var multiPolygons = polygonClient.getPolygonData(osmId);
-            Polygon polygon = buildPolygon(multiPolygons);
-            multipolygonRepository.insert(placeName, polygon);
+            try {
+                var osmId = polygonClient.getNominatimData(placeName);
+                var multiPolygons = polygonClient.getPolygonData(osmId);
+                Polygon polygon = buildPolygon(multiPolygons);
+                multipolygonRepository.insert(placeName, polygon);
+                return multipolygonRepository.calculatePercentArea(requestDto.userId(), placeName);
+            } catch (Exception e) {
+                log.error("Error while getting city polygons", e);
+                return BigDecimal.ZERO;
+            }
         }
 
         return multipolygonRepository.calculatePercentArea(requestDto.userId(), placeName);
