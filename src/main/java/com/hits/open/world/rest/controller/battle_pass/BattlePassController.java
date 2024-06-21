@@ -33,4 +33,10 @@ public class BattlePassController {
         var userId = token.getToken().getClaim("sub").toString();
         return battlePassService.getAllBattlePasses(userId);
     }
+
+    @PostMapping("/add_experience")
+    public void increaseExperience(JwtAuthenticationToken token, @RequestParam Integer countExperience) {
+        var userId = token.getToken().getClaim("sub").toString();
+        battlePassService.addExperience(userId, countExperience);
+    }
 }

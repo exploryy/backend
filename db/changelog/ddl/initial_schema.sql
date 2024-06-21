@@ -420,3 +420,7 @@ create table client_buff
 );
 
 -- rollback DROP TABLE client_buff;
+
+-- changeset gordey_dovydenko:25
+
+alter table quest_review alter column message drop not null;

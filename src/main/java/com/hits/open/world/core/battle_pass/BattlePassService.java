@@ -73,31 +73,37 @@ public class BattlePassService {
     }
 
     public void increaseLevel(String userId, BattlePassEntity currentBattlePass, BattlePassUserStatisticEntity userLevelInBattlePass, int countExperience) {
-        var needIncreaseLevel = battlePassRepository.getMaxLevel(currentBattlePass.battlePassId()) != userLevelInBattlePass.level();
-        if (needIncreaseLevel) {
-            var rewards = currentBattlePass.levels().get(userLevelInBattlePass.level()).rewards();
+        var maxLevel = battlePassRepository.getMaxLevel(currentBattlePass.battlePassId());
+        var currentUserLevel = userLevelInBattlePass.level();
+        if (maxLevel != currentUserLevel) {
+            var rewards = currentBattlePass.levels().get(userLevelInBattlePass.level() - 1).rewards();
             for (var reward : rewards) {
                 try {
                     inventoryService.addItemToInventory(userId, reward.itemId());
                 } catch (ExceptionInApplication e) {
                     log.error("add item to inventory", e);
-                    moneyService.addMoney(userId, cosmeticItemService.findById(reward.itemId()).get().price());
+                    moneyService.addMoney(
+                            userId,
+                            cosmeticItemService.findById(reward.itemId())
+                                    .orElseThrow()
+                                    .price()
+                    );
                 }
             }
             eventService.sendEvent(
                     userId,
                     new EventDto(
-                            "%d".formatted(userLevelInBattlePass.level() + 1),
+                            "%d".formatted(currentUserLevel + 1),
                             EventType.UPDATE_BATTLE_PASS_LEVEL
                     )
             );
+            battlePassRepository.updateLevelAndExperience(
+                    userId,
+                    currentBattlePass.battlePassId(),
+                    currentUserLevel + 1,
+                    userLevelInBattlePass.currentExperience() + countExperience
+            );
         }
-        battlePassRepository.updateLevelAndExperience(
-                userId,
-                currentBattlePass.battlePassId(),
-                needIncreaseLevel ? userLevelInBattlePass.level() : userLevelInBattlePass.level() + 1,
-                userLevelInBattlePass.currentExperience() + countExperience
-        );
     }
 
     private BattlePassDto fromEntityToDto(BattlePassEntity battlePassEntity, String userId) {

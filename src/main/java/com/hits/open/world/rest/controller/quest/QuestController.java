@@ -156,7 +156,7 @@ public class QuestController {
     @PostMapping(path = "/{quest_id}/review")
     public void addQuestReview(@PathVariable("quest_id") Long questId,
                                @RequestParam("score") Integer score,
-                               @RequestParam("message") String message,
+                               @RequestParam(value = "message", required = false) Optional<String> message,
                                @RequestParam("images") List<MultipartFile> images,
                                JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();

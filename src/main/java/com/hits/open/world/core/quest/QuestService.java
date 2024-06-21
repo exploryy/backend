@@ -471,7 +471,7 @@ public class QuestService {
         var updatedEntity = new QuestReviewEntity(
                 dto.questReviewId(),
                 dto.score().orElse(questReview.score()),
-                dto.message().orElse(questReview.message()),
+                Optional.ofNullable(dto.message().orElse(questReview.message().orElse(null))),
                 questReview.clientId(),
                 questReview.questId()
         );
