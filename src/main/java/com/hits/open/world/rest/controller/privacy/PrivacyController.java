@@ -1,6 +1,7 @@
 package com.hits.open.world.rest.controller.privacy;
 
 import com.hits.open.world.core.privacy.ClientPrivacyService;
+import com.hits.open.world.public_interface.privacy.PrivacyDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -21,5 +22,11 @@ public class PrivacyController {
     ) {
         var userId = token.getTokenAttributes().get("sub").toString();
         clientPrivacyService.setPrivacy(userId, isPublic);
+    }
+
+    @GetMapping
+    public PrivacyDto getPrivacy(JwtAuthenticationToken token) {
+        var userId = token.getTokenAttributes().get("sub").toString();
+        return clientPrivacyService.getPrivacy(userId);
     }
 }

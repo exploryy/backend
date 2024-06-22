@@ -2,6 +2,7 @@ package com.hits.open.world.core.friend.repository;
 
 import com.google.gson.Gson;
 import com.hits.open.world.core.friend.FriendService;
+import com.hits.open.world.core.privacy.ClientPrivacyService;
 import com.hits.open.world.core.websocket.client.WebSocketClient;
 import com.hits.open.world.public_interface.multipolygon.PolygonRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,16 @@ public class NotificationFriendService {
     private static final Gson objectMapper = new Gson();
     private final WebSocketClient webSocketClient;
     private final FriendService friendService;
+    private final ClientPrivacyService clientPrivacyService;
 
     public void notifyFriendsAboutNewLocation(PolygonRequestDto dto) {
         var userId = dto.userId();
+
+        var isPublic = clientPrivacyService.isPublic(userId);
+        if (!isPublic) {
+            return;
+        }
+
         var responseMessage = objectMapper.toJson(dto);
 
         var friends = friendService.getFriends(userId);
