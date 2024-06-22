@@ -63,12 +63,11 @@ public class StatisticService {
 
     @Transactional
     public TotalStatisticDto getTopLevel(String userId, int count) {
-        List<StatisticEntity> allStatistics = statisticRepository.findAllStatistic();
-
-        List<StatisticEntity> sortedStatistics = sortStatisticsByExperience(allStatistics, count);
+        List<StatisticEntity> sortedStatistics = statisticRepository.findAllStatisticByExperienceDesc();
 
         List<LocationStatisticDto> locationStatisticDtos = sortedStatistics.stream()
                 .map(statistic -> buildLocationStatisticDto(statistic.clientId()))
+                .limit(count)
                 .toList();
 
         int userPosition = findUserPosition(sortedStatistics, userId);
@@ -78,12 +77,11 @@ public class StatisticService {
 
     @Transactional
     public TotalStatisticDto getTopDistance(String userId, int count) {
-        List<StatisticEntity> allStatistics = statisticRepository.findAllStatistic();
-
-        List<StatisticEntity> sortedStatistics = sortStatisticsByDistance(allStatistics, count);
+        List<StatisticEntity> sortedStatistics = statisticRepository.findAllStatisticByDistanceDesc();
 
         List<LocationStatisticDto> locationStatisticDtos = sortedStatistics.stream()
                 .map(statistic -> buildLocationStatisticDto(statistic.clientId()))
+                .limit(count)
                 .toList();
 
         int userPosition = findUserPosition(sortedStatistics, userId);
@@ -181,20 +179,6 @@ public class StatisticService {
                 statisticEntity.webSessionId().equals(updateStatisticDto.webSessionId()) &&
                 isCoordinateValid(statisticEntity.previousLatitude()) &&
                 isCoordinateValid(statisticEntity.previousLongitude());
-    }
-
-    private List<StatisticEntity> sortStatisticsByExperience(List<StatisticEntity> statistic, int count) {
-        return statistic.stream()
-                .sorted(Comparator.comparingInt(StatisticEntity::experience).reversed())
-                .limit(count)
-                .toList();
-    }
-
-    private List<StatisticEntity> sortStatisticsByDistance(List<StatisticEntity> statistics, int count) {
-        return statistics.stream()
-                .sorted(Comparator.comparingInt(StatisticEntity::distance).reversed())
-                .limit(count)
-                .toList();
     }
 
     private ProfileDto getUserProfile(String userId) {

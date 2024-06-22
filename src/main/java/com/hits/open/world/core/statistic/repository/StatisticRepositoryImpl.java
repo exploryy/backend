@@ -51,9 +51,16 @@ public class StatisticRepositoryImpl implements StatisticRepository {
     }
 
     @Override
-    public List<StatisticEntity> findAllStatistic() {
+    public List<StatisticEntity> findAllStatisticByDistanceDesc() {
         return create.selectFrom(CLIENT_STATISTIC)
-                .orderBy(CLIENT_STATISTIC.EXPERIENCE.desc(), CLIENT_STATISTIC.DISTANCE.desc())
+                .orderBy(CLIENT_STATISTIC.DISTANCE.desc())
+                .fetch(mapper);
+    }
+
+    @Override
+    public List<StatisticEntity> findAllStatisticByExperienceDesc() {
+        return create.selectFrom(CLIENT_STATISTIC)
+                .orderBy(CLIENT_STATISTIC.EXPERIENCE.desc())
                 .fetch(mapper);
     }
 }
