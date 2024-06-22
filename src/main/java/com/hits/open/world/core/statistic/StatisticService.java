@@ -25,15 +25,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static com.hits.open.world.core.statistic.ExperienceService.calculateExperienceByDistance;
-import static com.hits.open.world.core.statistic.ExperienceService.calculateExperienceByTask;
+import static com.hits.open.world.core.statistic.ExperienceService.*;
 import static com.hits.open.world.util.DistanceCalculator.calculateDistanceInMeters;
 import static com.hits.open.world.util.LevelUtil.calculateLevel;
 import static com.hits.open.world.util.LevelUtil.calculateTotalExperienceInLevel;
@@ -240,12 +238,12 @@ public class StatisticService {
         var userId = statisticEntity.clientId();
         int distanceInMeters = getDistanceInMeters(statisticEntity, dto);
         var coefficient = buffService.getUserBuffs(userId, BuffStatus.EXPERIENCE);
-        int calculatedExperience = (int) (calculateExperienceByDistance(statisticEntity, dto, distanceInMeters) *
+        int calculatedNewExperience = (int) (calculateNewExperienceByDistance(statisticEntity, dto, distanceInMeters) *
                         coefficient.doubleValue());
 
         var updatedStatisticEntity = new StatisticEntity(
                 userId,
-                calculatedExperience,
+                calculatedNewExperience + statisticEntity.experience(),
                 statisticEntity.distance() + distanceInMeters,
                 statisticEntity.webSessionId(),
                 dto.latitude().toString(),

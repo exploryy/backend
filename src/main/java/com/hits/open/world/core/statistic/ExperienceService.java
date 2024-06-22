@@ -25,7 +25,7 @@ public final class ExperienceService {
         return currentExperience + addedExperienceBuf;
     }
 
-    public static int calculateExperienceByDistance(StatisticEntity statistic, UpdateStatisticDto dto, int distanceInMeters) {
+    public static int calculateNewExperienceByDistance(StatisticEntity statistic, UpdateStatisticDto dto, int distanceInMeters) {
         var time = Math.abs(ChronoUnit.SECONDS.between(OffsetDateTime.now(), statistic.lastUpdate()));
         long speedMetersInSeconds = time == 0 ? 0 : distanceInMeters / Math.abs(ChronoUnit.SECONDS.between(OffsetDateTime.now(), statistic.lastUpdate()));
         TransportType transportType = TransportType.fromSpeedMetersInSeconds(speedMetersInSeconds);
@@ -34,11 +34,9 @@ public final class ExperienceService {
         int businessDistance = dto.isNewTerritory() ? distanceInMeters : distanceInMeters / NEW_TERRITORY_BUF;
         businessDistance = (level < MAX_LEVEL_WITH_BUF) ? businessDistance : 0;
 
-        double levelBuf = 1 + level / LEVEL_COST;
+        double levelBuf = level / LEVEL_COST;
         double transportBuf = transportType.getExperienceBuff();
-        int buffedDistance = (int) (levelBuf * businessDistance * transportBuf);
-
-        return buffedDistance + statistic.experience();
+        return (int) (levelBuf * businessDistance * transportBuf);
     }
 
 }
