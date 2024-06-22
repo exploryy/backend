@@ -10,5 +10,7 @@ public interface StatisticRepository {
 
     void updateStatistic(StatisticEntity statistic);
 
-    List<StatisticEntity> findAllStatistic();
+    List<StatisticEntity> findAllStatisticByExperienceDesc();
+
+    List<StatisticEntity> findAllStatisticByDistanceDesc();
 }
