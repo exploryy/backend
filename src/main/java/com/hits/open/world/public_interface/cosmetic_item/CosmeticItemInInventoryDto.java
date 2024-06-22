@@ -11,6 +11,7 @@ public record CosmeticItemInInventoryDto(
         RarityTypeEnum rarityType,
         CosmeticTypeEnum cosmeticType,
         boolean isEquipped,
-        String url
+        String url,
+        boolean isSellable
 ) {
 }

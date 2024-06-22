@@ -104,7 +104,10 @@ public class InventoryService {
                 entity.rarityType(),
                 entity.cosmeticType(),
                 entity.isEquipped(),
-                cosmeticItemService.getPhotoUrl(entity.itemId())
+                cosmeticItemService.getPhotoUrl(entity.itemId()),
+                cosmeticItemService.findById(entity.itemId())
+                        .orElseThrow()
+                        .sellable()
         );
     }
 
