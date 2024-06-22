@@ -23,18 +23,18 @@ import java.util.List;
 public class StatisticController {
     private final StatisticService statisticService;
 
-    @GetMapping("/top/experience/distance")
+    @GetMapping("/top/level")
     public TotalStatisticDto getAllStatistics(@RequestParam(value = "count", defaultValue = "10") Integer count,
                                               JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
-        return statisticService.getTopExperienceDistance(userId, count);
+        return statisticService.getTopLevel(userId, count);
     }
 
-    @GetMapping("/top/level/distance")
-    public TotalStatisticDto getTopLevelDistance(@RequestParam(value = "count", defaultValue = "10") Integer count,
+    @GetMapping("/top/distance")
+    public TotalStatisticDto getTopDistance(@RequestParam(value = "count", defaultValue = "10") Integer count,
                                                  JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
-        return statisticService.getTopLevelDistance(userId, count);
+        return statisticService.getTopDistance(userId, count);
     }
 
     @GetMapping(path = "/my")

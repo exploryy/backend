@@ -62,10 +62,10 @@ public class StatisticService {
     }
 
     @Transactional
-    public TotalStatisticDto getTopExperienceDistance(String userId, int count) {
+    public TotalStatisticDto getTopLevel(String userId, int count) {
         List<StatisticEntity> allStatistics = statisticRepository.findAllStatistic();
 
-        List<StatisticEntity> sortedStatistics = sortStatisticsByExperienceAndDistance(allStatistics, count);
+        List<StatisticEntity> sortedStatistics = sortStatisticsByExperience(allStatistics, count);
 
         List<LocationStatisticDto> locationStatisticDtos = sortedStatistics.stream()
                 .map(statistic -> buildLocationStatisticDto(statistic.clientId()))
@@ -77,10 +77,10 @@ public class StatisticService {
     }
 
     @Transactional
-    public TotalStatisticDto getTopLevelDistance(String userId, int count) {
+    public TotalStatisticDto getTopDistance(String userId, int count) {
         List<StatisticEntity> allStatistics = statisticRepository.findAllStatistic();
 
-        List<StatisticEntity> sortedStatistics = sortStatisticsByLevelAndDistance(allStatistics, count);
+        List<StatisticEntity> sortedStatistics = sortStatisticsByDistance(allStatistics, count);
 
         List<LocationStatisticDto> locationStatisticDtos = sortedStatistics.stream()
                 .map(statistic -> buildLocationStatisticDto(statistic.clientId()))
@@ -183,27 +183,16 @@ public class StatisticService {
                 isCoordinateValid(statisticEntity.previousLongitude());
     }
 
-    private List<StatisticEntity> sortStatisticsByExperienceAndDistance(List<StatisticEntity> statistics, int count) {
-        return statistics.stream()
-                .sorted(Comparator.comparingInt(StatisticEntity::experience).reversed()
-                        .thenComparingInt(StatisticEntity::distance).reversed())
+    private List<StatisticEntity> sortStatisticsByExperience(List<StatisticEntity> statistic, int count) {
+        return statistic.stream()
+                .sorted(Comparator.comparingInt(StatisticEntity::experience).reversed())
                 .limit(count)
                 .toList();
     }
 
-    private List<StatisticEntity> sortStatisticsByLevelAndDistance(List<StatisticEntity> statistics, int count) {
+    private List<StatisticEntity> sortStatisticsByDistance(List<StatisticEntity> statistics, int count) {
         return statistics.stream()
-                .sorted((o1, o2) -> {
-                    int level1 = LevelUtil.calculateLevel(o1.experience());
-                    int level2 = LevelUtil.calculateLevel(o2.experience());
-
-                    int levelComparison = Integer.compare(level2, level1);
-                    if (levelComparison != 0) {
-                        return levelComparison;
-                    }
-
-                    return Integer.compare(o2.distance(), o1.distance());
-                })
+                .sorted(Comparator.comparingInt(StatisticEntity::distance).reversed())
                 .limit(count)
                 .toList();
     }

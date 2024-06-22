@@ -2,6 +2,7 @@ package com.hits.open.world.core.privacy;
 
 import com.hits.open.world.core.privacy.repository.ClientPrivacyEntity;
 import com.hits.open.world.core.privacy.repository.ClientPrivacyRepository;
+import com.hits.open.world.public_interface.privacy.PrivacyDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,8 +18,14 @@ public class ClientPrivacyService {
         clientPrivacyRepository.setPrivacy(clientPrivacyEntity);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public boolean isPublic(String clientId) {
         return clientPrivacyRepository.isPublic(clientId);
+    }
+
+    @Transactional
+    public PrivacyDto getPrivacy(String clientId) {
+        boolean isPublic = isPublic(clientId);
+        return new PrivacyDto(isPublic);
     }
 }

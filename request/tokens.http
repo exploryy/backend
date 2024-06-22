@@ -4,8 +4,8 @@ Content-Type: application/x-www-form-urlencoded
 client_id = users-app &
 client_secret = 123456789 &
 grant_type = password &
-username = sanya228 &
-password = 12345
+username = clown &
+password = 123456
 
 // clown 123456 f9ef4bd9-d511-4ac9-a9b3-be55d19f0808
 // sanya228 12345 70755628-9268-4d4c-926d-8dd7c518187c с него на clown смотреть
