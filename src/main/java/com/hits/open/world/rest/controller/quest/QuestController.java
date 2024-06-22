@@ -156,8 +156,8 @@ public class QuestController {
     @PostMapping(path = "/{quest_id}/review")
     public void addQuestReview(@PathVariable("quest_id") Long questId,
                                @RequestParam("score") Integer score,
-                               @RequestParam("message") String message,
-                               @RequestParam("images") List<MultipartFile> images,
+                               @RequestParam(value = "message", required = false) Optional<String> message,
+                               @RequestParam(value = "images", required = false) Optional<List<MultipartFile>> images,
                                JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
         var createDto = new CreateQuestReviewDto(
@@ -165,7 +165,7 @@ public class QuestController {
                 score,
                 message,
                 userId,
-                images
+                images.orElse(List.of())
         );
         questService.createQuestReview(createDto);
     }

@@ -44,10 +44,11 @@ public class NoteService {
                 OffsetDateTime.now(),
                 pointId
         );
+        var noteId = noteRepository.save(noteEntity).id();
         for (var photo : createNoteDto.images()) {
-            addPhoto(noteEntity.id(), photo);
+            addPhoto(noteId, photo);
         }
-        return noteRepository.save(noteEntity).id();
+        return noteId;
     }
 
     @Transactional(readOnly = true)

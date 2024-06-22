@@ -128,7 +128,7 @@ public class QuestRepositoryImpl implements QuestRepository {
                 .set(QUEST_REVIEW.QUEST_ID, entity.questId())
                 .set(QUEST_REVIEW.CLIENT_ID, entity.clientId())
                 .set(QUEST_REVIEW.SCORE, entity.score())
-                .set(QUEST_REVIEW.MESSAGE, entity.message())
+                .set(QUEST_REVIEW.MESSAGE, entity.message().orElse(null))
                 .returning(QUEST_REVIEW.QUEST_REVIEW_ID, QUEST_REVIEW.QUEST_ID, QUEST_REVIEW.CLIENT_ID, QUEST_REVIEW.SCORE, QUEST_REVIEW.MESSAGE)
                 .fetchOne(questReviewEntityMapper);
     }
@@ -137,7 +137,7 @@ public class QuestRepositoryImpl implements QuestRepository {
     public void updateQuestReview(QuestReviewEntity entity) {
         create.update(QUEST_REVIEW)
                 .set(QUEST_REVIEW.SCORE, entity.score())
-                .set(QUEST_REVIEW.MESSAGE, entity.message())
+                .set(QUEST_REVIEW.MESSAGE, entity.message().orElse(null))
                 .where(QUEST_REVIEW.QUEST_REVIEW_ID.eq(entity.questReviewId()))
                 .execute();
     }

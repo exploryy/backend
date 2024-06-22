@@ -13,12 +13,13 @@ import com.hits.open.world.public_interface.event.EventDto;
 import com.hits.open.world.public_interface.exception.ExceptionInApplication;
 import com.hits.open.world.public_interface.exception.ExceptionType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BattlePassService {
@@ -51,7 +52,7 @@ public class BattlePassService {
                 .orElseThrow(() -> new ExceptionInApplication("User not found in battle pass", ExceptionType.NOT_FOUND));
 
         var sumExperienceBeforeLevel = battlePassRepository.sumPreviousLevelsExperience(currentBattlePass.battlePassId(), userLevelInBattlePass.level());
-        if (countExperience + userLevelInBattlePass.currentExperience() >= currentBattlePass.levels().get(userLevelInBattlePass.level()).experienceNeeded() + sumExperienceBeforeLevel) {
+        if (countExperience + userLevelInBattlePass.currentExperience() >= currentBattlePass.levels().get(userLevelInBattlePass.level() - 1).experienceNeeded() + sumExperienceBeforeLevel) {
             increaseLevel(userId, currentBattlePass, userLevelInBattlePass, countExperience);
         } else {
             battlePassRepository.updateLevelAndExperience(
@@ -72,30 +73,44 @@ public class BattlePassService {
     }
 
     public void increaseLevel(String userId, BattlePassEntity currentBattlePass, BattlePassUserStatisticEntity userLevelInBattlePass, int countExperience) {
-        var needIncreaseLevel = battlePassRepository.getMaxLevel(currentBattlePass.battlePassId()) != userLevelInBattlePass.level();
-        if (needIncreaseLevel) {
-            var rewards = currentBattlePass.levels().get(userLevelInBattlePass.level()).rewards();
-            for (var reward : rewards) {
-                try {
-                    inventoryService.addItemToInventory(userId, reward.itemId());
-                } catch (Exception e) {
-                    moneyService.addMoney(userId, cosmeticItemService.findById(reward.itemId()).get().price());
-                }
-            }
+        var maxLevel = battlePassRepository.getMaxLevel(currentBattlePass.battlePassId());
+        var currentUserLevel = userLevelInBattlePass.level();
+
+        if (currentUserLevel <= maxLevel) {
+            addItemToInventoryForLevelUp(userId, currentBattlePass, currentUserLevel);
+        }
+        if (maxLevel != currentUserLevel) {
             eventService.sendEvent(
                     userId,
                     new EventDto(
-                            "%d".formatted(userLevelInBattlePass.level() + 1),
+                            "%d".formatted(currentUserLevel + 1),
                             EventType.UPDATE_BATTLE_PASS_LEVEL
                     )
             );
+            battlePassRepository.updateLevelAndExperience(
+                    userId,
+                    currentBattlePass.battlePassId(),
+                    currentUserLevel + 1,
+                    userLevelInBattlePass.currentExperience() + countExperience
+            );
         }
-        battlePassRepository.updateLevelAndExperience(
-                userId,
-                currentBattlePass.battlePassId(),
-                needIncreaseLevel ? userLevelInBattlePass.level() : userLevelInBattlePass.level() + 1,
-                userLevelInBattlePass.currentExperience() + countExperience
-        );
+    }
+
+    private void addItemToInventoryForLevelUp(String userId, BattlePassEntity currentBattlePass, int level) {
+        var rewards = currentBattlePass.levels().get(level).rewards();
+        for (var reward : rewards) {
+            try {
+                inventoryService.addItemToInventory(userId, reward.itemId());
+            } catch (ExceptionInApplication e) {
+                log.error("add item to inventory", e);
+                moneyService.addMoney(
+                        userId,
+                        cosmeticItemService.findById(reward.itemId())
+                                .orElseThrow()
+                                .price()
+                );
+            }
+        }
     }
 
     private BattlePassDto fromEntityToDto(BattlePassEntity battlePassEntity, String userId) {

@@ -32,7 +32,7 @@ overpassTurbo:
 
 flickr:
   baseUrl: https://www.flickr.com/services/rest/
-  apiKey: f95a06a07e605b7c177f765597641b26
+  apiKey: 1ba0b8648fec28623eebe3b210b24d7d
 
 quest:
   generateQuestsFixedRate: 600000

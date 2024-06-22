@@ -420,3 +420,11 @@ create table client_buff
 );
 
 -- rollback DROP TABLE client_buff;
+
+-- changeset gordey_dovydenko:25
+
+alter table quest_review alter column message drop not null;
+
+-- changeset gordey_dovydenko:26
+
+alter table quest_review add column created_at timestamp with time zone not null default current_timestamp;
