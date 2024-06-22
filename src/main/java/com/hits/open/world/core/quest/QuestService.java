@@ -298,7 +298,7 @@ public class QuestService {
         for (var quest : activeQuests) {
             switch (quest.questType()) {
                 case POINT_TO_POINT -> {
-                    final int distance = 10;
+                    final int distance = 50;
                     var pointToPointQuest = questRepository.getPointToPointQuestByQuestId(quest.questId())
                             .orElseThrow(() -> new ExceptionInApplication("Point to point quest not found", ExceptionType.NOT_FOUND));
                     var way = routeService.getRoute(pointToPointQuest.routeId());
