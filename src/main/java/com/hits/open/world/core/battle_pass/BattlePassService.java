@@ -77,7 +77,7 @@ public class BattlePassService {
         var currentUserLevel = userLevelInBattlePass.level();
 
         if (currentUserLevel <= maxLevel) {
-            addItemToInventoryForLevelUp(userId, currentBattlePass, currentUserLevel);
+            addItemToInventoryForLevelUp(userId, currentBattlePass, currentUserLevel - 1);
         }
         if (maxLevel != currentUserLevel) {
             eventService.sendEvent(
