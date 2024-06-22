@@ -53,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -355,7 +356,8 @@ public class QuestService {
                             review.message(),
                             review.questId(),
                             images,
-                            userService.getProfile(review.clientId())
+                            userService.getProfile(review.clientId()),
+                            review.createdAt()
                     );
                 })
                 .toList();
@@ -425,7 +427,8 @@ public class QuestService {
                 dto.score(),
                 dto.message(),
                 dto.clientId(),
-                dto.questId()
+                dto.questId(),
+                OffsetDateTime.now()
         );
         var questReviewInDb = questRepository.createQuestReview(questReviewEntity);
         for (var image : dto.images()) {
@@ -473,7 +476,8 @@ public class QuestService {
                 dto.score().orElse(questReview.score()),
                 Optional.ofNullable(dto.message().orElse(questReview.message().orElse(null))),
                 questReview.clientId(),
-                questReview.questId()
+                questReview.questId(),
+                questReview.createdAt()
         );
         questRepository.updateQuestReview(updatedEntity);
     }
@@ -592,13 +596,13 @@ public class QuestService {
     private int getMoneyForQuest(DifficultyType type) {
         switch (type) {
             case EASY -> {
-                return 10;
+                return 100;
             }
             case MEDIUM -> {
-                return 20;
+                return 500;
             }
             case HARD -> {
-                return 30;
+                return 1200;
             }
             default -> throw new ExceptionInApplication("Invalid difficulty type", ExceptionType.INVALID);
         }
@@ -607,13 +611,13 @@ public class QuestService {
     private int getExperienceForQuest(DifficultyType type) {
         switch (type) {
             case EASY -> {
-                return 30;
+                return 300;
             }
             case MEDIUM -> {
-                return 60;
+                return 600;
             }
             case HARD -> {
-                return 100;
+                return 2000;
             }
             default -> throw new ExceptionInApplication("Invalid difficulty type", ExceptionType.INVALID);
         }

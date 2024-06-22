@@ -1,4 +1,4 @@
-package com.hits.open.world.rest.privacy;
+package com.hits.open.world.rest.controller.privacy;
 
 import com.hits.open.world.core.privacy.ClientPrivacyService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

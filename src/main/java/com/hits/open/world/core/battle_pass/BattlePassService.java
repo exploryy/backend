@@ -75,21 +75,11 @@ public class BattlePassService {
     public void increaseLevel(String userId, BattlePassEntity currentBattlePass, BattlePassUserStatisticEntity userLevelInBattlePass, int countExperience) {
         var maxLevel = battlePassRepository.getMaxLevel(currentBattlePass.battlePassId());
         var currentUserLevel = userLevelInBattlePass.level();
+
+        if (currentUserLevel <= maxLevel) {
+            addItemToInventoryForLevelUp(userId, currentBattlePass, currentUserLevel);
+        }
         if (maxLevel != currentUserLevel) {
-            var rewards = currentBattlePass.levels().get(userLevelInBattlePass.level() - 1).rewards();
-            for (var reward : rewards) {
-                try {
-                    inventoryService.addItemToInventory(userId, reward.itemId());
-                } catch (ExceptionInApplication e) {
-                    log.error("add item to inventory", e);
-                    moneyService.addMoney(
-                            userId,
-                            cosmeticItemService.findById(reward.itemId())
-                                    .orElseThrow()
-                                    .price()
-                    );
-                }
-            }
             eventService.sendEvent(
                     userId,
                     new EventDto(
@@ -103,6 +93,23 @@ public class BattlePassService {
                     currentUserLevel + 1,
                     userLevelInBattlePass.currentExperience() + countExperience
             );
+        }
+    }
+
+    private void addItemToInventoryForLevelUp(String userId, BattlePassEntity currentBattlePass, int level) {
+        var rewards = currentBattlePass.levels().get(level).rewards();
+        for (var reward : rewards) {
+            try {
+                inventoryService.addItemToInventory(userId, reward.itemId());
+            } catch (ExceptionInApplication e) {
+                log.error("add item to inventory", e);
+                moneyService.addMoney(
+                        userId,
+                        cosmeticItemService.findById(reward.itemId())
+                                .orElseThrow()
+                                .price()
+                );
+            }
         }
     }
 

@@ -157,7 +157,7 @@ public class QuestController {
     public void addQuestReview(@PathVariable("quest_id") Long questId,
                                @RequestParam("score") Integer score,
                                @RequestParam(value = "message", required = false) Optional<String> message,
-                               @RequestParam("images") List<MultipartFile> images,
+                               @RequestParam(value = "images", required = false) Optional<List<MultipartFile>> images,
                                JwtAuthenticationToken token) {
         var userId = token.getTokenAttributes().get("sub").toString();
         var createDto = new CreateQuestReviewDto(
@@ -165,7 +165,7 @@ public class QuestController {
                 score,
                 message,
                 userId,
-                images
+                images.orElse(List.of())
         );
         questService.createQuestReview(createDto);
     }

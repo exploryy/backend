@@ -14,7 +14,8 @@ public class QuestReviewEntityMapper implements RecordMapper<QuestReviewRecord, 
                 questReviewRecord.getScore(),
                 Optional.ofNullable(questReviewRecord.getMessage()),
                 questReviewRecord.getClientId(),
-                questReviewRecord.getQuestId()
+                questReviewRecord.getQuestId(),
+                questReviewRecord.getCreatedAt()
         );
     }
 }

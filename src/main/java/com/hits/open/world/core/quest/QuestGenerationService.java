@@ -41,7 +41,7 @@ public class QuestGenerationService {
     private final PhotoClient photoClient;
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Scheduled(fixedRateString = "${quest.generateQuestsFixedRate}")
+    //@Scheduled(fixedRateString = "${quest.generateQuestsFixedRate}")
     public void generateQuests() {
         try {
             for (var cityName : poiService.getCities()) {
@@ -105,12 +105,13 @@ public class QuestGenerationService {
             var generatedText = gptClient.generateText("%s%n%s".formatted(QuestType.DISTANCE, poi))
                     .replace("*", "")
                     .replace("Обратите внимание, что это лишь пример названия и описания квеста, которые можно адаптировать под конкретные условия и требования.", "");
+            var distance = getRandomDistance();
             return new GeneratedDistanceQuest(
                     getNameQuest(generatedText),
                     getDescriptionQuest(generatedText),
-                    DifficultyType.getRandonDifficultyType(),
+                    getDifficultyType(distance),
                     TransportType.getRandomTransportType(),
-                    getRandomDistance(),
+                    distance,
                     String.valueOf(poi.longitude()),
                     String.valueOf(poi.latitude())
             );
@@ -135,9 +136,9 @@ public class QuestGenerationService {
             return new GeneratedPointToPointQuest(
                     getNameQuest(generatedText),
                     getDescriptionQuest(generatedText),
-                    DifficultyType.getRandonDifficultyType(),
+                    getDifficultyType(way.distance()),
                     TransportType.getRandomTransportType(),
-                    way
+                    way.points()
             );
         } catch (Exception e) {
             log.error("Error generating description", e);
@@ -162,6 +163,7 @@ public class QuestGenerationService {
 
     private String getDescriptionQuest(String generatedText) {
         return generatedText.split("Описание квеста:")[1]
+                .split("Примечание")[0]
                 .replace("«", "")
                 .replace("»", "")
                 .trim();
@@ -219,5 +221,15 @@ public class QuestGenerationService {
                 Files.write(dest.toPath(), imageBytes);
             }
         };
+    }
+
+    private DifficultyType getDifficultyType(double distance) {
+        if (distance < 1000) {
+            return DifficultyType.EASY;
+        } else if (distance < 5000) {
+            return DifficultyType.MEDIUM;
+        } else {
+            return DifficultyType.HARD;
+        }
     }
 }

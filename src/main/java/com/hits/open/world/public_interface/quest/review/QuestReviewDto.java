@@ -2,6 +2,7 @@ package com.hits.open.world.public_interface.quest.review;
 
 import com.hits.open.world.public_interface.user.ProfileDto;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ public record QuestReviewDto(
         Optional<String> message,
         Long questId,
         List<String> reviewPhotos,
-        ProfileDto profile
+        ProfileDto profile,
+        OffsetDateTime createdAt
 ) {
 }
