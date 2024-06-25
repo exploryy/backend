@@ -84,8 +84,7 @@ public class BuffService {
                 .filter(buff -> buff.status().equals(buffStatus.name()));
 
         if (buffStatus.equals(BuffStatus.COINS)) {
-            var currentBuffs = buffDtoStream.reduce(BigDecimal.ZERO, (acc, buff) -> acc.add(buff.valueFactor()), BigDecimal::add);
-            return max(currentBuffs, BigDecimal.TWO);
+            return buffDtoStream.reduce(BigDecimal.ZERO, (acc, buff) -> acc.add(buff.valueFactor()), BigDecimal::add);
         }
 
         return buffDtoStream.reduce(BigDecimal.ONE, (acc, buff) -> acc.multiply(buff.valueFactor()), BigDecimal::multiply);

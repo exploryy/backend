@@ -83,9 +83,9 @@ public class MultipolygonHandler extends AbstractWebSocketHandler {
     }
 
     private void processLocationInfo(WebSocketSession session, PolygonRequestDto requestDto) throws IOException {
-        updateStatistics(requestDto, session);
-
         userLocationService.updateUserLocation(requestDto);
+
+        updateStatistics(requestDto, session);
         multipolygonService.save(requestDto);
 
         var response = buildPolygonResponse(requestDto);
