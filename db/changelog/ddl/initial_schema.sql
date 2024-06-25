@@ -239,7 +239,7 @@ create table user_location
     client_id       varchar(60)              not null,
     latitude        varchar(60)              not null,
     longitude       varchar(60)              not null,
-    last_visitation timestamp with time zone not null default current_timestamp,
+    last_visitation timestamp with time zone not null,
     primary key (client_id)
 );
 
