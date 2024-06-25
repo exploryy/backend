@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum TransportType {
     WALK(1.0),
-    BICYCLE(0.5),
-    CAR(0.1);
+    BICYCLE(0.7),
+    CAR(0.3);
 
     private final double experienceBuff;
 
