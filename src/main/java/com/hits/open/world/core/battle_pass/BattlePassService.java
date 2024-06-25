@@ -123,8 +123,9 @@ public class BattlePassService {
                 battlePassEntity.endDate(),
                 userLevelInBattlePass.map(BattlePassUserStatisticEntity::level).orElseGet(() -> {
                     battlePassRepository.addUserToBattlePass(userId, battlePassEntity.battlePassId());
-                    return 0;
-                }),
+                    return 2;
+                }) - 1,
+                userLevelInBattlePass.map(BattlePassUserStatisticEntity::currentExperience).orElse(0),
                 battlePassEntity.levels().stream()
                         .map(level -> new BattlePassDto.BattlePassLevelDto(
                                 level.level(),
