@@ -238,8 +238,8 @@ public class StatisticService {
         var userId = statisticEntity.clientId();
         int distanceInMeters = getDistanceInMeters(statisticEntity, dto);
         var coefficient = buffService.getUserBuffs(userId, BuffStatus.EXPERIENCE);
-        int calculatedNewExperience = (int) (calculateNewExperienceByDistance(statisticEntity, dto, distanceInMeters) *
-                        coefficient.doubleValue());
+        int calculatedNewExperience = Math.max((int) (calculateNewExperienceByDistance(statisticEntity, dto, distanceInMeters) *
+                        coefficient.doubleValue()), 1);
 
         var updatedStatisticEntity = new StatisticEntity(
                 userId,
