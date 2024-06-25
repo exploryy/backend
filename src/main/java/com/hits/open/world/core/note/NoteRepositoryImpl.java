@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,4 +65,10 @@ public class NoteRepositoryImpl implements NoteRepository {
                 .fetch(NOTE_PHOTO.PHOTO_ID);
     }
 
+    @Override
+    public List<NoteEntity> getNotesOlderThan(OffsetDateTime time) {
+        return create.selectFrom(CLIENT_NOTES)
+                .where(CLIENT_NOTES.CREATED_AT.lt(time))
+                .fetch(NOTE_ENTITY_MAPPER);
+    }
 }

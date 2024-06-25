@@ -3,7 +3,7 @@
 -- changeset gordey_dovydenko:1
 
 insert into cosmetic_item (name, description, price, rarity_type, cosmetic_type, sellable)
-values ('Огненые пятки', 'Вы пришли к нам из ада', 1000, 'LEGENDARY', 'FOOTPRINT', true),
+values ('Водные пятки', 'Вы пришли к нам из ада', 1000, 'LEGENDARY', 'FOOTPRINT', true),
        ('Бензокос', 'Вы истребляете траву', 50, 'COMMON', 'FOG', true),
        ('Цыган', 'Пусть все завидуют вашему золоту', 500, 'EPIC', 'AVATAR_FRAMES', true),
        ('Уникум', 'Вау вы имеетее кастомную иконку приложения', 200, 'RARE', 'APPLICATION_IMAGE', true),
@@ -19,7 +19,9 @@ insert into cosmetic_item (name, description, price, rarity_type, cosmetic_type,
 values ('mmorpg рамка', 'Все и так знаю что ты не вылазишь из телефона 24/7', 400, 'LEGENDARY', 'AVATAR_FRAMES', true),
        ('Геншин импакт вумен рамка', 'Look at me... just... once... more...', 600, 'RARE', 'AVATAR_FRAMES', false),
        ('Геншин импакт мэн рамка', 'Блин я вообще не знаю что тут можно написать.', 100, 'COMMON', 'AVATAR_FRAMES', true),
-       ('Опять двойка', 'Твоя оценка по матеше, уникум', 800, 'RARE', 'APPLICATION_IMAGE', false),
-       ('Главный спонсор', 'Авиасейлс - поиск дешевых авиабилетов', 1, 'EPIC', 'APPLICATION_IMAGE', true);
+       ('Тик тик', 'Мда ребятки, не думал что так опустимся', 800, 'RARE', 'APPLICATION_IMAGE', false),
+       ('Главный спонсор', 'Авиасейлс - поиск дешевых авиабилетов', 1, 'EPIC', 'APPLICATION_IMAGE', true),
+       ('Open the world', 'Ура вы обладатель иконки нашего приложения, ниреальный хайп', 1, 'COMMON', 'APPLICATION_IMAGE', true),
+       ('Пила', 'С пилой лучше не играться, ведь вы носите её на шее', 1000, 'EPIC', 'AVATAR_FRAMES', true);
 
--- rollback delete from cosmetic_item_id in (8, 9, 10, 11, 12);
+-- rollback delete from cosmetic_item_id in (8, 9, 10, 11, 12, 13, 14);

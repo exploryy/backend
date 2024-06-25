@@ -15,6 +15,7 @@ import com.hits.open.world.public_interface.note.NoteDto;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +32,19 @@ public class NoteService {
     private final MultipolygonRepository multipolygonRepository;
     private final RouteRepository routeRepository;
     private final FileStorageService fileStorageService;
+
+    @Scheduled(cron = "${note.noteCleanUp.cron}")
+    public void cleanUpNotes() {
+        var notes = noteRepository.getNotesOlderThan(OffsetDateTime.now().minusDays(1));
+        notes.forEach(noteEntity -> {
+            noteRepository.deleteById(noteEntity.id());
+            noteRepository.getPhotosIdByNoteId(noteEntity.id())
+                    .forEach(photoId -> {
+                        var fileName = "client_note_%s_photo_%s".formatted(noteEntity.id(), photoId);
+                        fileStorageService.deleteFile(fileName).subscribe();
+                    });
+        });
+    }
 
     @Transactional
     public Long createNote(CreateNoteDto createNoteDto) {

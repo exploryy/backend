@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,14 +42,14 @@ public class NoteController {
     public Long createNote(@RequestParam String text,
                            @RequestParam String latitude,
                            @RequestParam String longitude,
-                           @RequestParam List<MultipartFile> images,
+                           @RequestParam(required = false) Optional<List<MultipartFile>> images,
                            JwtAuthenticationToken token) {
         var userId = token.getToken().getClaim("sub").toString();
         var createNoteDto = new CreateNoteDto(
                 text,
                 latitude,
                 longitude,
-                images,
+                images.orElse(List.of()),
                 userId
         );
         return noteService.createNote(createNoteDto);

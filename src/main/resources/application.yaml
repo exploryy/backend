@@ -37,6 +37,10 @@ flickr:
 quest:
   generateQuestsFixedRate: 600000
 
+note:
+  noteCleanUp:
+    cron: 0 0 0 * * *
+
 websocket:
   storage:
     fixedDelay:

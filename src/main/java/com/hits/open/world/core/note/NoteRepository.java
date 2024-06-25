@@ -1,5 +1,6 @@
 package com.hits.open.world.core.note;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,4 +16,5 @@ public interface NoteRepository {
     Optional<NoteEntity> findById(Long id);
 
     List<Long> getPhotosIdByNoteId(Long noteId);
+    List<NoteEntity> getNotesOlderThan(OffsetDateTime time);
 }
