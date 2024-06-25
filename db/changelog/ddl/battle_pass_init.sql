@@ -23,3 +23,16 @@ VALUES (5, 10, 1),
        (11, 5, 1);
 
 -- rollback delete from battle_pass_id = 1;
+
+-- changeset gordey_dovydenko:2
+
+update battle_pass_level set experience = 2000 where level = 1 and battle_pass_id = 1;
+update battle_pass_level set experience = 3000 where level = 2 and battle_pass_id = 1;
+update battle_pass_level set experience = 4000 where level = 3 and battle_pass_id = 1;
+update battle_pass_level set experience = 5000 where level = 4 and battle_pass_id = 1;
+update battle_pass_level set experience = 6000 where level = 5 and battle_pass_id = 1;
+update battle_pass_level set experience = 7000 where level = 6 and battle_pass_id = 1;
+update battle_pass_level set experience = 8000 where level = 7 and battle_pass_id = 1;
+update battle_pass_level set experience = 9000 where level = 8 and battle_pass_id = 1;
+update battle_pass_level set experience = 10000 where level = 9 and battle_pass_id = 1;
+update battle_pass_level set experience = 11000 where level = 10 and battle_pass_id = 1;

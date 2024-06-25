@@ -36,7 +36,7 @@ public class PoiService {
     }
 
     public PoiEntity getRandomPoiInCity(String cityName) {
-        return dataInCity.get(cityName).get(random.nextInt(dataInCity.get(cityName).size()));
+        return dataInCity.get(cityName).get(Math.abs(random.nextInt(dataInCity.get(cityName).size())));
     }
 
     public List<String> getCities() {
