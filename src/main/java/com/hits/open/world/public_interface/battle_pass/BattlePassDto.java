@@ -12,6 +12,7 @@ public record BattlePassDto(
         LocalDateTime startDate,
         LocalDateTime endDate,
         int currentLevel,
+        int currentExperience,
         List<BattlePassLevelDto> levels
 ) {
     public record BattlePassLevelDto(
