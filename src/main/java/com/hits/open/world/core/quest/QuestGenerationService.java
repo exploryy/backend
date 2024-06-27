@@ -41,7 +41,7 @@ public class QuestGenerationService {
     private final PhotoClient photoClient;
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Scheduled(fixedRateString = "${quest.generateQuestsFixedRate}")
+    //@Scheduled(fixedRateString = "${quest.generateQuestsFixedRate}")
     public void generateQuests() {
         try {
             for (var cityName : poiService.getCities()) {
